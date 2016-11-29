@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="java.text.SimpleDateFormat"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>车辆信息</title>
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="${basePath}/css/plugins/font-awesome/css/font-awesome.min.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="${basePath}/css/plugins/font-awesome/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/goods.css" />
+    <link rel="stylesheet" type="text/css" href="${basePath}/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="${basePath}/theme/transparent/main.css" />
+    <script language="javascript" src="${basePath}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${basePath}/js/quartz/plugins/My97DatePicker/WdatePicker.js"></script>
+    <script language="javascript" src="${basePath}/js/util.js"></script>
+    <script src="${basePath}/js/bootstrap.min.js"></script>
+    <script src="${basePath}/js/communicate.js"></script>
+</head>
+<body style="min-height:900px;">
+<form name="myForm" id="myForm" action="carStatistic_list.do" method="post">
+    <ul class="breadcrumb">
+        <li><i class="icon-home icon-2x"></i></li>
+        <li>当前位置：车辆信息查询</li>
+    </ul>
+    <div class="widget widget-table">
+        <div class="widget-content">
+            <div class="widget-header">
+                <h5>车辆信息查询</h5>
+            </div>
+            <table class="pn-ftable" border="0" cellpadding="10" style="table-layout: fixed;">
+                <tbody>
+                <tr>
+                    <th><span class="point">*</span>中心站 :</th>
+                    <td class="pn-fcontent">
+                        <select id="centralStation" name="carStatistic.centralStationId" mandatory='false' >
+                            <option value="">全部</option> 
+							<c:forEach items="${centerStationList}" var="centerStation">
+								<option value="${centerStation.id}" <c:if test="${centerStation.id==carStatistic.centralStationId}">selected</c:if>>${centerStation.orgName}</option>
+							</c:forEach>
+                        </select>
+                    </td>
+                    <th>收费站 :</th>
+                    <td class="pn-fcontent">
+                    	<input type="hidden" value="${carStatistic.stationNo}" id="stationId" />
+                        <select name="carStatistic.stationNo" id="stationNo">
+                            <option value="">全部</option>
+                        </select>
+                    </td>
+                    <th>入口流水 :</th>
+                    <td class="pn-fcontent">
+                        <input type="text" name="carStatistic.laneEnSerialNo" value="${carStatistic.laneEnSerialNo}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="point">*</span>车牌 :</th>
+                    <td class="pn-fcontent">
+                    	<input type="text" size="7" maxlength="7" name="carStatistic.exVehiclePlate" value="${carStatistic.exVehiclePlate}" /></td>
+                    <th>复合卡表面卡号 :</th>
+                    <td class="pn-fcontent">
+                        <input type="text"  name="carStatistic.exCPCSnNo" value="${carStatistic.exCPCSnNo}" />
+                    </td>
+                    <th>CPU卡号 :</th>
+                    <td class="pn-fcontent">
+                        <input type="text" name="carStatistic.exCPUCardSnNo" value="${carStatistic.exCPUCardSnNo}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="point">*</span>开始日期:</th>
+                    <td class="pn-fcontent">
+                        <input type="text" name="carStatistic.startTime" class="Wdate" onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss',skin:'whyGreen'})" readonly="readonly" value="<fmt:formatDate type="both" pattern="yyyy-MM-dd HH:mm:ss" value="${carStatistic.startTime}" />" />
+                    </td>
+                    <th><span class="point">*</span>结束日期</th>
+                    <td class="pn-fcontent">
+                        <input type="text" name="carStatistic.endTime" class="Wdate" onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss',skin:'whyGreen'})" readonly="readonly" value="<fmt:formatDate value="${carStatistic.endTime}" type="both" pattern="yyyy-MM-dd HH:mm:ss" />" />
+                    </td>
+                    <th>出口流水:</th>
+                    <td class="pn-fcontent">
+                        <input type="text"  name="carStatistic.laneExSerialNo" value="${carStatistic.laneExSerialNo}" />
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="point">*</span>异常情况:</th>
+                    <td class="pn-fcontent">
+                        <a href="javascript:selectDealStatusFunction();" class="btn btn-primary btn-s">选择异常情况</a>
+                        <input type="hidden" name="carStatistic.dealStatusArr" value="${carStatistic.dealStatusArr}" />
+                        <input type="hidden" name="carStatistic.dealStatusStr" value="${carStatistic.dealStatusStr}" />
+                    </td>
+                    <td class="pn-fcontent" colspan="4" id="showDealStatusTd" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;" title="${carStatistic.dealStatusStr}" >
+                    	<b>${carStatistic.dealStatusStr}</b> 
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <a 	class="btn btn-s-md btn-primary pull-right" id="submit">搜索</a>
+        </div>
+    </div>
+    <div class="separator line"></div>
+    <div class="widget widget-table">  <!-- style="height:580px;overflow-y: auto;" -->
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h5>数据列表</h5>
+        </div>
+        <div class="widget-content widget-list widget-scroll">  <!--  style="min-height:500px;" -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>序号 </th>
+                    <th>日期</th>
+                    <th>路段</th>
+                    <th>车道标号</th>
+                    <th>车道类型</th>
+                    <th>车牌</th>
+                    <th>车型</th>
+                    <th>出口收费站</th>
+                    <th>入口站</th>
+                    <th>通行卡号</th>
+                    <th>异常情况</th>
+                    <th>CPU卡号</th>
+                    <th>入口流水</th>
+                    <th>出口流水</th>
+                    
+                    
+                    <th class="hidden">轴组数</th>
+                    <th class="hidden">入口时间</th>
+                    <th class="hidden">入口车型</th>
+                    <th class="hidden">出口识别车牌</th>
+                    <th class="hidden">收费员编号</th>
+                    
+                    <th class="hidden">收费金额</th>
+                    <th class="hidden">车种</th>
+                    
+                    
+                    
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="databody">
+                <c:forEach items="${list}" var="item" varStatus="status">
+                <tr>
+                    <td>${status.count}</td>
+                    <td name="exTimeTd"><fmt:formatDate type="both" pattern="yyyy-MM-dd HH:mm:ss" value="${item[0]}" /></td>
+                    <td name="exRoadNameTd">${orgMap[fn:trim(item[1])]}</td>
+                    <td name="exLaneIdTd">${item[3]}</td>
+                    <td name="exLaneNameTd">${laneTypeMap[fn:trim(item[4])]}</td>
+                    <td name="exVehiclePlateTd">${item[5]}</td>
+                    <td name="exVehicleClassTd">${vehClassMap[fn:trim(item[6])]}</td>
+                    <td name="exStationNameTd">${orgMap[fn:trim(item[2])]}</td>
+                    <td name="enStationNameId">${item[8]}</td>
+                    <td name="exCPCSnNoTd">${item[9]}</td>
+                    <td name="dealStatusNameTd" style="overflow:hidden;white-space: nowrap;text-overflow: ellipsis;" title="${fn:replace(item[20], '&&&&', ' ')}">${fn:replace(item[20], '&&&&', ' ')}</td>
+                    <td name="exCPUCardSnNoTd">${item[10]}</td>
+                    <td name="laneEnSerialNoTd">${item[17]}</td>
+                    <td name="laneExSerialNoTd">${item[18]}</td>
+                    
+                    
+                    
+                    <td class="hidden" name="axisGroupNumTd">${item[12]}</td>
+                    <td class="hidden" name="enTimeTd"><fmt:formatDate type="both" pattern="yyyy-MM-dd HH:mm:ss" value="${item[13]}" /></td>
+                    <td class="hidden" name="enVehicleClassTd">${vehClassMap[fn:trim(item[14])]}</td>
+                    <td class="hidden" name="exVehIdentifyPlateTd">${item[15]}</td>
+                    <td class="hidden" name="exOperatorIdTd">${item[16]}</td>
+                    <td class="hidden" name="cashMoneyTd">${item[19]}</td>
+                    <td class="hidden" name="exVehicleStatusTd">${vehTypeMap[fn:trim(item[21])]}</td>
+                   
+                    
+                    <td>
+                        <a href="javascript:;" name="showMoreContent" class="btn btn-warning">详情</a>
+                    </td>
+                </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <jsp:include page="../include/pager.jsp" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel4">请勾选异常情况(可多项)</h4>
+            </div>
+            <div class="modal-body" id="dealStatusTable"></div>
+            <div class="modal-footer" id="footer4">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="selectDealStatusButton">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal5" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel5">车辆信息详情显示</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="1" cellspacing="1" style="border:1px solid #ddd;"  class="pn-ftable dt-table showTable">
+                    <tr>
+                        <th>收费流水 :</th><td class="motaiTd"><font id="laneExSerialNoFont" class="motaiTdFont"></font></td>
+                        <th>收费金额:</th><td class="motaiTd"><font id="cashMoneyFont" class="motaiTdFont"></font></td>
+                        <th>收费员 :</th><td class="motaiTd"><font id="exOperatorIdFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>出口时间 :</th><td class="motaiTd"><font id="exTimeFont" class="motaiTdFont"></font></td>
+                        <th>入口时间 :</th><td class="motaiTd"><font id="enTimeFont" class="motaiTdFont"></font></td>
+                        <th>出口收费站 :</th><td class="motaiTd"><font id="exStationNameFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>入口收费站:</th><td class="motaiTd"><font id="enStationNameFont" class="motaiTdFont"></font></td>
+                        <th>通行卡号:</th><td class="motaiTd"><font id="exCPCSnNoFont" class="motaiTdFont"></font></td>
+                        <th>车道类型:</th><td class="motaiTd"><font id="exLaneTypeFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>初判车型:</th><td class="motaiTd"><font id="enVehicleClassFont" class="motaiTdFont"></font></td>
+                        <th>最终车型:</th><td class="motaiTd"><font id="exVehicleClassFont" class="motaiTdFont"></font></td>
+                        <th>轴组组成:</th><td class="motaiTd"><font id="axisGroupNumFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>识别车牌:</th><td class="motaiTd"><font id="exVehIdentifyPlateFont" class="motaiTdFont"></font></td>
+                        <th>最终车牌:</th><td class="motaiTd"><font id="exVehiclePlateFont" class="motaiTdFont"></font></td>
+                        <th>车种:</th><td class="motaiTd"><font id="exVehicleStatusFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>特殊事件:</th><td class="motaiTd" colspan="5"><font id="dealStatusNameFont" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr style="height:110px;" id="TrShow" >
+                        <th>入口车辆照 :</th>
+                        <td colspan="5" id="driverImg">
+                            <img src="/images/more.png" id="qianMingShow3" class="qianMingShow2" />
+                        </td>
+                    </tr>
+                    <tr style="height:110px;" id="hwjlDiv">
+                        <th>出口车辆照 :</th>
+                        <td colspan="5">
+                            <div style="padding:5px 10px;">
+                                <img src="/images/more.png" class="imgFirstClass displayClass" id="hwjl1" />
+                                <img src="/images/more.png" class="imgsClass displayClass" id="hwjl2" />
+                                <img src="/images/more.png" class="imgsClass displayClass" id="hwjl3" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer" id="footer5">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+	var ROW_SPLIT = '&&&&';
+	var SHOW_SPLIT = ';';
+	
+	//限制输入的条件
+	var checkQueryCondition = function(){
+		var centralStationId = $("select[name='carStatistic.centralStationId']").val();
+		var exVehPlate = $("input[name='carStatistic.exVehiclePlate']").val();
+		var startTime = stringToDate($("input[name='carStatistic.startTime']").val());
+		var endTime = stringToDate($("input[name='carStatistic.endTime']").val());
+		var showDealStatusTd = $("input[name='carStatistic.dealStatusArr']").val();
+		
+		
+		//判断中心站必填
+		if(!centralStationId){
+			alert("中心站为必选项");
+			return false;
+		}
+		
+		//判断车牌必填
+		if(!$.trim(exVehPlate)){
+			alert("车牌为必填项");
+			return false;
+		}
+		
+		//判断开始时间必填
+		if(!startTime){
+			alert("开始时间为必填项");
+			return false;
+		}
+		
+		//判断结束时间必填
+		if(!endTime){
+			alert("结束时间为必填项");
+			return false;
+		}
+		
+		//判断异常情况为必选项
+		if(!$.trim(showDealStatusTd)){
+			alert("异常情况为必选项");
+			return false;
+		}
+		//判断开始时间不能大于结束时间时间
+		if (startTime > endTime) {
+	        alert("结束时间不能小于起始时间");
+	        return false;
+	    }   
+		//开始时间和结束时间必须在同一年内
+		if(startTime.getFullYear() != endTime.getFullYear()){
+			alert("开始时间和结束时间必须在同一年内");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	$(function(){
+		$("#submit").on("click", function(){
+			if (checkQueryCondition()) {
+	            $("#myForm").submit();
+	        }
+	        event.preventDefault();
+		});
+		
+		
+		//中心站联动选择收费站
+		$("#centralStation").on("change", function(){
+			var id = $(this).val();
+			var option = "<option value=''>全部</option>";
+			if(!!id){
+				var centralStation = $("#centralStation").val();
+				if(null == id || "" == id){
+					id = roadNo;
+				}
+				var url=uri+"admin/carStatistic_getStationSelectName.do";
+				var params2 = {
+					'carStatistic.selectId':id
+				};
+				var stationId = $("#stationId").val();
+				$("#stationNo").empty();
+		
+				$.get(url,params2,function(jsonTemp){
+					if(!!jsonTemp.stationList){ 
+						$.each(jsonTemp.stationList,function(i,org){ 
+							if(org.id == stationId){
+								option += "<option value='"+org.id+"' selected>"+org.orgName+"</option>"
+							}else{
+								option += "<option value='"+org.id+"'>"+org.orgName+"</option>"
+							}
+						});
+					} 
+					$("#stationNo").append(option);
+				});
+			}else{
+				$("#stationId").val('');
+				$("#stationNo").html("<option value=''>全部</option>");
+			}
+		});
+		/*
+		function selectStation(id){
+			
+		}*/
+		
+		
+		$('#centralStation').trigger('change');
+	});
+	
+	
+	//列出所有的异常情况选项
+	function selectDealStatusFunction(){
+		var count = 1;
+		var url=uri+"admin/carStatistic_getDealStatus.do";
+		var params2 = {};
+
+		$.get(url,params2,function(jsonTemp){
+			if(!!jsonTemp.dealStatusList){ 
+				var divNode = '<div>'
+				$.each(jsonTemp.dealStatusList, function(i,dealStatus){ 
+					if(dealStatus[1]!='付费方式'){
+						divNode += '<label><input name="selectDealStatus" type="checkbox" value="'+dealStatus[1]+'" />'+dealStatus[1]+'</label>';
+						if(count%4==0){
+							divNode += '</div><div>';
+						}
+						
+						count++;
+					}
+				});
+				
+				divNode += '</div>';
+				
+				$("#dealStatusTable").html(divNode);
+			} else{
+				$("#dealStatusTable").empty();
+			}
+		});
+		
+		$('#myModal4').modal('show');
+	}
+	
+	//异常情况进行选择
+	$("#selectDealStatusButton").on("click", function(){
+		var dealStatusResult = '';
+		var showDealStatus = '选择异常情况:';
+		var dealStatusNodes = $("#dealStatusTable input[name='selectDealStatus']");
+		
+		$.each(dealStatusNodes, function(i,dealStatus){ 
+			if(dealStatus.checked){
+				dealStatusResult += dealStatus.value+ROW_SPLIT;
+				showDealStatus += dealStatus.value+SHOW_SPLIT;
+			}
+		});
+		$("#showDealStatusTd").html('<b>'+$.trim(showDealStatus)+'</b>');
+		$("input[name='carStatistic.dealStatusArr']").val($.trim(dealStatusResult));
+		$("input[name='carStatistic.dealStatusStr']").val($.trim(showDealStatus));
+		$("#showDealStatusTd").attr("title", $.trim(showDealStatus));
+		
+		$('#myModal4').modal('hide');
+	});
+	
+	//单击显示详情页面内容
+	$("#databody a[name='showMoreContent']").on("click", function(){
+		var tr = $(this).parents("tr");
+		showDetails(tr);
+	});
+	
+	//双击显示详情页面内容
+	$("#databody tr").on("dblclick", function(){
+		var tr = $(this);
+		showDetails(tr);
+	});
+	
+	//显示详情进行显示
+	function showDetails(tr){
+		
+		//获取图片数据<>
+		
+		$("#laneExSerialNoFont").text(tr.find("[name=laneExSerialNoTd]").text());  //收费流水
+   		$("#cashMoneyFont").text(tr.find("[name=cashMoneyTd]").text());     //收费金额
+   		$("#exOperatorIdFont").text(tr.find("[name=exOperatorIdTd]").text());  //收费员
+   		$("#exTimeFont").text(tr.find("[name=exTimeTd]").text());    //出口时间
+   		$("#enTimeFont").text(tr.find("[name=enTimeTd]").text()); //入口时间
+   		
+   		$("#exStationNameFont").text(tr.find("[name=exStationNameTd]").text());	//出口收费站
+   		$("#enStationNameFont").text(tr.find("[name=enStationNameId]").text());    //入口收费站
+   		$("#exCPCSnNoFont").text(tr.find("[name=exCPCSnNoTd]").text());    //通行卡号
+   		$("#exLaneTypeFont").text(tr.find("[name=exLaneNameTd]").text());       //车道类型
+   		$("#enVehicleClassFont").text(tr.find("[name=enVehicleClassTd]").text());  //初判车型
+   		$("#exVehicleClassFont").text(tr.find("[name=exVehicleClassTd]").text());    //最终车型
+   		
+   		
+   		$("#axisGroupNumFont").text(tr.find("[name=axisGroupNumTd]").text());   //轴组组成
+   		$("#exVehIdentifyPlateFont").text(tr.find("[name=exVehIdentifyPlateTd]").text());    //识别车牌
+   		$("#exVehiclePlateFont").text(tr.find("[name=exVehiclePlateTd]").text());     //最终车牌
+   		$("#exVehicleStatusFont").text(tr.find("[name=exVehicleStatusTd]").text());     //车种
+   		$("#dealStatusNameFont").text(tr.find("[name=dealStatusNameTd]").text());   //特殊事件
+   		
+   		$('#myModal5').modal('show');
+	}
+</script>
+</html>

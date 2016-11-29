@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template name="ofile" packageName="com.hgsoft.txt.parse" className="XMLParse" separator="\t" maxPattern="5">
+	<pattern id="1" firstLine="false"  columns="6" entityName="com.hgsoft.main.entity.ParkConsumptionHeadRecv" fields="fileType,fileName,sendCode,receiveCode,transmissionDate,packageNum" option="required"/>
+	<pattern id="2" firstLine="false"  columns="3" entityName="com.hgsoft.main.entity.ParkConsSubHeadRecv" fields="packageType,recordNum,operateType" option="1001"/>
+	<pattern id="3" firstLine="false"  columns="18" entityName="com.hgsoft.main.entity.ParkConsumptionDetailRecv" fields="listno,detailNo,icCode,icType,entry,enTime,export,exTime,expType,payAmt,tollBala,trSeq,termCode,termSeq,tac,mechineCode,stopPlaceCode,squadDate" option="required"/>	
+	<pattern id="4" firstLine="false"  columns="3" entityName="com.hgsoft.main.entity.ParkConsSubHeadRecv" fields="packageType,recordNum,operateType" option="1002"/>
+	<pattern id="5" firstLine="false"  columns="7" entityName="com.hgsoft.main.entity.ParkConsCollectRecv" fields="listno,startTime,endTime,mechineCode,gross,icType,squadDate" option="required"/>
+</template>

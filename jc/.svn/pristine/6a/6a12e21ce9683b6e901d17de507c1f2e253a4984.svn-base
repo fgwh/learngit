@@ -1,0 +1,54 @@
+package com.hgsoft.main.jcManange.dao;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.AbnormalCarDetail;
+import com.hgsoft.security.dao.BaseDao;
+@Repository
+public class AbnormalCarDetailDao extends BaseDao<AbnormalCarDetail>{
+
+	
+	//获取流水
+		public List<AbnormalCarDetail> getAbnorLiuShui(String plateNum,String num ){
+			String sql="select ac.id,ac.EnStationID,ac.EnTime,sd2.name as EnVehicleClass,ac.EnVehicleStatus,ac.EnVehiclePlate,ac.ExStationID,ac.ExTime,sd.name as ExVehicleClass,ac.ExVehicleStatus,"
+					+ "ac.ExVehiclePlate,ac.exVehIdentifyPlate,ac.DealStatus,ac.AxisGroupNum,ac.TotalWeight,ac.OverLoadWeight,ac.RealPath,ac.Miles,ac.OBUPlate,ac.OverLoadPercent,"
+					+ "ac.ExceptionType,ac.ExVehicleFlag,ac.CashMoney,ac.EnNetRoadID,ac.ExNetRoadID,ac.LaneExSerialNo,ac.LaneEnSerialNo,ac.EnLaneID,ac.ExLaneID,ac.EnRoadID,"
+					+ "ac.ExRoadID,ac.SquadDate,ac.ExOperatorID,ac.AuditStatus,ExcepDisplayType FROM tb_AbnormalCarDeatils ac LEFT JOIN sys_dic sd ON ac.ExVehicleClass=sd.value "
+					+ "LEFT JOIN sys_dic sd2 ON ac.EnVehicleClass=sd2.value where sd.type='vehClass' and sd2.type='vehClass' and ac.ExVehiclePlate='"+plateNum.trim()+"' and ac.ExTime>convert(nvarchar(10),dateadd(m,-36,getdate()),120)";
+			List list=null;
+			try{
+			 list=(List<AbnormalCarDetail>)findBySql(sql, null,AbnormalCarDetail.class);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			return list;
+		}
+		
+		
+		
+		public void batchDelete(String ... ids) {
+			if(ids==null || ids.length<1){
+				return;
+			}
+		    
+		    StringBuffer sql = new StringBuffer();
+			if(ids.length > 0) {
+				sql.append("('").append(ids[0]).append("'");
+			}
+			for(int i = 1; i < ids.length; i++) {
+				sql.append(",'").append(ids[i]).append("'");
+			}
+			if(sql.length() > 0) {
+				sql.append(")");
+				//Query q= this.getSession().createSQLQuery("delete from tb_" + clazz.getSimpleName() + " where id in " + sql.toString());
+				Query q= this.getSession().createSQLQuery("delete from  tb_AbnormalCarDeatils   where id in " + sql.toString());
+		        q.executeUpdate();
+		        this.getSession().flush();
+			}
+		}
+		
+}
+

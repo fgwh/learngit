@@ -1,0 +1,56 @@
+
+
+
+-- ----------------------------
+-- Table structure for tb_AbnormalCarDeatils
+-- ----------------------------
+
+CREATE TABLE [dbo].[tb_AbnormalCarDeatils] (
+[id] varchar(50) NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[RealPath] varchar(255) NOT NULL ,
+[Miles] int NOT NULL ,
+[OBUPlate] varchar(12) NULL ,
+[OverLoadPercent] real NULL ,
+[ExceptionType] tinyint NOT NULL ,
+[ExVehicleFlag] tinyint NOT NULL ,
+[CashMoney] int NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[ExRoadID] smallint NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExOperatorID] int NOT NULL ,
+[AuditStatus] tinyint NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_AbnormalCarDeatils
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_AbnormalCarDeatils
+-- ----------------------------
+ALTER TABLE [dbo].[tb_AbnormalCarDeatils] ADD PRIMARY KEY ([id])
+GO

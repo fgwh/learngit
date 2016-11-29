@@ -1,0 +1,265 @@
+package com.hgsoft.main.laneexlist.service;
+
+import com.hgsoft.job.GetLaneExListDataJob;
+import com.hgsoft.job.JobLog;
+import com.hgsoft.main.entity.Conditions;
+import com.hgsoft.main.entity.QrtzLog;
+import com.hgsoft.main.laneexlist.dao.LaneExListDao;
+import com.hgsoft.main.laneexlist.entity.LaneExList;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.*;
+import org.apache.log4j.Logger;
+import org.eclipse.birt.report.model.api.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.Connection;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 出口流水service
+ *
+ * @author 郭志强
+ * @time 2016/9/9 9:37
+ */
+@Service
+public class LaneExListService extends BaseService<LaneExList> {
+    private static Logger logger = Logger.getLogger(GetLaneExListDataJob.class);
+    // 注入dao
+    @Autowired
+    private LaneExListDao laneExListDao;
+
+
+    /**
+     * 根据时间从中间库中取出数据，并保存到本地库
+     *
+     * @param qrtzLog
+     * @param date
+     */
+    public void saveLaneExList(QrtzLog qrtzLog, String... date) {
+        qrtzLog.setCreatetime(new Date());
+        // 从中间库中取出数据
+        List<LaneExList> list = getLaneExListFromOuterDatabase(date);
+
+
+        try {
+            int count = 0;
+            // 判断list,并遍历list
+            if (list != null && list.size() > 0) {
+                for (LaneExList laneExList : list) {
+                    Connection connection = null;
+                    Connection connection1 = null;
+                    try {
+                        Timestamp exTime = laneExList.getExTime();
+                        String y = DateUtil.format(exTime, "yyyy");
+                        // 保存到本地库 (用jdbc)
+                        // 获取数据库连接
+                        connection = LocalDBUtils.getConnection();
+                        JDBCFrameForLaneExOrEnList jf =
+                                new JDBCFrameForLaneExOrEnList(connection);
+
+
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("INSERT INTO tb_LaneExList_");
+                        // 这里需要改成year
+                        sb.append(y);
+                        sb.append("([ExRecordNo],[LaneExSerialNo] ,[LaneEnSerialNo],[EnNetRoadID],[EnRoadID],[ICInCardID],[EnStationID],[EnLaneID],[EnLaneType] ,[EnTime],[EnVehicleClass],[EnVehicleStatus],[EnVehiclePlate],[ExNetRoadID],[ExRoadID],[ExStationID],[ExLaneID],[ExLaneType],[ExTime],[SquadDate],[ExCPCSnNo],[ExVehicleClass],[ExVehicleStatus],[ImageSerialNo],[ExVehiclePlate],[ExVehIdentifyPlate],[CashMoney] ,[VehicleClassMoney],[DeviceStatus],[RecordType],[ExCPUCardSnNo],[ExCPUCardID],[ExCPUCardType],[WeightFlag],[VehCount],[AxisNum],[AxisGroupNum],[TotalWeight],[TotalWeightLimit],[TollType],[AxisType],[AxisWeightDetail],[OverLoadWeight],[PreVehType],[ExETCTermCode] ,[OriginalPath],[RealPath],[RoadComb],[RoadSStationComb],[RoadEStationComb],[RealPath01],[ManualFlag],[VerifyCode],[Spare1],[Spare2],[Spare3],[Spare4],[UploadTime],[DealStatus],[EnVehicleFlag],[EnOperatorID],[ExOperatorID])");
+                        sb.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+                                ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+                        System.out.println(sb.toString());
+                        List<Object> params = new ArrayList<Object>();
+                        // 封装参数
+                        LaneEnAndExUtils.encapsulationLanExParams(laneExList, params);
+                        connection.setAutoCommit(false);
+                        boolean b = jf.updateByPreparedStatement(sb.toString(), params);
+
+
+                        if (!b) {
+                            throw new Exception("没有需要保存的数据");
+                        } else {
+                            // 保存成功方可在中间库中删除这条数据
+                            connection1 = DBUtil.getConnection();
+                            JDBCFrame jdbcFrame = new JDBCFrame(connection1);
+                            List<Object> objects = new ArrayList<Object>();
+                            objects.add(laneExList.getLaneExSerialNo());
+                            connection1.setAutoCommit(false);
+                            jdbcFrame.updateByPreparedStatement("DELETE FROM tb_LaneExList201508 WHERE LaneExSerialNo=?", objects);
+                        }
+
+                        count++;
+                        connection.commit();
+                        connection1.commit();
+                    } catch (Exception e) {
+//                        e.printStackTrace();
+                        if (connection != null) {
+                            connection.rollback();
+                        }
+
+                        if (connection1 != null) {
+                            connection1.rollback();
+                        }
+                    }
+                }
+            }
+            logger.info("[" + date[0] + "]" + "-" + "[" + date[1] + "]" + "的" + count + "条出口流水数据保存到本地数据库成功。");
+            qrtzLog.setDescription("[" + date[0] + "]" + "-" + "[" + date[1] + "]" + "的" + count + "条出口流水数据保存到本地数据库成功。");
+            qrtzLog.setJobStatus(JobLog.JOB_STATUS_SUCC);
+        } catch (Exception e) {
+//            e.printStackTrace();
+            logger.info("出口流水数据保存到本地数据库失败。");
+            qrtzLog.setDescription("[" + date[0] + "]" + "-" + "[" + date[1] + "]" + "出口的流水数据保存到本地数据库失败。");
+            qrtzLog.setJobStatus(JobLog.JOB_STATUS_FAIL);
+        }
+    }
+
+    /**
+     * @param date
+     */
+    private List<LaneExList> getLaneExListFromOuterDatabase(String... date) {
+        // 用jdbcFrame取数据
+        JDBCFrame jdbcFrame = new JDBCFrame(DBUtil.getConnection());
+        // 编写sql语句
+        String sql = "  SELECT \n" +
+                "  ExRecordNo as exRecordNo,\n" +
+                "  LaneExSerialNo as laneExSerialNo,\n" +
+                "  LaneEnSerialNo as laneEnSerialNo,\n" +
+                "  EnNetRoadID as enNetRoadId,\n" +
+                "  EnRoadID as enRoadId,\n" +
+                "  ICInCardID as icinCardId,\n" +
+                "  EnStationID as enStationId,\n" +
+                "  EnLaneID as enLaneId,\n" +
+                "  EnLaneType as enLaneType,\n" +
+                "  EnTime as enTime,\n" +
+                "  EnVehicleClass as enVehicleClass,\n" +
+                "  EnVehicleStatus as enVehicleStatus,\n" +
+                "  EnVehiclePlate as enVehiclePlate,\n" +
+                "  ExNetRoadID as exNetRoadId,\n" +
+                "  ExRoadID as exRoadId,\n" +
+                "  ExStationID as exStationId,\n" +
+                "  ExLaneID as exLaneId,\n" +
+                "  ExLaneType as exLaneType,\n" +
+                "  ExTime as exTime,\n" +
+                "  SquadDate as squadDate,\n" +
+                "  ExCPCSnNo as exCpcsnNo,\n" +
+                "  ExVehicleClass as exVehicleClass,\n" +
+                "  ExVehicleStatus as exVehicleStatus,\n" +
+                "  ImageSerialNo as imageSerialNo,\n" +
+                "  ExVehiclePlate as exVehiclePlate,\n" +
+                "  ExVehIdentifyPlate as exVehIdentifyPlate,\n" +
+                "  CashMoney as cashMoney,\n" +
+                "  VehicleClassMoney as vehicleClassMoney,\n" +
+                "  DeviceStatus as deviceStatus,\n" +
+                "  RecordType as recordType,\n" +
+                "  ExCPUCardSnNo as exCpucardSnNo,\n" +
+                "  ExCPUCardID as exCpucardId,\n" +
+                "  ExCPUCardType as exCpucardType,\n" +
+                "  WeightFlag as weightFlag,\n" +
+                "  VehCount as vehCount,\n" +
+                "  AxisNum as axisNum,\n" +
+                "  AxisGroupNum as axisGroupNum,\n" +
+                "  TotalWeight as totalWeight,\n" +
+                "  TotalWeightLimit as totalWeightLimit,\n" +
+                "  TollType as tollType,\n" +
+                "  AxisType as axisType,\n" +
+                "  AxisWeightDetail as axisWeightDetail,\n" +
+                "  OverLoadWeight as  overLoadWeight,\n" +
+                "  PreVehType as preVehType,\n" +
+                "  ExETCTermCode as exEtctermCode,\n" +
+                "  OriginalPath as originalPath,\n" +
+                "  RealPath as realPath,\n" +
+                "  RoadComb as roadComb,\n" +
+                "  RoadSStationComb as roadSstationComb,\n" +
+                "  RoadEStationComb as roadEstationComb,\n" +
+                "  RealPath01 as realPath01,\n" +
+                "  ManualFlag as manualFlag,\n" +
+                "  VerifyCode as verifyCode,\n" +
+                "  Spare1 as spare1,\n" +
+                "  Spare2 as spare2,\n" +
+                "  Spare3 as spare3,\n" +
+                "  Spare4 as spare4,\n" +
+                "  UploadTime as uploadTime,\n" +
+                "  DealStatus as dealStatus," +
+                "  EnVehicleFlag as enVehicleFlag," +
+                "  EnOperatorID as enOperatorID," +
+                "  ExOperatorID as exOperatorID" +
+                "  FROM tb_LaneExList201508\n" +
+                "WHERE CONVERT(VARCHAR(100), UploadTime, 120) > ? AND CONVERT(VARCHAR(100), UploadTime, 120) < ?";
+        System.out.println(sql);
+        // 查询
+        List<Object> params = new ArrayList<Object>();
+        params.add(date[0]);
+        params.add(date[1]);
+        List<LaneExList> laneExLists = null;
+        try {
+            laneExLists = jdbcFrame.findMoreRefResult(sql, params, LaneExList.class);
+        } catch (Exception e) {
+            logger.warn("从中间库获取数据失败");
+            return null;
+        } finally {
+            // 关闭连接
+            jdbcFrame.releaseConn();
+        }
+
+        // 返回
+        return laneExLists;
+    }
+
+    public List getListBySql(Pager pager, Admin operator, Conditions conditions) {
+        //获取默认查询时间
+        if (StringUtil.isEmpty(conditions.getStartQueryDate())) {
+            conditions.setStartQueryDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        }
+
+        if (StringUtil.isEmpty(conditions.getEndQueryDate())) {
+            conditions.setEndQueryDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        }
+        //分页、查询SQL、
+        String[] selectName = new String[]{"startQueryDate", "endQueryDate", "vehPlate", "LaneEnNo", "LaneExNo", "ExCPCSnNo"};
+        Object[] selectValue = new Object[]{
+                conditions.getStartQueryDate(),
+                conditions.getEndQueryDate(),
+                conditions.getPlateNum() + conditions.getCarNo(),
+                conditions.getLaneEnNo(),
+                conditions.getLaneExNo(),
+                conditions.getExCPCSnNo(),
+        };
+        return laneExListDao.findByNamedQuery(pager, "queryLaneExListSql", selectName, selectValue, LaneExList.class, "new");
+    }
+
+    public List getListBySql2(Pager pager, Admin operator, Conditions conditions) {
+        //获取默认查询时间
+        if (StringUtil.isEmpty(conditions.getStartQueryDate())) {
+            conditions.setStartQueryDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        }
+
+        if (StringUtil.isEmpty(conditions.getEndQueryDate())) {
+            conditions.setEndQueryDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        }
+        //分页、查询SQL、
+        String[] selectName = new String[]{"startQueryDate", "endQueryDate", "vehPlate", "LaneEnNo", "LaneExNo", "ExCPCSnNo"};
+        Object[] selectValue = new Object[]{
+                conditions.getStartQueryDate(),
+                conditions.getEndQueryDate(),
+                conditions.getPlateNum() + conditions.getCarNo(),
+                conditions.getLaneEnNo(),
+                conditions.getLaneExNo(),
+                conditions.getExCPCSnNo(),
+        };
+        return laneExListDao.findByNamedQuery2(pager, "queryLaneExListSql", selectName, selectValue, LaneExList.class, "new");
+    }
+
+	public List getListBySql3(List flaglist) {
+		// TODO Auto-generated method stub
+		return laneExListDao.getListBySql3(flaglist);
+	}
+
+//传入realPath查询条件
+    
+
+}

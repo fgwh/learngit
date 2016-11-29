@@ -1,0 +1,63 @@
+%E5%A4%A7%E8%B4%A2%E4%BA%86-%E7%AC%91%E8%AF%9D%E5%85%BB%E7%94%9F&ari=1&dbv=2&drs=1&pcs=1400x836&pss=1400x1655&cfv=0&cpl=5&chi=28&cce=true&cec=UTF-8&tlm=1464079291&ltu=http%3A%2F%2Fxiao.39yst.com%2Fhao123jingxuan%2F99992.shtml&ltr=http%3A%2F%2Fxiao.39yst.com%2Fhao123jingxuan%2F99998.shtml&ecd=1&psr=1920x1080&par=1920x1040&pis=-1x-1&ccd=24&cja=false&cmi=7&col=zh-CN&cdo=-1&tcn=1464165041-1&tcn=1464165041&qn=a5d059d0307b8538&tt=1464165040981.172.219.223pis=-1x-1&ccd=24&cja=fp)I</b></u></font></a> 已被禁止!<br>
+禁止原因如下:
+<br>规则办及联网中心&外网web
+<br>-DETAILED_REASON-
+<br><div id="device_ip" style="display:none;">172.30.1.254:44590</div>
+<br>单击浏览器的 "<a href=# onclick="window.history.back(-1)"><font color="#003464">后退</font></a>" 按钮返回上一页
+<br>若有任何疑问，请与管理员联系。
+<br>
+<span style="font-size:11px">Powered by <a href="http://www.netentsec.com" target=_blank>
+<font color=#003a9d><u><b>www.netentsec.com</b></u></font></a>
+</span>
+</span>
+<br><br>
+<input id="submitButton" type="button" value="我访问的网站不是该分类，我要反馈给管理员" onclick="urlFeedback();" />
+<iframe style="display:none;"  id="iframeProxy"></iframe>
+
+<script>
+function urlFeedback(){
+    if(window.confirm("您确定所访问的URL分类有错误并反馈给管理员吗？")){
+    var device_ip = document.getElementById("device_ip").innerHTML;
+    var url ="http://"+device_ip+"/urlfeedback/index.php";
+        var userip =  document.getElementById("userip").value;
+        var urladdr=  document.getElementById("urladdr").value;
+        urladdr = encodeURI(urladdr );
+        var urlcate=  document.getElementById("urlcate").value;
+        urlcate= encodeURI(urlcate);
+        
+        var param = "?userip="+userip+"&urlcate="+urlcate+"&urladdr="+urladdr;
+        document.getElementById("submitButton").value="您的意见已提交管理员，感谢反馈！";
+        document.getElementById("submitButton").disabled = true;
+        setCookie();
+        document.getElementById("iframeProxy").src = url + param;
+        var proxy = document.getElementById("iframeProxy").contentWindow;
+        proxy.sendRequest('GET',url + param);
+    }
+}
+
+function setCookie(){
+    var Days = 1;
+    var exp = new Date();
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = "submited=true;expires=" + exp.toGMTString();
+}
+
+function getCookie()
+{
+    var arr,reg=new RegExp("(^| )"+"submited"+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+        return (arr[2]);
+    else
+        return false;
+}
+if(getCookie()){
+    document.getElementById("submitButton").disabled = true;
+    document.getElementById("submitButton").value="您的意见已提交管理员，感谢反馈！";
+}
+</script>
+<!--获取反馈用户相关信息-->
+<input id="userip" value="172.31.234.173" style="display:none;">
+<input id="urladdr" value="pos.baidu.com/ccom?di=u1398411&dri=0&dis=0&dai=7&ps=623x880&dcb=BAIDU_SSP_define&dtm=BAIDU_DUP_SETJSONADSLOT&dvi=0.0&dci=-1&dpt=none&tsr=0&tpr=1464165040997&ti=%E6%88%91%E5%A5%BD%E5%83%8F%E8%A6%81%E5%8F%91%E5%A4%A7%E8%B4%A2%E4%BA%86-%E7%AC%91%E8%AF%9D%E5%85%BB%E7%94%9F&ari=1&dbv=2&drs=1&pcs=1400x836&pss=1400x1655&cfv=0&cpl=5&chi=28&cce=true&cec=UTF-8&tlm=1464079291&ltu=http%3A%2F%2Fxiao.39yst.com%2Fhao123jingxuan%2F99992.shtml&ltr=http%3A%2F%2Fxiao.39yst.com%2Fhao123jingxuan%2F99998.shtml&ecd=1&psr=1920x1080&par=1920x1040&pis=-1x-1&ccd=24&cja=false&cmi=7&col=zh-CN&cdo=-1&tcn=1464165041-1&tcn=1464165041&qn=a5d059d0307b8538&tt=1464165040981.172.219.223pis=-1x-1&ccd=24&cja=fp)I" style="display:none;">
+<input id="urlcate" value="网络资源" style="display:none;">
+</body>
+</html>

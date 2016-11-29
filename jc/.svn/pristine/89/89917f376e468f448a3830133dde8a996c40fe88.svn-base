@@ -1,0 +1,1671 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<title>控件信息类demo</title>
+<script language="javascript" src="md5.js"></script>
+<script>
+
+//工具函数---start
+function CreateEmptyString(l) {
+    var a = [];
+    for (var i = 0; i < l; i++) {
+        a[i] = '*';
+    }
+    return a.join('');
+}
+
+
+//向列表中添加表项
+function AddList(sel, text, value){
+    var option = document.createElement("option");
+    option.appendChild(document.createTextNode(text));
+    option.setAttribute("value",value); 
+    sel.appendChild(option);
+    return;
+}
+
+
+//去除时间格式内的HTTP关键字
+function FormatTime(time){
+    var tmp_string = time.split(' ');
+    var tmp_string_cp = tmp_string[1].split(':');
+    return tmp_string[0]+'%20'+tmp_string_cp[0]+'%3A'+tmp_string_cp[1]+'%3A'+ tmp_string_cp[2];
+}
+
+
+
+var IS_SHOW_DEBUG = 0;  //0-关闭, 1-开启
+var gdownloadID = 1;   //下载编码
+var gdownloadID2 = 1;
+
+function DebugAlert(str){
+    if(IS_SHOW_DEBUG == 1){
+        alert(str);
+    }
+}
+
+String.prototype.replaceAll = function(f, r) {
+    var s = new String(this);
+    while (s.indexOf(f) != -1) {
+        s = s.replace(f, r);
+    }
+    return s.toString();
+}
+
+/**
+ * 解析从控件返回的xml字符串
+ */
+function loadXML(xmlString){
+     if(!g_xmlActive){
+         return;
+     }
+     g_xmlActive.loadXML(xmlString);
+     if(0 == g_xmlActive.parseError.errorCode){
+         return g_xmlActive;
+     }
+     else{
+         alert("xml解析错误:" + g_xmlActive.parseError.reason);
+         return null;
+     } 
+} 
+
+function getElementById(dom, tagName){
+    for(var i = 0; i < dom.childNodes.length; i++){
+        var node = dom.childNodes[i];
+        if(node.baseName == tagName){
+            return node.nodeTypedValue;
+        }
+        else{
+            if(node.childNodes.length != 0){
+                getElementById(dom.childNodes[i], tagName);
+            }
+        }
+    }
+}
+
+//工具函数---end
+
+
+
+//全局变量---start
+
+var g_UserLoginId = '';
+var g_UserName = '';    //登录用户名
+var g_PassWord = '';    //登录用户密码
+var g_ServerIP = '';    //服务器IP地址
+var g_imosActivePlayer = null;
+var g_curFrameNum = '';
+var g_xmlActive = null;
+var g_isLogin = 1;
+
+
+
+//全局变量---end
+
+
+
+//================>功能函数---start
+//检查控件
+function InitPage(){
+    
+   g_imosActivePlayer = document.all.h3c_IMOS_ActiveX;
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+    }
+    
+    var xmldoc;
+    try{
+        xmldoc = new ActiveXObject("Microsoft.XMLDOM");
+        if(!xmldoc){
+           xmldoc = new ActiveXObject("MSXML2.DOMDocument.3.0");  
+        }
+    } 
+    catch(e){        
+    }
+    g_xmlActive = xmldoc;
+    if(!g_xmlActive){
+        alert("xml解析器获取错误，将导致某些功能不可用");
+    }
+    else{
+        g_xmlActive.async = "false";  
+    }
+}
+
+//登录    
+function DoLogin(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var serverIP = document.getElementById("ServerIPText").value;
+    var userName = document.getElementById("UserNameText").value;
+    var passWd = document.getElementById("PassWordText").value.toString();
+    if(passWd == ""){
+        passWd = "";
+    }
+    //alert(typeof passWd);
+    g_isLogin = g_imosActivePlayer.IMOSAX_InitOCX(serverIP, "8800", userName, passWd, 1);
+    
+    //获取用户信息
+    var retStr = g_imosActivePlayer.IMOSAX_GetUserLoginInfo();
+    var userObj = loadXML(retStr);
+    g_UserLoginId = userObj.documentElement.selectNodes("//LOGININFO/UserLoginIDInfo/UserLoginCode")[0].text;
+
+}
+
+
+//退出登录
+function DoLogout(){
+    if(g_imosActivePlayer){
+        var flag = g_imosActivePlayer.IMOSAX_UnregOCX();
+        if(0 != flag){
+           //暂时不提示
+        }
+    }
+}
+
+//启动轮切
+function DoStartSwitch(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var cameraId = document.getElementById("SwitchIDText").value;
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StartFrameSwitch (frameNum, cameraId);
+    if(0 == flag){
+        alert("启动轮切成功");
+    }
+    else{
+        alert("停止轮切失败，错误码：" + flag);
+    }
+}
+
+//释放实况
+function DoStopSwitch(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var frameNum = g_curFrameNum;
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StopFrameSwitch(frameNum);
+    if(0 == flag){
+        alert("停止轮切成功");
+    }
+    else{
+        alert("停止轮切失败，错误码：" + flag);
+    }
+}
+
+//启动实况
+function DoStartPlay(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var cameraId = document.getElementById("CamIDText").value;
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StartFrameLive (frameNum, cameraId);
+    if(0 == flag){
+        alert("实况播放成功");
+    }
+    else{
+        alert("播放实况失败，错误码：" + flag);
+    }
+}
+
+//释放实况
+function DoStopPlay(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var frameNum = g_curFrameNum;
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StopFramelive(frameNum);
+    if(0 == flag){
+        alert("停止实况成功");
+    }
+    else{
+        alert("停止实况失败，错误码：" + flag);
+    }
+}
+
+//启动文件
+function DoStartFile(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var cameraId = document.getElementById("FileIDText").value;
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StartLocalReplay (frameNum, cameraId);
+    if(0 == flag){
+        alert("播放文件成功");
+    }
+    else{
+        alert("播放文件失败，错误码：" + flag);
+    }
+}
+
+//释放实况
+function DoStopFile(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var frameNum = g_curFrameNum;
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StartLocalReplay(frameNum);
+    if(0 == flag){
+        alert("停止文件成功");
+    }
+    else{
+        alert("停止文件失败，错误码：" + flag);
+    }
+}
+
+//单步 
+function DoStepFile(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var frameNum = g_curFrameNum;
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_OneStepPlay(frameNum);
+    if(0 != flag){
+        alert("单步文件失败，错误码：" + flag);
+    }
+}
+
+
+
+/**
+*  查询类型枚举值
+*/
+
+/*
+    'CODE_TYPE' => 0, ///< 编码类型(除用户编码之外) //
+    'NAME_TYPE' => 1, ///< 名称类型(除用户名称之外) //
+    'USER_CODE_TYPE' => 2, ///< 用户编码类型 //
+    'USER_NAME_TYPE' => 3, ///< 用户名称类型 //
+    'TIME_TYPE' => 4, ///< 时间类型 //
+    'EVENT_TYPE' => 5, ///< 告警事件类型 //
+    'EVENT_SECURITY' => 6, ///< 告警事件级别 //
+    'EVENT_COMFIRMED' => 7, ///< 告警是否已确认 //
+    'EVENT_TIME' => 8, ///< 告警时间 //
+    'DEV_SUB_TYPE'=>9,///< 设备子类型//
+    'INDEX_TYPE'=>10,///< 索引类型(如视频输入通道索引,视频输出通道索引,串口索引,开关量索引) //
+    'RES_SUB_TYPE' => 11,///< 资源子类型 //
+    
+    'SRV_TYPE' => 12,               ///< 业务类型 //
+    'MONITOR_TYPE' => 13,           ///< 监视器类型 //
+    'MONITOR_NAME' => 14,           ///< 监视器名称 //
+    'MONITOR_DOMAIN' => 15,         ///< 监视器所在域 //
+    'CAMERA_NAME' => 16,            ///< 摄像机名称 //
+    'USER_LOGIN_IP' => 17,          ///< 用户登录IP //
+    'MON_SRV_STATUS' => 18,         ///< 实况状态 //
+    'VOCBRD_SRV_STATUS' => 19,      ///< 广播状态 //
+    
+    //begin added by y07083 2010.11.29 for 备份支持条件查询
+    'CASE_DESC'               => 20,       ///< 案例描述 //
+    'TASK_STATUS'             => 21,       ///< 任务状态 //
+    'TASK_SUB_TIME'           => 22,       ///< 任务提交时间 //
+    'TASK_END_TIME'           => 23,       ///< 任务结束时间 //
+    'BAK_START_TIME'          => 24,       ///< 备份开始时间 //
+    'BAK_END_TIME'            => 25,       ///< 备份结束时间 //
+    'FILE_CREATE_TIME'        => 26,       ///< 文件创建时间 //
+    'FILE_CAPACITY'           => 27,       ///< 文件容量 //
+    'FILE_TYPE '              => 28,       ///< 文件类型 //
+    'FILE_LOCK_FLAG'          => 29,       ///< 文件锁定标识 //
+    //end added by y07083 2010.11.29 for 备份支持条件查询
+    'PHY_DEV_IP'              => 31,       //设备IP地址查询// //added by lisufen 06653 for baobiao
+    'DOMAIN_FLAG'=>100,///< 域类型,现只支持本外域 //
+    //Added by liubing,2010-01-19,for VVD39123//
+    'EXT_DOMAIN_TPYE' => 200,      ///< 外域类型:上/下/平级域 //
+    'EXT_DOMAIN_IP' => 201,      ///< 外域IP //
+    'EXT_DOMAIN_PORT'  => 202,      ///< 外域PORT //
+    'EXT_DOMAIN_TRUNK_NUM' => 203,      ///< 外域干线数量 //
+    'EXT_DOMAIN_MULTICAST' => 204,      ///< 域间组播策略 //
+    'EXT_DOMAIN_SESSION' => 205,      ///< 外域引流标志 //
+    
+    'JOB_STATUS' => 210,          ///< 升级任务状态 //
+    'JOB_CREATOR' => 211,          ///< 升级任务创建者 //
+    'JOB_EXEC_TIME' => 212,          ///< 升级任务调度时间 //
+    'JOB_ESTB_TIME' => 213,          ///< 升级任务制定时间 //
+    'JOB_END_TIME' => 214,          ///< 升级任务完成时间 //
+    'JOB_RESULT' => 215,          ///< 升级结果 //
+    
+    'OPER_TIME' => 220,      ///< 操作时间 //
+    'OPER_IP' => 221,      ///< 操作者IP地址 //
+    'OPER_TYPE' => 222,      ///< 操作类型 //
+    'OPER_RESULT' => 223,      ///< 操作结果 //
+    'OPER_SERVICE_TYPE' => 224,      ///< 操作的业务类型 //
+    'OPER_OBJ' => 225,      ///< 操作对象 //
+
+    'LABEL_TIME' => 230,          ///< 标签时间点 //
+    'REC_START_TIME' => 231,          ///< 标签录像开始时间，格式为"hh:mm:ss" //
+    'REC_END_TIME' => 232,          ///< 标签录像结束时间，格式为"hh:mm:ss" //
+
+    'USER_FULL_NAME' => 240,      ///< 用户全名 //
+    'USER_TEL_PHONE' => 241,      ///< 用户座机电话 //
+    'USER_MOBILE_PHONE' => 242,      ///< 用户移动电话 //
+    'USER_EMAIL' => 243,      ///< 用户电子邮件 //
+    'USER_IS_LOCKED' => 244,      ///< 用户是否被锁定 //
+    'USER_DESC' => 245,           ///< 用户是否被锁定 //
+
+    'ROLE_PRIORITY' => 250,           ///< 角色优先级 //
+    //Begin:Added by zkf2003,2010-07-20 of第三方告警//
+    'DEV_TYPE' => 255, ///< 设备ID //
+    //End:Added by zkf2003,2010-07-20 of 第三方告警 VVD47339//
+    'QUERY_TYPE_MAX' => 251,        ///< 无效值 //
+    'RES_TYPE' => 256,                ///<资源类型//
+    'IS_QUERY_SUB' => 257,          ///<是否查下级域//
+    'RES_ID' => 258,                ///< 资源ID // //added by lisufen 06653 for ROLE VVD52953
+    'SUPPORT_LINK' => 259,          ///< 是否支持联动 //  //added by ykf1510 for 新增告警类型自定义VVD58218
+    'SUPPORT_GUARD' => 260,         ///< 是否支持布防 //  //added by ykf1510 for 新增告警类型自定义VVD58218
+    'RES_ATTRIBUTE' => 261          ///< 支持按资源属性查询 //  //added by kf1606 for vvd56513
+*/
+
+/**
+* 查询条件枚举值
+*/
+/*
+    'EQUAL_FLAG' => 0, ///< 等于 //
+    'GREAT_FLAG' => 1, ///< 大于 //
+    'LITTLE_FLAG' => 2, ///< 小于 //
+    'GEQUAL_FLAG' => 3, ///< 大于等于 //
+    'LEQUAL_FLAG' => 4, ///< 小于等于 //
+    'LIKE_FLAG' => 5, ///< 模糊查询 //
+    'ASCEND_FLAG' => 6, ///< 升序 //
+    'DESCEND_FLAG' => 7, ///< 降序 //     
+    'NEQUAL_FLAG' => 8, ///< 不等于 //  //Begin:Modified by zkf2003 for VVD52949 2010-01-27//
+    'LOGIC_FLAG_MAX' => 9 ///< 无效值 // //Begin:Added by zkf2003 for VVD52949 2010-01-27//
+*/
+
+/**
+ * 资源类型枚举
+ */
+
+ /*
+define('RESTYPE_ORG','1');                      ///< 组织域 //
+define('RESTYPE_OUTER_DOMAIN','2');             ///< 外域 //
+define('RESTYPE_LOCAL_DOMAIN','3');             ///< 本域 //
+
+define('RESTYPE_DM','11');                     ///< DM //
+define('RESTYPE_MS','12');                     ///< MS //
+define('RESTYPE_VX500','13');                  ///< VX500 //
+define('RESTYPE_MONITOR','14');              ///< 监视器 //
+
+define('RESTYPE_EC','15');                     ///< EC //
+define('RESTYPE_DC','16');                     ///< DC //
+// Add by nixueliang for V1 ECR 2010-10-12 //
+define('RESTYPE_ECR','18');                     ///< ECR //
+
+define('RESTYPE_CAMERA','1001');               ///< 摄像机 //
+define('RESTYPE_ALARM_SOURCE','1003');         ///< 告警源 //
+
+define('RESTYPE_STORAGE_DEV','1004');          ///< 存储设备 //
+define('RESTYPE_TRANS_CHANNEL','1005');        ///< 透明通道 //
+
+define('RESTYPE_ALARM_OUTPUT','1200');         ///< 告警输出 //
+
+define('RESTYPE_GUARD_TOUR_RESOURCE','2001');  ///< 轮切资源 //
+define('RESTYPE_GUARD_TOUR_PLAN','2002');      ///< 轮切计划 //
+define('RESTYPE_MAP',' 2003');                  ///< 地图 //
+
+define('RESTYPE_XP','2005');                   ///< XP //
+define('RESTYPE_XP_WIN','2006');               ///< XP窗格 //
+define('RESTYPE_GUARD_PLAN','2007');           ///< 布防计划 //
+
+define('RESTYPE_CAMERA_GROUP','3002');         ///< 摄像机组 //
+define('RESTYPE_MONITOR_GROUP','3003');        ///< 监视器组 //
+define('RESTYPE_SALVO_RESOURCE','3004');       ///< 组显示资源 //
+define('RESTYPE_GROUP_SWITCH_RESOURCE','3010');///< 组轮巡资源 //
+define('RESTYPE_GROUP_SWITCH_PLAN','3011');    ///< 组轮巡计划资源 //
+*/
+
+/**
+* 获取资源接口演示（以摄像机为例）
+* 这个接口会用到很多枚举值，相应的枚举值见上边的注释部分
+* 资源类型枚举有：摄像机（1001），ec（15），dc（16）等
+* 查询条件解释，举例如下：
+* “资源类型 == 摄像机” 可以解析为：
+*       '<QueryType>256</QueryType>'+   //256表示按照‘资源’查询，在上述枚举中可以找到
+*       '<LogicFlag>0</LogicFlag>'+     //0表示‘等于’          ，在上述枚举中可以找到
+*       '<QueryData>1001</QueryData>'+  //1001表示‘摄像机’     ，在上述枚举中可以找到
+*/
+function DoGetCamList(){
+var strXmlQueryCondition = "";
+strXmlQueryCondition =  '<?xml version="1.0" ?>'+
+'<data>'+
+  '<ItemNum>4</ItemNum>'+                   //总共有四个查询条件
+'<QueryConditionList count="4">'+
+'<item>'+                                   // 不查询子域
+      '<QueryType>257</QueryType> '+
+      '<LogicFlag>0</LogicFlag> '+
+      '<QueryData>0</QueryData> '+
+    '</item>'+
+  '<item>'+                                //查询的资源类型是摄像头
+      '<QueryType>256</QueryType>'+
+      '<LogicFlag>0</LogicFlag>'+
+      '<QueryData>1001</QueryData>'+
+    '</item>'+
+  '<item>'+                               // 查询的资源子类型是固定摄像头
+      '<QueryType>11</QueryType>'+
+      '<LogicFlag>0</LogicFlag>'+
+      '<QueryData>1</QueryData>'+ 
+    '</item>'+
+  '<item>'+                               // 查询结果按照名称的升序排序
+      '<QueryType>1</QueryType> '+
+      '<LogicFlag>6</LogicFlag>'+ 
+      '<QueryData /> '+
+   '</item>'+
+   '</QueryConditionList>'+
+  '</data>';
+
+var strXmlQueryPageInfo = '<?xml version="1.0" ?> '+
+'<data>'+
+  '<PageRowNum>100</PageRowNum>'+                     //最多返回100个记录
+  '<PageFirstRowNumber>0</PageFirstRowNumber>'+       //从第0个记录开始返回
+  '<QueryCount>1</QueryCount>'+                       //还需要返回总记录数
+'</data>';
+
+    var retStr = "";
+    retStr = g_imosActivePlayer.IMOSAX_QueryOrgResListEx('iccsid', strXmlQueryCondition, strXmlQueryPageInfo);
+
+    var cameraListObj = loadXML(retStr);
+    if(!cameraListObj){
+	    return;
+	}
+	var firstCameraCode = cameraListObj.documentElement.selectNodes("//result/ResList/item/ResItemV1/ResCode");//参见文档xml结构进行解析
+	firstCameraCode = firstCameraCode[0].text;
+	alert("检索到的第一个摄像机的编码是：" + firstCameraCode);
+}
+
+
+function DoGetAlarmList(){
+var strXmlQueryCondition = "";
+ 
+var strXmlQueryPageInfo = '<?xml version="1.0" ?> '+
+'<data>'+
+  '<PageRowNum>10</PageRowNum>'+                     //最多返回100个记录
+  '<PageFirstRowNumber>0</PageFirstRowNumber>'+       //从第0个记录开始返回
+  '<QueryCount>1</QueryCount>'+                       //还需要返回总记录数
+'</data>';
+
+    var retStr = "";
+    retStr = g_imosActivePlayer.IMOSAX_QueryAlarmList(strXmlQueryCondition, strXmlQueryPageInfo);
+    alert(retStr);
+}
+
+//发送云台指令
+
+function DoStartPtz(){
+    //开始云台控制    /* 发送云台控制指令*/
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    //摄像机名称
+    var cameraId = document.getElementById("CamIDText").value;
+    var PtzCmd = parseInt(document.getElementById("PtzCmdText").value, 16);
+    var ptzSpeed = 6;
+    var flag = g_imosActivePlayer.IMOSAX_SendPtzCtrlCommand(cameraId, PtzCmd, ptzSpeed, ptzSpeed, 0);
+    if(0 != flag){
+        alert("云台控制出错，错误码：" + flag);
+    }
+
+}
+
+function DoStopPtz(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    //摄像机名称
+    var cameraId = document.getElementById("CamIDText").value;
+    var PtzCmd = 0x0901;
+    var ptzSpeed = 6;
+    var flag = g_imosActivePlayer.IMOSAX_SendPtzCtrlCommand(cameraId, PtzCmd, ptzSpeed, ptzSpeed, 0);
+    if(0 != flag){
+        alert("云台控制出错，错误码：" + flag);
+    }
+}
+
+
+function DoQueryRecord(){
+    var cameraId = document.getElementById("CamIDText").value;
+    var startQueryTime = document.getElementById("StartTimeText").value;
+    var endQueryTime = document.getElementById("EndTimeText").value;
+    var retStr = g_imosActivePlayer.IMOSAX_QueryRecord(cameraId, startQueryTime, endQueryTime);
+    alert(retStr);
+    var recordListObj = loadXML(retStr);
+    var RecordObjArray = recordListObj.documentElement.selectNodes("//RESLIST/item");
+    
+    var FileListObj = document.all.FileList;
+    FileListObj.innerHTML = '';
+    for(i = 0; i < RecordObjArray.length; i++){ 
+        var FileName = RecordObjArray[i].selectSingleNode("FileName").text;
+        var StartTime = RecordObjArray[i].selectSingleNode("StartTime").text;
+        var EndTime = RecordObjArray[i].selectSingleNode("EndTime").text;
+        AddList(FileListObj, StartTime + '~' + EndTime, FileName);
+    }
+
+}
+
+function DoQueryRecord1(){
+    var cameraId = document.getElementById("CamIDText").value;
+    var startQueryTime = document.getElementById("StartTimeText1").value;
+    var endQueryTime = document.getElementById("EndTimeText1").value;
+    var retStr = g_imosActivePlayer.IMOSAX_QueryBakRecord(cameraId, startQueryTime, endQueryTime);
+    alert(retStr);
+    
+    var recordListObj = loadXML(retStr);
+    var RecordObjArray = recordListObj.documentElement.selectNodes("//RESLIST/item");
+    
+    var FileListObj = document.all.FileList;
+    FileListObj.innerHTML = '';
+    for(i = 0; i < RecordObjArray.length; i++){ 
+        var FileName = RecordObjArray[i].selectSingleNode("BakFilePath").text;
+        var StartTime = RecordObjArray[i].selectSingleNode("BeginTime").text;
+        var EndTime = RecordObjArray[i].selectSingleNode("EndTime").text;
+        AddList(FileListObj, StartTime + '~' + EndTime, FileName);
+    }
+
+}
+
+function DoQueryRecord2(){
+    var cameraId = document.getElementById("CamIDText").value;
+    var startQueryTime = document.getElementById("StartTimeText2").value;
+    var endQueryTime = document.getElementById("EndTimeText2").value;
+    var retStr = g_imosActivePlayer.IMOSAX_QuerySlaveRecord(cameraId, startQueryTime, endQueryTime);
+    alert(retStr);
+    var recordListObj = loadXML(retStr);
+    var RecordObjArray = recordListObj.documentElement.selectNodes("//RESLIST/item");
+    
+    var FileListObj = document.all.FileList;
+    FileListObj.innerHTML = '';
+    for(i = 0; i < RecordObjArray.length; i++){ 
+        var FileName = RecordObjArray[i].selectSingleNode("FileName").text;
+        var StartTime = RecordObjArray[i].selectSingleNode("StartTime").text;
+        var EndTime = RecordObjArray[i].selectSingleNode("EndTime").text;
+        AddList(FileListObj, StartTime + '~' + EndTime, FileName);
+    }
+
+}
+
+function DoPlayRecord(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格"); 
+        return;
+    }
+	var cameraId = document.getElementById("CamIDText").value;    
+    var FileListObj = document.all.FileList;
+    var file_name = FileListObj.value;
+    var start_time;
+    var stop_time;
+    var time_array;
+    // 从列表中获取当前选择的文件起止时间
+    for(var i = 0; i < FileListObj.options.length; i++){
+        if(FileListObj.options[i].value == FileListObj.value){
+            time_array = FileListObj.options[i].innerText.split("~");
+            start_time = time_array[0];
+            stop_time = time_array[1];
+            DebugAlert(start_time + ":" + stop_time);
+            break;
+        }
+    }
+	if("" == time_array){
+	    return;
+	}
+    var flag = g_imosActivePlayer.IMOSAX_StartVodReplay(frameNum, cameraId, start_time, stop_time);
+	if(0 != flag){
+	     alert("回放失败，错误码：" + flag);
+	}
+}
+
+function DoPlayRecord2(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格"); 
+        return;
+    }
+	var cameraId = document.getElementById("CamIDText").value;    
+    var FileListObj = document.all.FileList;
+    var file_name = FileListObj.value;
+    var start_time;
+    var stop_time;
+    var time_array;
+    // 从列表中获取当前选择的文件起止时间
+    for(var i = 0; i < FileListObj.options.length; i++){
+        if(FileListObj.options[i].value == FileListObj.value){
+            time_array = FileListObj.options[i].innerText.split("~");
+            start_time = time_array[0];
+            stop_time = time_array[1];
+            DebugAlert(start_time + ":" + stop_time);
+            break;
+        }
+    }
+	if("" == time_array){
+	    return;
+	}
+    var flag = g_imosActivePlayer.IMOSAX_StartSlaveVodReplay(frameNum, cameraId, start_time, stop_time);
+	if(0 != flag){
+	     alert("回放失败，错误码：" + flag);
+	}
+}
+
+function DoPlayRecord1(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+	var cameraId = document.getElementById("CamIDText").value;    
+    var FileListObj = document.all.FileList;
+    var file_name = FileListObj.value;
+    var start_time;
+    var stop_time;
+    var time_array;
+    // 从列表中获取当前选择的文件起止时间
+    for(var i = 0; i < FileListObj.options.length; i++){
+        if(FileListObj.options[i].value == FileListObj.value){
+            time_array = FileListObj.options[i].innerText.split("~");
+            start_time = time_array[0];
+            stop_time = time_array[1];
+            DebugAlert(start_time + ":" + stop_time);
+            break;
+        }
+    }
+	if("" == time_array){
+	    return;
+	}
+    var flag = g_imosActivePlayer.IMOSAX_StartBakVodReplay(frameNum, cameraId, start_time, stop_time);
+	if(0 != flag){
+	     alert("回放失败，错误码：" + flag);
+	}
+}
+//停止录像回放
+
+function DoStopPlayRecord(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StopReplay(frameNum);
+    if(0 != flag){
+	     alert("关闭回放失败，错误码：" + flag);
+	}
+    
+}
+
+function DoBakDownload(){
+
+	var cameraId = document.getElementById("CamIDText").value;    
+    var FileListObj = document.all.FileList;
+    var file_name = FileListObj.value;
+    var start_time;
+    var stop_time;
+    var time_array;
+    // 从列表中获取当前选择的文件起止时间
+    for(var i = 0; i < FileListObj.options.length; i++){
+        if(FileListObj.options[i].value == FileListObj.value){
+            time_array = FileListObj.options[i].innerText.split("~");
+            start_time = time_array[0];
+            stop_time = time_array[1];
+            DebugAlert(start_time + ":" + stop_time);
+            break;
+        }
+    }
+	if("" == time_array){
+	    return;
+	}
+    gdownloadID= g_imosActivePlayer.IMOSAX_StartDownBakMediaStream( cameraId, start_time, stop_time);
+	alert(gdownloadID);
+	document.getElementById("downloadID").value = gdownloadID;
+	
+}
+
+function DoSlaveDownload(){
+
+	var cameraId = document.getElementById("CamIDText").value;    
+    var FileListObj = document.all.FileList;
+    var file_name = FileListObj.value;
+    var start_time;
+    var stop_time;
+    var time_array;
+    // 从列表中获取当前选择的文件起止时间
+    for(var i = 0; i < FileListObj.options.length; i++){
+        if(FileListObj.options[i].value == FileListObj.value){
+            time_array = FileListObj.options[i].innerText.split("~");
+            start_time = time_array[0];
+            stop_time = time_array[1];
+            DebugAlert(start_time + ":" + stop_time);
+            break;
+        }
+    }
+	if("" == time_array){
+	    return;
+	}
+    gdownloadID2= g_imosActivePlayer.IMOSAX_StartDownSlaveMediaStream( cameraId, start_time, stop_time);
+	alert(gdownloadID2);
+	document.getElementById("downloadID2").value = gdownloadID2;
+	
+}
+
+function DoBakDownloadStop(){
+
+	var downloadId = document.getElementById("downloadID").value;    
+  var flag = g_imosActivePlayer.IMOSAX_StopDownMediaStream(downloadId);
+	alert(flag);
+}
+function DoSlaveDownloadStop(){
+
+	var downloadId = document.getElementById("downloadID2").value;    
+  var flag = g_imosActivePlayer.IMOSAX_StopDownMediaStream(downloadId);
+	alert(flag);
+}
+//获取播放进度
+
+function GetReplayPos(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var posTime = g_imosActivePlayer.IMOSAX_GetReplayPos(frameNum);
+	alert(posTime);
+}
+
+
+
+//回放控制
+
+function ReplayControl(cmd){
+    
+}
+
+
+//回放跳转
+
+function SetPos(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+	var pos = document.all.PosText.value;   //时间格式为：yyyy-mm-dd hh:mm:ss
+    var flag = g_imosActivePlayer.IMOSAX_DragPlay(frameNum, pos)
+	if(0 != flag){
+	     alert("拖动回放失败，错误码：" + flag);
+	}
+    
+}
+
+
+//设置播放速度
+
+function SetPlaySpeed(speed){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_SetPlaySpeed(frameNum, speed);
+    if(0 != flag){
+	     alert("设置回放速度失败，错误码：" + flag);
+	}
+}
+//EC通道配置
+//查询EC通道视频信息
+function DoQueryECVideoInChannel(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var cameraId = document.getElementById("CamIDText").value;
+    var resStr = g_imosActivePlayer.IMOSAX_QueryECVideoInChannel(cameraId);
+    
+	alert(resStr);
+	document.getElementById("ECVideoInfo").value = resStr;
+
+}
+//配置EC通道视频信息
+function DoConfigECVideoInChannel(){
+  if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var cameraId = document.getElementById("CamIDText").value;
+	var ECVideoInfo = document.getElementById("ECVideoInfo").value;
+	
+    var flag = g_imosActivePlayer.IMOSAX_ConfigECVideoInChannel(cameraId, ECVideoInfo);
+    
+	if(0 != flag){
+	     alert("配置失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("配置成功！")
+	}
+}
+
+//控制类业务
+//获取窗格配置信息
+function DoGetAllCfgParam(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var resStr = g_imosActivePlayer.IMOSAX_GetAllCfgParam();
+	alert(resStr);
+	document.getElementById("Config").value = resStr;
+}
+//获取窗格信息
+function DoGetFrameInfo(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+	
+    var resStr = g_imosActivePlayer.IMOSAX_GetFrameInfo(frameNum);
+	alert(resStr);
+}
+//设置窗格配置参数
+function DoSetAllCfgParam(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	
+	var config = document.getElementById("Config").value;
+	var flag = g_imosActivePlayer.IMOSAX_SetAllCfgParam(config);
+	if(0 != flag){
+	     alert("设置失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("设置成功！")
+	}
+ 
+}
+//获取单个参数信息
+
+function DoGetSingleCfgParam(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	
+	var paramName = document.getElementById("ParamName").value;
+	var paramVal = g_imosActivePlayer.IMOSAX_GetSingleCfgParam(paramName);
+	alert(paramVal);
+
+}
+//设置单个参数信息
+
+function DoSetSingleCfgParam(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	
+	var paramName = document.getElementById("ParamName").value;
+	var paramVal = document.getElementById("ParamVal").value;
+	var flag = g_imosActivePlayer.IMOSAX_SetSingleCfgParam(paramName, paramVal);
+	
+	if(0 != flag){
+	     alert("设置失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("设置成功！")
+	}
+}
+//配置监视器分屏信息
+function DoConfigSplitScrInfo(){
+	if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+	
+	var ScrCode = document.getElementById("strScrCode1").value;
+	var FrameNum = document.getElementById("ulFrameNum").value;
+	
+	var resStr = g_imosActivePlayer.IMOSAX_ConfigSplitScrInfo(ScrCode, FrameNum);
+    	if(0 != resStr){
+    		alert("错误码：" + resStr);
+    		return;
+    	}
+    	alert("设置成功！");
+		
+	return;
+}
+
+//查询监视器分屏信息
+function DoQuerySplitScrInfo(){
+	if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+	
+	var ScrCode = document.getElementById("strScrCode2").value;
+
+	var resStr = g_imosActivePlayer.IMOSAX_QuerySplitScrInfo(ScrCode);
+
+    alert(resStr);
+	
+	return;
+}
+
+
+//切换布局
+function DoChangeLayout(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	
+	var layoutNum = document.getElementById("LayoutNum").value;
+
+	var flag = g_imosActivePlayer.IMOSAX_ChangeLayout(layoutNum);
+	if(0 != flag){
+	     alert("切换失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("切换成功！")
+	}
+
+}
+//最大化窗格
+function DoMaxFrame(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+	var flag = g_imosActivePlayer.IMOSAX_MaxFrame(frameNum);
+	if(0 != flag){
+	     alert("最大化窗格失败，错误码：" + flag);
+	}
+
+}
+//还原窗格
+function DoResumeFrame(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+	var flag = g_imosActivePlayer.IMOSAX_ResumeFrame(frameNum);
+	if(0 != flag){
+	     alert("还原窗格失败，错误码：" + flag);
+	}
+
+}
+//全屏
+function DoFullScreen(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var flag = g_imosActivePlayer.IMOSAX_FullScreen();
+	if(0 != flag){
+	     alert("全屏失败，错误码：" + flag);
+	}
+
+}
+//全屏退出
+function DoResumeScreen(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var flag = g_imosActivePlayer.IMOSAX_ResumeScreen();
+	if(0 != flag){
+	     alert("全屏退出失败，错误码：" + flag);
+	}
+}
+//查询是否有最大化窗格
+function DoQueryIsHasMaxFrame(){
+	if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+	
+	var retCode = g_imosActivePlayer.IMOSAX_HasMaxFrame();
+	if (true != retCode)
+	{
+		alert("当前没有最大化窗格");
+		return;
+	}
+	alert("当前有最大化窗格");
+}
+
+//获取最大化窗格ID
+function DoQueryMaxFrame(){
+	if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+	var retStr = g_imosActivePlayer.IMOSAX_HasMaxFrame();
+	if( true == retStr ){
+	var retCode = g_imosActivePlayer.IMOSAX_GetMaxFrameID();
+	retCode+=1;
+	alert('最大化窗格ID为：' + retCode);
+	}
+	else{
+	alert("当前没有最大化窗格");
+	}
+}
+//设置焦点窗格
+function DoSetFocusFrame(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var frameNum = document.getElementById("FrameID").value;
+    
+	var flag = g_imosActivePlayer.IMOSAX_SetFocusFrame(frameNum);
+	if(0 != flag){
+	     alert("设置焦点窗格失败，错误码：" + flag);
+	}
+	else{
+	alert("设置成功！")
+	}
+
+}
+//获取焦点窗格
+function DoGetFocusFrame(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var flag = g_imosActivePlayer.IMOSAX_GetFocusFrame();
+	
+	alert(flag);
+	
+
+}
+//显示工具栏
+function DoShowToolBar(){
+
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var toolBarType = document.getElementById("ToolBarType").value;
+	var frameNum = g_imosActivePlayer.IMOSAX_ShowToolBar(toolBarType, 1);
+
+}
+//隐藏工具栏
+function DoUnShowToolBar(){
+   if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+	var toolBarType = document.getElementById("ToolBarType").value;
+	var frameNum = g_imosActivePlayer.IMOSAX_ShowToolBar(toolBarType, 0);
+
+}
+//抓拍
+
+//抓拍图片将保存在指定路径下, 以当天日期为名称的文件夹内
+
+function DoSnatch(){
+    var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_SnatchOnce(frameNum);
+    if(0 != flag){
+	     alert("抓拍失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("抓拍成功！")
+	}
+
+}
+ function DoStartSnatchSeries(){
+ var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StartSnatchSeries(frameNum);
+    if(0 != flag){
+	     alert("连续抓拍失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("连续抓拍成功！")
+	}
+ 
+ }
+ 
+ function DoStopSnatchSeries(){
+ var frameNum = g_curFrameNum;
+    frameNum = parseInt(frameNum, 10);    
+    if(isNaN(frameNum) || frameNum < 1 || frameNum > 25){
+        alert("请先选择一个窗格");
+        return;
+    }
+    var flag = g_imosActivePlayer.IMOSAX_StopSnatchSeries(frameNum);
+    if(0 != flag){
+	     alert("停止连续抓拍失败，错误码：" + flag);
+	}
+	
+	else{
+	    alert("停止连续抓拍成功！")
+	}
+ }
+
+//查询摄像机信息
+function DoQueryCamInfo(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    var cameraId = document.getElementById("CameraID").value;
+    
+    var retStr = g_imosActivePlayer.IMOSAX_QueryCameraInfo(cameraId);
+    alert(retStr); 
+}
+
+//开启图像拼接
+function DoStartMosiacPlay(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var szMosaicCode = document.getElementById("szMosaicCodeID").value;
+    var ulRet = g_imosActivePlayer.IMOSAX_StartMosiacPlay(szMosaicCode);
+    if(0 != ulRet){
+    	alert("无该图像拼接！");
+    	return;
+    }
+}
+
+//关闭图像拼接
+function DoStopMosiacPlay(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+    
+    var ulRet = g_imosActivePlayer.IMOSAX_StopMosiacPlay();
+    //alert(ulRet);
+}
+
+//录像锁定
+function DoLockRecord(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var strCameraCode = document.getElementById("strCameraCode").value;
+    var strBeginTime = document.getElementById("strBeginTime").value;
+    var strEndTime = document.getElementById("strEndTime").value;
+    var strDes = document.getElementById("strDes").value;
+    var ulRet = g_imosActivePlayer.IMOSAX_LockRecord(strCameraCode, strBeginTime, strEndTime, strDes);
+    if(0 != ulRet){
+    	alert("错误码" + ulRet);
+    	return;
+    }
+    alert("录像锁定成功！");
+}
+
+//录像解锁
+function DoUnlockRecord(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var ulUnlockType = document.getElementById("ulUnlockType").value;
+    var strUnlockKey = document.getElementById("strUnlockKey").value;
+    var ulRet = g_imosActivePlayer.IMOSAX_UnlockRecord(ulUnlockType, strUnlockKey);
+    if(0 != ulRet){
+    	alert("错误码" + ulRet);
+    	return;
+    }
+    alert("录像解锁成功！");
+}
+
+//查询摄像机锁定的录像列表
+function DoQueryLockedRecordList(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var strCameraCode = document.getElementById("strCameraCode2").value;
+    var strXmlQueryPageInfo = document.getElementById("strXmlQueryPageInfo1").value;
+    var resStr = g_imosActivePlayer.IMOSAX_QueryLockedRecordList(strCameraCode, strXmlQueryPageInfo);
+    
+    alert(resStr);
+}
+
+//查询锁定的摄像机列表
+function DoQueryLockedCameraList(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var ulUnlockType = document.getElementById("ulUnlockType2").value;
+    var strUnlockKey = document.getElementById("strUnlockKey2").value;
+    var strXmlQueryPageInfo = document.getElementById("strXmlQueryPageInfo2").value;
+    var resStr = g_imosActivePlayer.IMOSAX_QueryLockedCameraList(ulUnlockType, strUnlockKey, strXmlQueryPageInfo);
+    
+    alert(resStr);
+}
+
+//查询摄像机角度和变倍
+function DoQueryDevInst(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var ulInstType = document.getElementById("ulInstType").value;
+    var strDevCode = document.getElementById("strDevCode").value;
+    var resStr = g_imosActivePlayer.IMOSAX_QueryDevInst(ulInstType, strDevCode);
+    
+    alert(resStr);
+}
+
+//用户发送云台控制指令
+function DoPtzCtrlCommand(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    
+    if(g_isLogin){
+    	alert("未登录，请先登录再使用本功能！");
+    	return;
+    }
+   
+    var ulPTZCmdID = document.getElementById("ulPTZCmdID").value;
+    var ulPTZCmdPara1 = document.getElementById("ulPTZCmdPara1").value;
+    var ulPTZCmdPara2 = document.getElementById("ulPTZCmdPara2").value;
+    var ulPTZCmdPara3 = document.getElementById("ulPTZCmdPara3").value;
+    var strPTZCamCode = document.getElementById("strPTZCamCode").value;
+    var resStr = g_imosActivePlayer.IMOSAX_PtzCtrlCommand(ulPTZCmdID, ulPTZCmdPara1, ulPTZCmdPara2, ulPTZCmdPara3, strPTZCamCode);
+    if(0 != resStr){
+    	alert("错误码：" + resStr);
+    	return;
+    }
+    alert("发送成功！");
+}
+
+
+//================>功能函数---end
+
+//================>事件处理函数event---start
+
+/**
+ * 窗格单击事件的处理函数
+ */
+function dealEventClickFrame(ulFrameNum, pcFrameInfo){
+    //当前窗格
+    g_curFrameNum = ulFrameNum;
+    pcFrameInfo = pcFrameInfo.replaceAll("\"", "\'");
+    var tmpXmlDoc = loadXML(pcFrameInfo);
+    if(!tmpXmlDoc){
+        return;
+    }
+    //将需要的数据从xml中获取，方便后续使用
+    var cameraID = tmpXmlDoc.selectNodes("//FrameInfo//CameraCode")[0];
+    if(cameraID){
+    	  document.getElementById("CamIDText").value = cameraID.text;
+        return;
+    }
+    else{
+    		document.getElementById("CamIDText").value = "未启动";
+    	}
+    
+}
+
+//================>事件处理函数event---end
+function StartTollgateMonitor(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var param1 = document.getElementById("param1").value;
+    var param2 = document.getElementById("param2").value;
+	var flag = g_imosActivePlayer.IMOSAX_StartTollgateMonitor(param2, param1);
+	if(flag != 0){
+		alert("错误码：" + flag);
+	}
+}
+
+function StopTollgateMonitor(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var param2 = document.getElementById("param2").value;
+	var flag = g_imosActivePlayer.IMOSAX_StopTollgateMonitor(param2);
+	if(flag != 0){
+		alert("错误码：" + flag);
+	}
+}
+
+function IMOSAX_QueryTollgate(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var param3 = document.getElementById("param3").value;
+    var flag = g_imosActivePlayer.IMOSAX_QueryTollgate(param3);
+    alert(flag);
+}
+
+function IMOSAX_QueryVehicleDataList(){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var param4 = document.getElementById("param4").value;
+    var param5 = document.getElementById("param5").value;
+    var flag = g_imosActivePlayer.IMOSAX_QueryVehicleDataList(param4, param5);
+    alert(flag);
+}
+
+function IMOSAX_QueryVehicleAlarmDataList (){
+    if(!g_imosActivePlayer) {
+        alert("未安装控件，请先安装后再使用本页面");
+        return;
+    }
+    var param4 = document.getElementById("param4").value;
+    var param5 = document.getElementById("param5").value;
+    var flag = g_imosActivePlayer.IMOSAX_QueryVehicleAlarmDataList(param4, param5);
+    alert(flag);
+}
+
+</script>
+
+</head>
+<body onload="InitPage()" onbeforeunload="DoLogout()" style="font-size:10pt">
+    <b>[基本参数] </b>
+    用户名:<input type=text id="UserNameText" value='loadmin' size=15></text>&nbsp;&nbsp;&nbsp;
+    密码:<input type=text id="PassWordText" value='loadmin' size=15></text>&nbsp;&nbsp;&nbsp;
+    服务器IP:<input type=text id="ServerIPText" value='207.207.88.15' size=15></text>&nbsp;&nbsp;&nbsp;
+    <hr>
+    <b>[使用流程] </b>
+    <input type=button onclick="DoLogin()" value="登录"></input>------->
+    业务操作------>
+    <input type=button onclick="DoLogout()" value="退出登录"></input>
+    <input type=button onclick="DoGetCamList()" value="查询资源接口演示（以摄像机为例）"></input>
+    <hr>
+    <p><b>[实况业务] </b>
+    摄像机ID:
+      <input type=text id="CamIDText" value='ec1501-ihf_1'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoStartPlay()" value="启动播放">
+      </input>
+      &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoStopPlay()" value="停止播放">
+      </input>
+    </p>
+	<hr>
+	<b>[监视器分屏业务]</b>
+	监视器编码：<input type=text id="strScrCode1" value="">
+	监视器分屏数：<input type=text id="ulFrameNum" value="4">
+	<input type=button onclick="DoConfigSplitScrInfo()" value="设置"></input>
+	<br>
+	 &nbsp;&nbsp;&nbsp;&nbsp; 
+	 &nbsp;&nbsp;&nbsp;&nbsp; 
+	 &nbsp;&nbsp;&nbsp;&nbsp; 
+	 &nbsp;&nbsp;
+	监视器编码：<input type=text id="strScrCode2" value="">
+	<input type=button onclick="DoQuerySplitScrInfo()" value="查询"></input>
+	<hr>
+    <p><b>[EC通道] </b>
+      配置信息:<textarea id="ECVideoInfo" style="width:1000px;height:100px"><?xml version="1.0"?><data><VinChannelDesc/><MulticastAddr/><MulticastPort>10002</MulticastPort><IsAutofit>1</IsAutofit><UseMSNum>0</UseMSNum><MSCode count="1"><item/></MSCode><EnableKeepout>0</EnableKeepout><EnableMotionDetect>0</EnableMotionDetect><EnableVideoLost>1</EnableVideoLost><SerialIndex>255</SerialIndex><Brightness>132</Brightness><Contrast>131</Contrast><Saturation>126</Saturation><Tone>128</Tone><AudioEnabled>0</AudioEnabled><AudioCoding>2</AudioCoding><AudioTrack>3</AudioTrack><SamplingRate>0</SamplingRate><AudioCodeRate>64</AudioCodeRate><Increment>225</Increment></data></textarea>&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <br>
+     </p>
+     <p>	 
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+       &nbsp;&nbsp;&nbsp;&nbsp;	  
+      <input type=button onclick="DoQueryECVideoInChannel()" value="查询">
+      </input>
+      &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoConfigECVideoInChannel()" value="配置">
+      </input>
+    </p>
+	<hr>
+    <p><b>[窗格] </b>
+      配置信息:<textarea id="Config" style="width:1000px;height:100px"><?xml version="1.0"?><data><StreamType>0</StreamType><PicFormat>1</PicFormat><SnatchInterval>500</SnatchInterval><DataTransProtocol>0</DataTransProtocol><VideoDownloadFormat>0</VideoDownloadFormat><DownloadSpeed>0</DownloadSpeed><VideoFormat>0</VideoFormat><PtzSpeed>6</PtzSpeed><SnatchPath>C:\</SnatchPath><StoragePath>C:\</StoragePath><VideoDownloadPath>C:\</VideoDownloadPath><StreamScheme>0</StreamScheme><RenderMode>0</RenderMode><PiexlFormat>0</PiexlFormat><PictureFluency>0</PictureFluency><ScaleMode>0</ScaleMode><StreamTransProtocol>4</StreamTransProtocol><StreamServerMode>1</StreamServerMode><AdjustPktSeq>0</AdjustPktSeq><WaveAudio>127</WaveAudio></data></textarea>&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;  
+	 </p>
+	 <p>
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoSetAllCfgParam()" value="设置窗格配置信息">
+      </input>
+      &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoGetAllCfgParam()" value="获取窗格配置信息">
+      </input>
+	  &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoGetFrameInfo()" value="获取窗格信息">
+      </input>
+    </p>
+	<hr>
+	<p><b>[参数设置] </b>
+    参数名称:
+      <input type=text id="ParamName" value='PtzSpeed'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp;  
+	参数值:
+      <input type=text id="ParamVal" value='6'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoSetSingleCfgParam()" value="设置参数信息">
+      </input>
+      &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoGetSingleCfgParam()" value="获取参数信息">
+      </input>
+    </p>
+	<hr>
+	<p><b>[布局] </b>
+    分屏数:
+      <input type=text id="LayoutNum" value='4'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoChangeLayout()" value="切换布局">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoMaxFrame()" value="最大化窗格">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoResumeFrame()" value="还原窗格">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoFullScreen()" value="全屏">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;  
+      <input type=button onclick="DoResumeScreen()" value="全屏退出">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  <input type="button" onclick="DoQueryIsHasMaxFrame()" value="查询是否有最大化窗格">
+	  </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp;
+	  <input type="button" onclick="DoQueryMaxFrame()" value="获取最大化窗格ID">
+	  </input>
+	<hr>
+    </p>
+	<hr>
+	<p><b>[焦点窗格] </b>
+	焦点窗格:
+      <input type=text id="FrameID" value='1'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp; 
+      <input type=button onclick="DoSetFocusFrame()" value="设置">
+      </input>
+      &nbsp;&nbsp;&nbsp;
+      <input type=button onclick="DoGetFocusFrame()" value="获取">
+      </input>
+    </p>
+	<hr>
+	<p><b>[工具栏] </b>
+	工具栏类型:
+      <input type=text id="ToolBarType" value='1'>
+      </text>
+      &nbsp;&nbsp;&nbsp;&nbsp; 
+      <input type=button onclick="DoShowToolBar()" value="显示">
+      </input>
+	  &nbsp;&nbsp;&nbsp;&nbsp; 
+      <input type=button onclick="DoUnShowToolBar()" value="隐藏">
+      </input>
+	  <br>
+	  <font color="red">（1：窗格顶部信息栏，2：窗格底部控制栏，3：窗格右键菜单）</font>
+    </p>
+	<hr>
+    <table width=940>
+    <!-- 播放控件  begin -->
+    <tr><td>
+    <object  classid="clsid:067A4418-EBAC-4394-BFBE-8C533BA6503A" id="h3c_IMOS_ActiveX" events="true"  height="480"  width="640">
+    </object>
+    </table>
+</body>
+</html>
+<!--ActiveX控件事件, 初始化完成后会触发, 告知界面当前的播放器ID-->
+<script type="text/javascript" for= "h3c_IMOS_ActiveX" event="eventClickFrame(ulFrameNum,  pcFrameInfo)">
+    if(typeof dealEventClickFrame == "function"){
+        dealEventClickFrame(ulFrameNum,  pcFrameInfo);
+    }
+</script>
+<script type="text/javascript" for= "h3c_IMOS_ActiveX" event="eventVehicleInfo(strParams)">
+//    alert(strParams);
+</script>
+
+

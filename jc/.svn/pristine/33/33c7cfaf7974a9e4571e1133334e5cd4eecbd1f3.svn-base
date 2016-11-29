@@ -1,0 +1,53 @@
+package com.hgsoft.main.action;
+
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.security.entity.AdminLogin;
+import com.hgsoft.security.service.AdminLoginService;
+
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+
+/**
+ * Created by Administrator on 2014/7/1.
+ */
+
+@Controller
+@Scope("prototype")
+public class LoginLogAction extends BaseAction<AdminLogin> {
+
+    
+    /**
+	 * 查询字典信息
+	 * @return
+	 */
+	
+	public AdminLogin getAdminLogin() {
+		return entity;
+	}
+
+	public void setAdminLogin(AdminLogin adminLogin) {
+		this.entity = adminLogin;
+	}
+	
+	//注入Service
+    @Resource
+    public void setBaseBridgeService(AdminLoginService service) {
+        this.setService(service);
+    }
+	 
+   /* public String list() {
+    	 
+        
+        list = this.loginLogService.queryLoginLogList(pager,this.operator, obj);
+        //设置当前位置
+        this.setMid("41");
+        return "list";
+    }*/
+
+    
+    
+}

@@ -1,0 +1,7 @@
+create table tb_msgPublish(
+	id varchar(64) primary key,
+	publishTime datetime not null,
+	theme varchar(100) not null,
+	content varchar(4000) not null,
+	publishMan varchar(80) not null
+)

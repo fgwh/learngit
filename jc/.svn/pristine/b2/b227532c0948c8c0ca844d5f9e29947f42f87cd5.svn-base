@@ -1,0 +1,61 @@
+﻿
+var uri = 'http://192.168.1.8:8080/';
+var wsSecurityKey = "a78!@&^%$#za1";
+var SERVER_IP = '192.168.1.7';
+var SERVER_PORT = 9000;
+//服务器ajax请求
+function GetSend(urls,params,succ,fail){//服务器地址，要传的参数，成功回调函数，失败回调函数
+				$.ajax({
+						   url: urls,
+						   type: "GET",
+						   dataType: 'jsonp',
+						   jsonp:'map',
+						   data: params,
+                           async:true,
+						   cache:false,
+						   contentType: "application/json",
+						   success:function(data){succ(data);},
+						   error:function(er){fail(er);}
+					   }
+                );
+			}
+
+			
+//上传文件
+function UpLoadFile(PictureURI,ServerUrl,options,succ,fail){//图片路径，服务器地址，配置参数，成功回调函数，失败回调函数
+	var ft = new FileTransfer();
+	ft.onprogress = showUploadingProgress;
+	navigator.notification.progressStart("", "process");
+	ft.upload( PictureURI ,encodeURI(ServerUrl), function(){ 
+		navigator.notification.progressStop();
+		if(succ != null && succ != "undefined"){
+			succ();
+		}
+	} , fail, options);
+}
+
+function showUploadingProgress( progressEvt ){//进度条方法
+	if( progressEvt.lengthComputable ){
+		navigator.notification.progressValue( Math.round( ( progressEvt.loaded / progressEvt.total ) * 100) );
+	}
+}
+
+//下载文件
+function DownLoadFile(TargetUrl,ServerUrl,succ,fail,options){//本地存放路径，服务器地址，成功回调函数，失败回调函数，配置参数
+	var ft = new FileTransfer();    
+	ft.onprogress = showUploadingProgress;	
+	navigator.notification.progressStart("", "process");
+	ft.download(
+	encodeURI(ServerUrl),
+	TargetUrl,
+	function(){ 
+		navigator.notification.progressStop();
+		if(succ != null && succ != "undefined"){
+			succ();
+		}
+	},
+	fail,
+	false,
+	options
+	);     
+}

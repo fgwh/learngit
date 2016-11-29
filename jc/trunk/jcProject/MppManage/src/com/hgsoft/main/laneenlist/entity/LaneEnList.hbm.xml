@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping>
+    <class name="com.hgsoft.main.laneenlist.entity.LaneEnList" table="tb_LaneEnList_Mid" schema="dbo" catalog="jc">
+        <id name="laneEnSerialNo" type="java.lang.String">
+            <column name="LaneEnSerialNo" length="16" />
+            <generator class="assigned"></generator>
+        </id>
+        <property name="enRecordNo" type="java.lang.Short">
+            <column name="EnRecordNo" not-null="true" />
+        </property>
+        <property name="cardNetRoadId" type="java.lang.Short">
+            <column name="CardNetRoadID" not-null="true" />
+        </property>
+        <property name="icinCardId" type="java.lang.Long">
+            <column name="ICInCardID" not-null="true" />
+        </property>
+        <property name="enNetRoadId" type="java.lang.Short">
+            <column name="EnNetRoadID" not-null="true" />
+        </property>
+        <property name="enRoadId" type="java.lang.Short">
+            <column name="EnRoadID" not-null="true" />
+        </property>
+        <property name="enStationId" type="java.lang.Integer">
+            <column name="EnStationID" not-null="true" />
+        </property>
+        <property name="enLaneId" type="java.lang.Short">
+            <column name="EnLaneID" not-null="true" />
+        </property>
+        <property name="enLaneType" type="java.lang.Short">
+            <column name="EnLaneType" not-null="true" />
+        </property>
+        <property name="enTime" type="java.sql.Timestamp">
+            <column name="EnTime" length="23" not-null="true" />
+        </property>
+        <property name="enOperatorId" type="java.lang.Long">
+            <column name="EnOperatorID" not-null="true" />
+        </property>
+        <property name="enOpCardNo" type="java.lang.String">
+            <column name="EnOpCardNo" length="10" />
+        </property>
+        <property name="enOpCardId" type="java.lang.Long">
+            <column name="EnOpCardID" />
+        </property>
+        <property name="enShiftId" type="java.lang.Short">
+            <column name="EnShiftID" not-null="true" />
+        </property>
+        <property name="enCpcsnNo" type="java.lang.String">
+            <column name="EnCPCSnNo" length="10" />
+        </property>
+        <property name="enCpcinId" type="java.lang.Long">
+            <column name="EnCPCInID" />
+        </property>
+        <property name="enVehicleClass" type="java.lang.Short">
+            <column name="EnVehicleClass" not-null="true" />
+        </property>
+        <property name="enVehicleStatus" type="java.lang.Short">
+            <column name="EnVehicleStatus" not-null="true" />
+        </property>
+        <property name="enVehiclePlate" type="java.lang.String">
+            <column name="EnVehiclePlate" length="12" not-null="true" />
+        </property>
+        <property name="enVehIdentifyPlate" type="java.lang.String">
+            <column name="EnVehIdentifyPlate" length="12" not-null="true" />
+        </property>
+        <property name="enVehicleFlag" type="java.lang.Short">
+            <column name="EnVehicleFlag" not-null="true" />
+        </property>
+        <property name="enIccissuer" type="java.lang.Short">
+            <column name="EnICCIssuer" />
+        </property>
+        <property name="enCpucardSnNo" type="java.lang.String">
+            <column name="EnCPUCardSnNo" length="16" />
+        </property>
+        <property name="enCpucardId" type="java.lang.Long">
+            <column name="EnCPUCardID" />
+        </property>
+        <property name="enCpucardType" type="java.lang.Short">
+            <column name="EnCPUCardType" not-null="true" />
+        </property>
+        <property name="enEtctermCode" type="java.lang.String">
+            <column name="EnETCTermCode" length="16" not-null="true" />
+        </property>
+        <property name="enObunum" type="java.lang.String">
+            <column name="EnOBUNum" length="16" not-null="true" />
+        </property>
+        <property name="enEtctradNo" type="java.lang.String">
+            <column name="EnETCTradNo" length="8" not-null="true" />
+        </property>
+        <property name="enEtctermTradNo" type="java.lang.Integer">
+            <column name="EnETCTermTradNo" not-null="true" />
+        </property>
+        <property name="enEtctac" type="java.lang.String">
+            <column name="EnETCTac" length="8" not-null="true" />
+        </property>
+        <property name="squadDate" type="java.sql.Timestamp">
+            <column name="SquadDate" length="23" not-null="true" />
+        </property>
+        <property name="imageSerialNo" type="java.lang.Integer">
+            <column name="ImageSerialNo" not-null="true" />
+        </property>
+        <property name="cardBoxNo" type="java.lang.Integer">
+            <column name="CardBoxNo" not-null="true" />
+        </property>
+        <property name="cardTrunkNo" type="java.lang.Integer">
+            <column name="CardTrunkNo" not-null="true" />
+        </property>
+        <property name="appVer" type="java.lang.String">
+            <column name="AppVer" length="20" not-null="true" />
+        </property>
+        <property name="dealStatus" type="java.lang.Long">
+            <column name="DealStatus" not-null="true" />
+        </property>
+        <property name="deviceStatus" type="java.lang.Integer">
+            <column name="DeviceStatus" not-null="true" />
+        </property>
+        <property name="recordType" type="java.lang.Short">
+            <column name="RecordType" not-null="true" />
+        </property>
+        <property name="vehCount" type="java.lang.Short">
+            <column name="VehCount" not-null="true" />
+        </property>
+        <property name="ticketType" type="java.lang.Short">
+            <column name="TicketType" not-null="true" />
+        </property>
+        <property name="listName" type="java.lang.Short">
+            <column name="ListName" not-null="true" />
+        </property>
+        <property name="billNo" type="java.lang.Integer">
+            <column name="BillNo" />
+        </property>
+        <property name="voidSerialNo" type="java.lang.String">
+            <column name="VoidSerialNo" length="16" />
+        </property>
+        <property name="verifyCode" type="java.lang.Integer">
+            <column name="VerifyCode" not-null="true" />
+        </property>
+        <property name="cpccurrentVol" type="java.lang.Short">
+            <column name="CPCCurrentVol" not-null="true" />
+        </property>
+        <property name="spare1" type="java.lang.Integer">
+            <column name="Spare1" />
+        </property>
+        <property name="spare2" type="java.lang.Integer">
+            <column name="Spare2" />
+        </property>
+        <property name="spare3" type="java.lang.String">
+            <column name="Spare3" length="50" />
+        </property>
+        <property name="spare4" type="java.lang.String">
+            <column name="Spare4" length="50" />
+        </property>
+        <property name="uploadTime" type="java.sql.Timestamp">
+            <column name="UploadTime" length="23" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,223 @@
+package com.hgsoft.main.recanalysis.dao;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.dao.BaseDao;
+import com.hgsoft.main.recanalysis.entity.Conditions;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.Pager;
+import com.hgsoft.util.StringUtil;
+import com.ibm.icu.text.DecimalFormat;
+
+@Repository
+public class RecanalysisDao extends BaseDao<Object[]>{
+
+	
+
+	
+	
+	public float queryRecanalysisDao(Pager pager, Admin operator, Conditions conditions){
+		
+		Map map=getAllorgName();
+		if(!StringUtil.isTrimEmpty(conditions.getStationNo())){
+			conditions.setOrgName(map.get(conditions.getStationNo()).toString());
+		}
+		
+		
+	   float list=0f;
+	         if(!StringUtil.isTrimEmpty(conditions.getGateWay())&&"ex".equals(conditions.getGateWay())){
+	        	  list = queryExList(operator, conditions);
+	        	  conditions.setChurukou("出口");
+	         }else if(!StringUtil.isTrimEmpty(conditions.getGateWay())&&"en".equals(conditions.getGateWay())){
+				 list = queryEnList(operator, conditions);
+				  conditions.setChurukou("入口");
+	         }else if(!StringUtil.isTrimEmpty(conditions.getGateWay())&&"all".equals(conditions.getGateWay())){
+	        	 conditions.setChurukou("出入口");
+	        	 list=queryExList(operator, conditions);
+	        	float  list2=queryEnList(operator, conditions);
+	        	if(list==0&&list2==0){
+                          return 0f;	        		
+ 	        	}else{
+ 	        		list=(list+list2)/2;
+ 	        	}
+	        	 }
+	        	 return list;
+	         }
+
+	/**
+	 * 入口识别率
+	 * @param operator
+	 * @param conditions
+	 * @param sqlsb
+	 * @return
+	 */
+	private float queryEnList(Admin operator, Conditions conditions) {
+		StringBuffer sqlsb=new StringBuffer();
+		List list=null;
+		if (!StringUtil.isTrimEmpty(conditions.getStartQueryDate())&&!StringUtil.isTrimEmpty(conditions.getPeriod())
+				&& !StringUtil.isTrimEmpty(conditions.getEndQueryDate())) {
+
+			String year = conditions.getStartQueryDate().substring(0, 4);
+			String startDate = conditions.getStartQueryDate().substring(0, 10); // 开始时间
+			String endDate = conditions.getEndQueryDate().substring(0,10); // 结束时间
+			//2015-09-01 22:02:02
+			String period=conditions.getPeriod();
+			String  s1Time=period.substring(0,2);
+			String  s2Time=period.substring(period.length()-5,period.length()-3);
+			conditions.setShijianduan(s1Time+"点--"+s2Time+"点");
+			startDate=startDate+" "+s1Time+":00:00";
+			endDate=endDate+" "+s2Time+":00:00";
+			
+			sqlsb.append(" select count(*) from tb_LaneEnList_" + year
+					+ "  t LEFT JOIN sys_org s ON t.EnStationID=s.orgCode where 1=1 "
+					+ " and  CONVERT(varchar(20),t.Entime,120)  between  '" + startDate + "' and  '"+ endDate + "'");
+					
+
+		}
+		
+		if(!StringUtil.isTrimEmpty(conditions.getEnLane())){
+			sqlsb.append("and EnLaneID='"+conditions.getEnLane().trim()+"'");
+		}
+	
+	     /*	String treeCode;
+			if (StringUtil.isTrimEmpty(conditions.getStationNo())) {
+				treeCode = conditions.getCentralStation();
+			} else {
+				treeCode = conditions.getStationNo();
+			}*/
+		String treeCode;
+		if (StringUtil.isTrimEmpty(conditions.getCentralStation())
+				&& StringUtil.isTrimEmpty(conditions.getStationNo())) {
+			treeCode = "";
+		} else {
+			if (StringUtil.isTrimEmpty(conditions.getStationNo())) {
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(conditions.getCentralStation());
+			} else {
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(conditions.getStationNo());
+			}
+		}
+			if(!StringUtil.isTrimEmpty(treeCode)){
+				sqlsb.append(" and  s.treeCode like '" + treeCode + "%'");
+			}
+	 /*   String sql="SELECT  convert(decimal(10,2),a.aa/b.aa) from ("+sqlsb+"and ExVehIdentifyPlate<>'0' )a,("+sqlsb+")b";*/
+		String sql1=sqlsb+" and EnVehiclePlate<>'000'";
+		String sql2=sqlsb.toString();
+		float  f1=Float.parseFloat(getSession().createSQLQuery(sql1).uniqueResult().toString());
+		float  f2= Float.parseFloat(getSession().createSQLQuery(sql2).uniqueResult().toString());
+		if(f2==0||f1==0){
+			return 0F;
+		}else{
+			
+			float size = (float)f1/f2;
+			return size;
+		}
+		
+	}
+
+	/**
+	 *出口识别率
+	 * @param operator
+	 * @param conditions
+	 * @param sqlsb
+	 * @return
+	 */
+	private float queryExList(Admin operator, Conditions conditions) {
+		StringBuffer sqlsb=new StringBuffer();
+		List list=null;
+		if (!StringUtil.isTrimEmpty(conditions.getStartQueryDate())&&!StringUtil.isTrimEmpty(conditions.getPeriod())
+				&& !StringUtil.isTrimEmpty(conditions.getEndQueryDate())) {
+
+			String year = conditions.getStartQueryDate().substring(0, 4);
+			String startDate = conditions.getStartQueryDate().substring(0, 10); // 开始时间
+			String endDate = conditions.getEndQueryDate().substring(0,10); // 结束时间
+			//2015-09-01 22:02:02
+			String period=conditions.getPeriod();
+			String  s1Time=period.substring(0,2);
+			String  s2Time=period.substring(period.length()-5,period.length()-3);
+			conditions.setShijianduan(s1Time+"点--"+s2Time+"点");
+			startDate=startDate+" "+s1Time+":00:00";
+			endDate=endDate+" "+s2Time+":00:00";
+			
+			sqlsb.append(" select count(*) from tb_LaneExList_" + year
+					+ "  t LEFT JOIN sys_org s ON t.ExStationID=s.orgCode where 1=1 "
+					+ " and  CONVERT(varchar(20),t.Extime,120)  between  '" + startDate + "' and  '"+ endDate + "'");
+
+		}
+		
+		if(!StringUtil.isTrimEmpty(conditions.getEnLane())){
+			sqlsb.append("and ExLaneID='"+conditions.getEnLane().trim()+"'");
+		}
+	
+	    /* 	String treeCode;
+			if (StringUtil.isTrimEmpty(conditions.getStationNo())) {
+				treeCode = conditions.getCentralStation();
+			} else {
+				treeCode = conditions.getStationNo();
+			}*/
+		String treeCode;
+	if (StringUtil.isTrimEmpty(conditions.getCentralStation())
+				&& StringUtil.isTrimEmpty(conditions.getStationNo())) {
+			treeCode ="";
+		} else {
+			if (StringUtil.isTrimEmpty(conditions.getStationNo())) {
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(conditions.getCentralStation());
+			} else {
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(conditions.getStationNo());
+			}
+		}
+			if(!StringUtil.isTrimEmpty(treeCode)){
+				sqlsb.append(" and  s.treeCode like '" + treeCode + "%'");
+			}
+	 /*   String sql="SELECT  convert(decimal(10,2),a.aa/b.aa) from ("+sqlsb+"and ExVehIdentifyPlate<>'0' )a,("+sqlsb+")b";*/
+		String sql1=sqlsb+" and ExVehiclePlate<>'000'";
+		String sql2=sqlsb.toString();
+		float  f1=Float.parseFloat(getSession().createSQLQuery(sql1).uniqueResult().toString());
+		float  f2= Float.parseFloat(getSession().createSQLQuery(sql2).uniqueResult().toString());
+		if(f2==0||f1==0){
+			return 0F;
+		}else{
+			float size = (float)f1/f2;
+			return size;
+		}
+	}
+			
+		//获取所有中心站
+/*		public List<Object[]> getAllcentral(){
+			String sql="select  this_.treeCode,this_.orgName  from sys_org this_ left outer join sys_org org2_  on this_.parentId=org2_.id where this_.orgType='4' and this_.isDelete='0'";
+			List<Object[]> list=(List<Object[]>) findBySql(sql, null);
+			return list;
+			
+		}*/
+		
+		//获取站联动
+//		public  List<Object[]> getStation(String imgId){
+//			List<Object[]> list=null;
+//			if(!StringUtil.isTrimEmpty(imgId)){
+//				String sql="SELECT id,treeCode,orgName from sys_org where treeCode  like '"+imgId+"%' and orgType='5' ";
+//				 list=(List<Object[]>) findBySql(sql, null);
+//			}
+//			return list;
+//		}
+		
+	
+	
+		public Map getAllorgName(){
+			Map map=new HashMap();
+			String sql="select orgName,id from sys_org";
+			List list=(List<Object[]>)findBySql(sql, null);
+			for (Object object : list) {
+				Object[] obj=(Object[])object;
+				map.put(obj[1], obj[0]);
+			}
+			return map;
+		}
+		
+
+	}
+	
+

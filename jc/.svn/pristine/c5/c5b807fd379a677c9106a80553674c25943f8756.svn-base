@@ -1,0 +1,110 @@
+package com.hgsoft.security.operLog.service;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.eclipse.birt.report.model.api.util.StringUtil;
+import org.springframework.stereotype.Service;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.OperLog;
+import com.hgsoft.security.operLog.dao.OperLogDao;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.security.service.ModuleService;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.Pager;
+
+@Service
+public class OperLogService extends BaseService<OperLog> {
+	
+	@Resource
+	public void setDao(OperLogDao dao) {
+		super.setDao(dao);
+	}
+
+	@Resource
+	private ModuleService moduleService;
+	
+	public List<OperLog> getListBySql(Pager pager,OperLog operLog,Admin operator){
+		
+		//分页、查询SQL、名字、值、类
+		String[] selectName = new String[]{"moduleName","staffNo","startQueryDate","endQueryDate","operLogType","treeCode"};
+		String treeCode;
+		//如果不选择路段、站编号，则查询该登录人下的所有操作数据
+		if(StringUtil.isEmpty(operLog.getRoadNo()) && StringUtil.isEmpty(operLog.getStationNo())){  
+			treeCode = operator.getOrg().getTreeCode() ; 
+		}else{
+			if(StringUtil.isEmpty(operLog.getStationNo())){
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(operLog.getRoadNo());
+			}else{
+				treeCode = CacheUtil.getAllOrgTreeCodeMap().get(operLog.getStationNo());
+			} 
+		} 
+		
+		Object[] selectValue = new Object[]{null == operLog.getModuleName()||"".equals(operLog.getModuleName())?"":"%"+operLog.getModuleName()+"%",null == operLog.getName()||"".equals(operLog.getName())?"":operLog.getName(),
+				operLog.getStartQueryDate(),operLog.getEndQueryDate(),null == operLog.getOperType()||"".equals(operLog.getOperType())?"":operLog.getOperType(),treeCode+"%"};
+		
+		//getDao().findByNamedQuery(null, "queryOperLogCountSql", selectName,selectValue,OperLog.class);
+		
+		return getDao().findByNamedQuery(pager, "queryOperLogSql", selectName,selectValue,OperLog.class,"new");
+	}
+	
+	
+	public List<?> getList(OperLog operLog, String moduleName, String name, String startQueryDate, String endQueryDate, Pager pager,Admin operator,String stationNo,String roadNo) {
+		StringBuffer sb = new StringBuffer();
+		List<String> value = new ArrayList<String>();
+		List<String> pattern = new ArrayList<String>();
+		sb.append(" from tb_operLog ol left join sys_module m on ol.moduleId=m.id left join sys_admin a on ol.operId=a.id  where 1=1 ");
+		if(!StringUtil.isEmpty(moduleName)){
+			sb.append(" and m.name like'%").append(moduleName).append("%'");
+		}
+		if(!StringUtil.isEmpty(name)){
+			sb.append(" and a.staffNo = '").append(name).append("'");
+		}
+		if(!StringUtil.isEmpty(startQueryDate)){
+			sb.append(" and convert(DATETIME, ol.operTime) >= CONVERT(DATETIME, '").append(startQueryDate.toString().trim()).append("')");
+		}
+		if(!StringUtil.isEmpty(endQueryDate)){
+			sb.append(" and convert(DATETIME, ol.operTime) <= CONVERT(DATETIME, '").append(endQueryDate.toString().trim()).append("')");
+		}
+		if(operLog!=null && operLog.getOperType()!=null){
+			sb.append(" and ol.operType=").append(operLog.getOperType());
+		}
+		
+		 String seachId; 
+			if(!StringUtil.isEmpty(roadNo)){
+				if (!StringUtil.isEmpty(stationNo)) {
+					seachId = stationNo;
+				}else if(operator.getOrg().getOrgType().equals("4")){
+					seachId = operator.getOrg().getId();
+				}else{
+					seachId = roadNo;
+				}
+				
+			}else{
+				seachId = operator.getOrg().getId(); 
+			}
+        pattern.add(" and ol.orgId in "); 
+		value.add(this.getDao().addSearchCondition(seachId));
+		
+	
+		sb.append(queryBuilder(value, pattern));
+		if(pager!=null){
+			int totalSize = getDao().executeCountSqlQuery(sb.toString());
+			pager.setTotalSize(totalSize);
+		}
+		sb.append(" order by ol.operTime desc");
+		String execSql="select ol.id,ol.operType,ol.moduleId,m.name moduleName,ol.details,ol.operId,a.name adminName,ol.operTime,ol.ip,ol.remark "+sb.toString();
+		return  getDao().findBySql(execSql, pager);
+	}
+
+	public void deleteByOutTime(Date d) {
+		String time = DateFormatUtils.format(d, "yyyy-MM-dd HH:mm:ss");
+		String sql = "delete from tb_operLog  where operTime<='"+time+"'";
+		getDao().updateBySql(sql);
+	}
+}

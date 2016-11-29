@@ -1,0 +1,37 @@
+--------------------------------------³µÅÆºÏ·¨ÐÔÅÐ¶Ïº¯Êý  £¬µ¥¶ÀÖ´ÐÐ-----------------------------------------
+
+create function dbo.vehPlate_legal(@vehPlate varchar(10))
+returns bit
+as  
+begin
+	declare @num int,@vehChar varchar(2)
+	set @num=1	
+	    if(len(@vehPlate)!=7)
+	       return 1
+		while @num<=len(@vehPlate)
+		begin
+			set @vehChar=SUBSTRING(@vehPlate,@num,1)
+			if (@num=1)		
+			begin
+			   if(@vehChar not  in ('¾¯','¾©','½ò','»¦','Óå','¼½','Ô¥','ÔÆ','ÁÉ','ºÚ','Ïæ','Íî','Â³','ÐÂ','ËÕ','Õã','¸Ó','¶õ','¹ð','¸Ê','½ú','ÃÉ','ÉÂ','¼ª','Ãö','¹ó','ÔÁ','Çà','²Ø','´¨','Äþ','Çí'))
+				 return 1
+			end
+			else if (@num=2)
+			begin
+			   if(UNICODE(@vehChar) not  between 65 and 90 )
+				 return 1
+			end
+			else if (@num=7)
+			begin
+			   if( (UNICODE(@vehChar) not between 48 and 57) and (UNICODE(@vehChar) not between 65 and 90) and  @vehChar!='¹Ò')
+				 return 1
+			end
+			else if(@num in(3,4,5,6))
+			begin
+			   if((UNICODE(@vehChar) not between 48 and 57) and (UNICODE(@vehChar) not  between 65 and 90) )
+				 return 1
+			end
+		    set @num=@num+1       
+		end
+  return 0
+end;

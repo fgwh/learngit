@@ -1,0 +1,55 @@
+package com.hgsoft.main.action;
+
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.util.Property;
+
+
+@Controller
+@Scope("prototype")
+public class DicItemAction extends BaseAction<DicItem>{
+	/**
+	 * 查询字典信息
+	 * @return
+	 */
+	
+	public DicItem getDicItem() {
+		return entity;
+	}
+
+	public void setDicItem(DicItem dicItem) {
+		this.entity = dicItem;
+	}
+	 
+	//注入Service
+    @Resource
+    public void setBaseService(DictionaryService service) {
+        this.setService(service);
+    }
+    
+    /**
+     * 判断是否重复
+     * @return
+     */
+    public String checkExist() {//检查数据库是否有重复数据
+    	if(entity.getId()==null){
+    		entity.setId("");
+    	}
+    	 
+    	List<DicItem> list = service.findByPager(getPager(), null, Property.ne("id", entity.getId()),Property.eq("type", entity.getType()),Property.eq("name", entity.getName()));
+    	List<DicItem> list1 = service.findByPager(getPager(), null, Property.ne("id", entity.getId()),Property.eq("type", entity.getType()),Property.eq("value", entity.getValue()));
+    	if(list.size()>0){
+    		message = "one";
+    	}else{
+    		if(list1.size()>0){
+    			message = "two";
+    		}
+    	}
+    	return "message";
+    }
+}

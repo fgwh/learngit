@@ -1,0 +1,391 @@
+package com.hgsoft.main.laneexlist.service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Date;
+import java.util.List;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.eclipse.birt.report.model.api.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.cxf.common.PropertiesUtil;
+import com.hgsoft.job.GetLaneExListDataJob;
+import com.hgsoft.job.JobLog;
+import com.hgsoft.main.carStatistic.entity.LaneExListImg;
+import com.hgsoft.main.entity.QrtzLog;
+import com.hgsoft.main.laneexlist.dao.LaneExListDao;
+import com.hgsoft.main.laneexlist.entity.LaneExList;
+import com.hgsoft.main.laneexlist.entity.LaneExList2;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.DBUtil;
+import com.hgsoft.util.DateUtil;
+import com.hgsoft.util.JDBCFrame;
+import com.hgsoft.util.LaneEnAndExUtils;
+import com.hgsoft.util.LocalDBUtils;
+import com.hgsoft.util.Pager;
+
+
+/**
+ * 出口流水service
+ *
+ * @author 郭志强
+ * @time 2016/9/9 9:37
+ */
+@Service
+public class LaneExListService extends BaseService<LaneExList> {
+	private static final String roadCode = PropertiesUtil.getProperty("ROAD_CODE");
+	private static final String provinceIp = PropertiesUtil.getProperty("PROVINCE_IP");
+	private static final String provincePort = PropertiesUtil.getProperty("PROVINCE_PORT");
+	private static final String fileDir = PropertiesUtil.getProperty("baseDir")+"//"+PropertiesUtil.getProperty("FILE_SAVE_DIR");
+    private static Logger logger = Logger.getLogger(GetLaneExListDataJob.class);
+    // 注入dao
+    @Autowired
+    private LaneExListDao laneExListDao;
+
+
+    /**
+     * 根据时间从中间库中取出数据，并保存到本地库
+     *
+     * @param qrtzLog
+     * @param date
+     */
+    public synchronized void saveLaneExList(QrtzLog qrtzLog, String... date) {
+        System.out.println(date[0]);
+        System.out.println(date[1]);
+        qrtzLog.setCreatetime(new Date());
+        // 从中间库中取出数据
+        List<LaneExList> list = getLaneExListFromOuterDatabase(date);
+        System.out.println("共获取到：" + list.size() + "出口数据");
+        Connection connection = null;
+        Connection connection1 = null;
+        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement1 = null;
+        try {
+            long startTime = System.currentTimeMillis();
+            connection = LocalDBUtils.getConnection();
+            connection1 = DBUtil.getConnection();
+
+            connection.setAutoCommit(false);
+            connection1.setAutoCommit(false);
+            int count = 0;
+            // 判断list,并遍历list
+            if (list != null && list.size() > 0) {
+                for (LaneExList laneExList : list) {
+                    Timestamp exTime = laneExList.getExTime();
+                    String y = DateUtil.format(exTime, "yyyy");
+                    // 保存到本地库 (用jdbc)
+                    // 获取数据库连接
+                    connection = LocalDBUtils.getConnection();
+//                    JDBCFrameForLaneExOrEnList jf =
+//                            new JDBCFrameForLaneExOrEnList(connection);
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("INSERT INTO tb_LaneExList_");
+                    // 这里需要改成year
+                    sb.append(y);
+                    sb.append("([ExRecordNo],[LaneExSerialNo] ,[LaneEnSerialNo],[EnNetRoadID],[EnRoadID],[ICInCardID],[EnStationID],[EnLaneID],[EnLaneType] ,[EnTime],[EnVehicleClass],[EnVehicleStatus],[EnVehiclePlate],[ExNetRoadID],[ExRoadID],[ExStationID],[ExLaneID],[ExLaneType],[ExTime],[SquadDate],[ExCPCSnNo],[ExVehicleClass],[ExVehicleStatus],[ImageSerialNo],[ExVehiclePlate],[ExVehIdentifyPlate],[CashMoney] ,[VehicleClassMoney],[DeviceStatus],[RecordType],[ExCPUCardSnNo],[ExCPUCardID],[ExCPUCardType],[WeightFlag],[VehCount],[AxisNum],[AxisGroupNum],[TotalWeight],[TotalWeightLimit],[TollType],[AxisType],[AxisWeightDetail],[OverLoadWeight],[PreVehType],[ExETCTermCode] ,[OriginalPath],[RealPath],[RoadComb],[RoadSStationComb],[RoadEStationComb],[RealPath01],[ManualFlag],[VerifyCode],[Spare1],[Spare2],[Spare3],[Spare4],[UploadTime],[DealStatus],[EnVehicleFlag],[EnOperatorID],[ExOperatorID])");
+                    sb.append("VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?" +
+                            ",?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+//                    System.out.println(sb.toString());
+                    List<Object> params = new ArrayList<Object>();
+                    // 封装参数
+                    LaneEnAndExUtils.encapsulationLanExParams(laneExList, params);
+                    preparedStatement = connection.prepareStatement(sb.toString());
+                    int index = 1;
+
+                    if ((params != null) && !params.isEmpty()) {
+                        for (int i = 0; i < params.size(); i++) {
+                            preparedStatement.setObject(index++, params.get(i));
+                        }
+                    }
+                    preparedStatement.addBatch();
+                    preparedStatement.executeBatch();
+                    preparedStatement.clearBatch();
+                    preparedStatement1 = connection1.prepareStatement("DELETE FROM tb_LaneExList_Mid WHERE LaneExSerialNo=?");
+                    preparedStatement1.setString(1, laneExList.getLaneExSerialNo());
+                    preparedStatement1.addBatch();
+                    preparedStatement1.executeBatch();
+                    preparedStatement1.clearBatch();
+                    count++;
+//                    System.out.println(count);
+                }
+            }
+            if (preparedStatement != null) {
+                preparedStatement.executeBatch();
+            }
+            if (preparedStatement1 != null) {
+                preparedStatement1.executeBatch();
+            }
+
+            if (connection != null) {
+                connection.commit();
+            }
+
+            if (connection1 != null) {
+                connection1.commit();
+            }
+            logger.info( "["+date[0]+"]"+"-"+"["+date[1]+"]"+count + "条出口流水数据保存到本地数据库成功。");
+            qrtzLog.setDescription("["+date[0]+"]"+"-"+"["+date[1]+"]"+count + "条出口流水数据保存到本地数据库成功。");
+            qrtzLog.setJobStatus(JobLog.JOB_STATUS_SUCC);
+
+            long endTime = System.currentTimeMillis();
+            System.out.println("执行了:" + (endTime - startTime) / 1000 + "s");
+        } catch (Exception e) {
+            // 事务回滚
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+            if (connection1 != null) {
+                try {
+                    connection1.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+            logger.info("出口流水数据保存到本地数据库失败。");
+            qrtzLog.setDescription("[" + date[0] + "]" + "-" + "[" + date[1] + "]" + "出口的流水数据保存到本地数据库失败。");
+            qrtzLog.setJobStatus(JobLog.JOB_STATUS_FAIL);
+        } finally {
+            JDBCFrame.release(connection, preparedStatement, null);
+            JDBCFrame.release(connection1, preparedStatement1, null);
+        }
+    }
+
+    /**
+     * @param date
+     */
+    private List<LaneExList> getLaneExListFromOuterDatabase(String... date) {
+        // 用jdbcFrame取数据
+        JDBCFrame jdbcFrame = new JDBCFrame(DBUtil.getConnection());
+        // 编写sql语句
+        String sql = "SELECT \n" +
+                "  ExRecordNo as exRecordNo,\n" +
+                "  LaneExSerialNo as laneExSerialNo,\n" +
+                "  LaneEnSerialNo as laneEnSerialNo,\n" +
+                "  EnNetRoadID as enNetRoadId,\n" +
+                "  EnRoadID as enRoadId,\n" +
+                "  ICInCardID as icinCardId,\n" +
+                "  EnStationID as enStationId,\n" +
+                "  EnLaneID as enLaneId,\n" +
+                "  EnLaneType as enLaneType,\n" +
+                "  EnTime as enTime,\n" +
+                "  EnVehicleClass as enVehicleClass,\n" +
+                "  EnVehicleStatus as enVehicleStatus,\n" +
+                "  EnVehiclePlate as enVehiclePlate,\n" +
+                "  ExNetRoadID as exNetRoadId,\n" +
+                "  ExRoadID as exRoadId,\n" +
+                "  ExStationID as exStationId,\n" +
+                "  ExLaneID as exLaneId,\n" +
+                "  ExLaneType as exLaneType,\n" +
+                "  ExTime as exTime,\n" +
+                "  SquadDate as squadDate,\n" +
+                "  ExCPCSnNo as exCpcsnNo,\n" +
+                "  ExVehicleClass as exVehicleClass,\n" +
+                "  ExVehicleStatus as exVehicleStatus,\n" +
+                "  ImageSerialNo as imageSerialNo,\n" +
+                "  ExVehiclePlate as exVehiclePlate,\n" +
+                "  ExVehIdentifyPlate as exVehIdentifyPlate,\n" +
+                "  CashMoney as cashMoney,\n" +
+                "  VehicleClassMoney as vehicleClassMoney,\n" +
+                "  DeviceStatus as deviceStatus,\n" +
+                "  RecordType as recordType,\n" +
+                "  ExCPUCardSnNo as exCpucardSnNo,\n" +
+                "  ExCPUCardID as exCpucardId,\n" +
+                "  ExCPUCardType as exCpucardType,\n" +
+                "  WeightFlag as weightFlag,\n" +
+                "  VehCount as vehCount,\n" +
+                "  AxisNum as axisNum,\n" +
+                "  AxisGroupNum as axisGroupNum,\n" +
+                "  TotalWeight as totalWeight,\n" +
+                "  TotalWeightLimit as totalWeightLimit,\n" +
+                "  TollType as tollType,\n" +
+                "  AxisType as axisType,\n" +
+                "  AxisWeightDetail as axisWeightDetail,\n" +
+                "  OverLoadWeight as  overLoadWeight,\n" +
+                "  PreVehType as preVehType,\n" +
+                "  ExETCTermCode as exEtctermCode,\n" +
+                "  OriginalPath as originalPath,\n" +
+                "  RealPath as realPath,\n" +
+                "  RoadComb as roadComb,\n" +
+                "  RoadSStationComb as roadSstationComb,\n" +
+                "  RoadEStationComb as roadEstationComb,\n" +
+                "  RealPath01 as realPath01,\n" +
+                "  ManualFlag as manualFlag,\n" +
+                "  VerifyCode as verifyCode,\n" +
+                "  Spare1 as spare1,\n" +
+                "  Spare2 as spare2,\n" +
+                "  Spare3 as spare3,\n" +
+                "  Spare4 as spare4,\n" +
+                "  UploadTime as uploadTime,\n" +
+                "  DealStatus as dealStatus," +
+                "  EnVehicleFlag as enVehicleFlag," +
+                "  EnOperatorID as enOperatorID," +
+                "  ExOperatorID as exOperatorID" +
+                "  FROM tb_LaneExList_Mid\n" +
+                "WHERE CONVERT(VARCHAR(100), UploadTime, 23) >= ? AND CONVERT(VARCHAR(100), UploadTime, 120) <= ?";
+        System.out.println(sql);
+        // 查询
+        List<Object> params = new ArrayList<Object>();
+        params.add(date[0]);
+        params.add(date[1]);
+        List<LaneExList> laneExLists = null;
+        try {
+            laneExLists = jdbcFrame.findMoreRefResult(sql, params, LaneExList.class);
+        } catch (Exception e) {
+            logger.warn("从中间库获取数据失败");
+            return null;
+        } finally {
+            // 关闭连接
+            jdbcFrame.releaseConn();
+        }
+
+        // 返回
+        return laneExLists;
+    }
+
+    /**
+     * 获取根据流水获取路径名字
+     */
+    public List queryNameBypath(List flaglist) {
+        // TODO Auto-generated method stub
+        return laneExListDao.queryNameBypath(flaglist);
+    }
+	 /**
+     * 分页获取出口流水 
+     */
+	public List<Object[]> queryAllLaneExList(LaneExList2 entity, Pager pager, Admin operator) {
+		return laneExListDao.findByLaneExListEntity(pager, entity, operator);
+	}
+	 /**
+     * 获取入口流水 
+     */
+	public List<Object[]> queryAllLaneEnList(LaneExList2 entity, Pager pager, Admin operator){
+		/*List<Object[]> list = new ArrayList<Object[]>();
+		if(!roadCode.equals(entity.getEnRoadId())){ //使用省营运协会的接口获取数据(非本路段)
+			
+			list.add(getProvinceEnList(entity));
+		} else{
+			list=laneExListDao.findByLaneExListEntity(pager, entity, operator);
+		}*/
+		return null;
+	}
+	 /**
+     * 不分页获取流水 
+     */
+	public List<Object[]> queryAllLaneExList2(LaneExList2 entity, Pager pager, Admin operator) {
+		return laneExListDao.findByLaneExListEntity2(pager, entity, operator);
+	}
+	/**
+     * 根据出口获取入口流水 接口
+     */
+	public String getProvinceEnList(LaneExList2 entity) throws IOException{
+		String validateURL = "http://"+provinceIp+":"+provincePort+"/openservice/services/http/entranceInfo?VehiclePlate="+java.net.URLEncoder.encode(entity.getExVehiclePlate(), "UTF-8")+"&CPCSnNo="+entity.getExCpcsnNo()+"&StartTime="+java.net.URLEncoder.encode(entity.getStartTime(), "UTF-8")+"&EndTime="+java.net.URLEncoder.encode(entity.getEndTime(), "UTF-8");
+		HttpURLConnection conn = null;
+		DataInputStream dis = null;
+		FileOutputStream fos = null;
+		try{
+			URL url = new URL(validateURL);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.connect();
+			
+			
+			// 判断是否正常响应数据
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				System.out.println("网络正常！!!!");
+				
+				System.out.println("responseCode:"+conn.getHeaderField("responseCode"));
+				
+				System.out.println(conn.getContent());
+				
+				
+				InputStream inputStream = conn.getInputStream();
+				
+				System.out.println(inputStream.available());
+				
+				
+				dis = new DataInputStream(inputStream);
+				byte[] buffer = new byte[1024];
+				int len = 0;
+				fos = new FileOutputStream(new File("E:/7.txt"));
+				while((len = inputStream.read(buffer))!=-1){
+					fos.write(buffer, 0, len);
+					
+				}
+			} else{
+				System.out.println("网络错误异常！!!!");
+			}
+		
+		
+		} catch(Exception e){
+
+			e.printStackTrace();
+		} finally{
+			conn.disconnect();
+			if(dis!=null){
+				try {
+					dis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(fos!=null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		return fos.toString();
+	}
+	
+	public byte[] readInputStram(InputStream inputStream) throws IOException{
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		while((len = inputStream.read(buffer))!=-1){
+			outStream.write(buffer, 0, len);
+		}
+		
+		byte[] data = outStream.toByteArray();
+		
+		outStream.close();
+		inputStream.close();
+		
+		return data;
+	}
+
+}

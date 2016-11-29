@@ -1,0 +1,12 @@
+CREATE  VIEW AbnormalCar WITH SCHEMABINDING  AS
+SELECT 
+ExVehiclePlate ,AuditStatus,
+sum(CASE WHEN ExceptionType='1' THEN 1 ELSE 0 END) as SwitchCard,sum(CASE WHEN ExceptionType='1' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecSwitchCard,
+sum(CASE WHEN ExceptionType='2' THEN 1 ELSE 0 END) AS ETCModelsNotMeet,sum(CASE WHEN ExceptionType='2' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecETCModelsNotMeet,
+sum(CASE WHEN ExceptionType='3' THEN 1 ELSE 0 END) AS ETCPlateNotMeet ,sum(CASE WHEN ExceptionType='3' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecETCPlateNotMeet,
+sum(CASE WHEN ExceptionType='4' THEN 1 ELSE 0 END) as ChargesNotIndetify,sum(CASE WHEN ExceptionType='4' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecChargesNotIndetify,
+sum(CASE WHEN ExceptionType='5' THEN 1 ELSE 0 END) as IndentifyPointExcep,sum(CASE WHEN ExceptionType='5' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecIndentifyPointExcep,
+sum(CASE WHEN ExceptionType='6' THEN 1 ELSE 0 END) as AxisGroupExcep,sum(CASE WHEN ExceptionType='6' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecAxisGroupExcep,
+CASE WHEN (SELECT  count(*) from dbo.tb_roBlackList where VehPlate=ExVehiclePlate)<>0 THEN 1 ELSE 0 END as HistoryEscape,
+ExVehicleFlag
+FROM dbo.tb_AbnormalCarDeatils acd where  acd.ExTime> convert(nvarchar(10),dateadd(m,-36,getdate()),120) GROUP BY ExVehiclePlate,AuditStatus,ExVehicleFlag

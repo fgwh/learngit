@@ -1,0 +1,29 @@
+## jdbc properties
+jdbc.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver
+#jdbc.jdbcUrl=jdbc:sqlserver://10.173.235.180:1433;databaseName=MPPTest4QF
+jdbc.jdbcUrl=jdbc\:sqlserver\://192.168.18.80\:1433;databaseName\=new_JxStation
+
+jdbc.username=sa
+jdbc.password=123456
+
+hibernate.dialect=com.hgsoft.dialect.MySQLServerDialect
+hibernate.show_sql=true
+hibernate.format_sql=true
+
+
+## c3p0 properties.
+c3p0.initialPoolSize=10
+c3p0.minPoolSize=10
+c3p0.maxPoolSize=30
+c3p0.acquireIncrement=5
+c3p0.maxIdleTime=30000
+c3p0.breakAfterAcquireFailure=false
+c3p0.idleConnectionTestPeriod=60
+c3p0.testConnectionOnCheckin=false
+c3p0.testConnectionOnCheckout=false
+c3p0.acquireRetryAttempts=10
+c3p0.acquireRetryDelay=1000
+#c3p0.maxStatements=0
+
+
+

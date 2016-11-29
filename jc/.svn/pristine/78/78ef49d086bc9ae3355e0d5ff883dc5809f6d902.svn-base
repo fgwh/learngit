@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>统计分析</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome.min.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../../css/goods.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../theme/transparent/main.css" />
+    <script language="javascript" src="../../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="${basePath}/js/echarts.js"></script>
+    <script type="text/javascript" src="${basePath}/js/bar.js"></script>
+    <script type="text/javascript" src="${basePath}/js/charts.js"></script>
+    <script type="text/javascript" src="${basePath}/js/line.js"></script>
+    <script type="text/javascript" src="${basePath}/js/util.js"></script>
+    <script type="text/javascript" src="${basePath}/js/communicate.js"></script>
+    <script type="text/javascript" src="${basePath}/js/common.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+    <style>
+        .table-striped >thead >tr > th {
+            background: none;
+            background-color: #f0f0f0;
+        }
+        .table-striped > tbody > tr:nth-child(2n+1) > td {
+            background-color: #fff;
+        }
+        .table-striped > tbody > tr:nth-child(2n) > td {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function() {  
+        var i = -1;  
+        var yea = ${condition.year};
+        var mon = ${condition.month};
+        var day = ${condition.day};
+        // 添加年份，从2014年开始  
+        for (i = 2014; i <= new Date().getFullYear(); i++) {  
+            addOption(select_year, i, i);  
+            // 默认选中
+            if (i == yea ) { 
+                select_year.options[i-2014+1].selected = true; 
+            } 
+        }  
+        // 添加月份  
+        for (i = 1; i <= 12; i++) {  
+             addOption(select_month, i, i);  
+             // 默认选中
+             if (i == mon ) { 
+                 select_month.options[i].selected = true; 
+             }
+        }  
+        // 添加天，先默认31天  
+        for (i = 1; i <= 31; i++) {  
+            addOption(select_day, i, i);  
+            // 默认选中
+            if (i == day ) { 
+                select_day.options[i].selected = true; 
+            }
+        }  
+          
+        //$("#birth_month"). birth_year  birth_day  
+    });  
+      
+           
+    // 设置每个月份的天数  
+    function setDays(year, month,day) {  
+        var monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];  
+        var yea = year.options[year.selectedIndex].text;  
+        var mon = month.options[month.selectedIndex].text;  
+        var num = monthDays[mon - 1];  
+        if (mon == 2 && isLeapYear(yea)) {  
+            num++;  
+        }  
+        for (var j = day.options.length - 1; j >=num; j--) {  
+               day.remove(j);  
+           }  
+           for (var i = day.options.length; i <= num; i++) {  
+               addOption(select_day,i,i);  
+           }  
+    }  
+           
+    // 判断是否闰年  
+    function isLeapYear(year)  
+    {  
+        return (year % 4 == 0 || (year % 100 == 0 && year % 400 == 0));  
+    }  
+           
+    // 向select尾部添加option  
+    function addOption(selectbox, text, value) {  
+        var option = document.createElement("option");  
+        option.text = text;  
+        option.value = value;  
+        selectbox.options.add(option);  
+    }  
+    
+    function radioOnclick(){
+    	var value  = $('input[name="condition.tableInfo"]:checked').val();
+    	if(value ==3){
+    		document.getElementById('select_month').disabled=true;
+    		document.getElementById('select_day').disabled=true;
+    	}
+    	if(value ==2){
+    		document.getElementById('select_month').disabled=false;
+    		document.getElementById('select_day').disabled=true;
+    	}
+    	if(value ==1){
+    		document.getElementById('select_month').disabled=false;
+    		document.getElementById('select_day').disabled=false;
+    	}
+    }
+    //页面加载自动执行方法
+    window.onload=radioOnclick;
+    //柱状图
+    $(function(){
+		//DrawMobileBar("type_container",["一类","二类","三类","四类","五类"],[[100, 200, 220, 120, 100],[40, 80, 50, 80,80, 70]],["总数","正常"]);
+	    var barSource = $('#barData').val();//源字符串： '标题;未通过车辆,通过车辆;项目一,项目二;45&50,55&60';
+	    //空数据则不显示
+	    if(barSource != '') {
+	    	barSource = '车辆流量柱状图;客车,货车;' + barSource;
+		    drawRightBarGraph("flowByBar_container",barSource);
+	    }
+	    
+	    var graphSource = $('#graphData').val();
+	    if(graphSource!=''){
+	    	graphSource = '总车辆流量折线图;客车,货车;' + graphSource;
+	    	drawRightMobileLineGraph("flowByGraph_container", graphSource);
+	    }
+	    
+	});
+    
+    //查询条件校验
+    function queryConditionCheck(){
+    	var tableInfo  = $('input[name="condition.tableInfo"]:checked').val();
+    	var yea = $("#select_year").val();
+    	var mon = $("#select_month").val();
+    	var day = $("#select_day").val();
+    	var centerId = $("#roadNo").val();
+    	
+    	if(tableInfo==3){
+    		if(yea==""){
+    			alert("年份不能为空！");
+    			return false;
+    		}
+    	}
+    	
+    	if(tableInfo==2){
+    		if(yea==""||mon==""){
+    			alert("年月不能为空！");
+    			return false;
+    		}
+    	}
+    	
+    	if(tableInfo==1){
+    		if(yea==""||mon==""||day==""){
+    			alert("年月日不能为空！");
+    			return false;
+    		}
+    	}
+    	
+    	/* if(centerId==""){
+    		alert("请选择具体中心站！");
+			return false;
+    	} */
+    	
+    	return true;
+    }
+    $(function() {
+        //邦定搜索按钮，添加点击事件查询数据列表
+        $("#submit").on("click", function(event) {
+            //验证查询条件合法性
+            if(queryConditionCheck()){
+            	$("#myForm").submit();
+            }
+            
+            event.preventDefault();
+        });
+
+        //按回车键，查询数据列表
+        document.onkeydown = function(event) {
+            var ev = document.all ? window.event : event;
+            if (ev.keyCode == 13) {
+                //验证查询条件合法性
+            	if(queryConditionCheck()){
+                	$("#myForm").submit();
+                }
+                ev.preventDefault();
+            }
+        }; 
+        var roadNo = $("#roadNo").val();
+		var stationId = $("#stationId").val();
+		selectStation(roadNo);
+		selectOperator(stationId);
+		//var checkText=$("#roadNo").find("option:selected").text();  //获取Select选择的Text
+		//$("#centerSelect").attr("value",checkText);//填充内容
+    });
+    
+    </script>
+</head>
+<body style="min-height:900px;">
+<form name="myForm" id="myForm" action="trafficFlow_trafficFlowStatistics.do" method="post">
+    <ul class="breadcrumb">
+        <li><i class="icon-home icon-2x"></i></li>
+        <li>当前位置：统计分析>交通流量报表</li>
+    </ul>
+    <div class="widget widget-table">
+        <div class="widget-content">
+           <!--  <div class="widget-header">
+                <h5>查询条件</h5>
+            </div> -->
+            <table class="pn-ftable" border="0" cellpadding="10">
+                <tbody>
+                <tr>
+                    <th><span class="point">*</span>交通道路信息表 :</th>
+                    <td class="pn-fcontent" colspan="5">
+                        <input type="radio" onclick="radioOnclick()" name="condition.tableInfo" value="3" <c:if test="${condition.tableInfo == 3}">checked</c:if> style="margin-left: 20px; font-size: 12px;" id="year" /><label for="year">年表</label>
+                        <input onclick="radioOnclick()" type="radio" name="condition.tableInfo" style="margin-left: 20px; font-size: 12px;" value="2" <c:if test="${condition.tableInfo == 2}" >checked</c:if> id="month" /><label for="month">月表</label>
+                        <input onclick="radioOnclick()" type="radio" name="condition.tableInfo" style="margin-left: 20px; font-size: 12px;" value="1" <c:if test="${condition.tableInfo == 1}" >checked</c:if> id="day" /><label for="day">日表</label>
+                    </td>
+                </tr>
+                <tr>
+                    <th><span class="point">*</span>年份 :</th>
+                    <td class="pn-fcontent">
+                        <select style="background-color:white;"  name="condition.year" id="select_year"  class="Wdate"  onchange="setDays(this,select_month,select_day);">
+                        <option value="">年</option>
+                        </select>
+                    </td>
+                    <th>月份 :</th>
+                    <td class="pn-fcontent">
+                        <select style="background-color:white;"  name="condition.month" id="select_month"  class="Wdate"  onchange="setDays(select_year,this,select_day);" >
+                        <option value="">月</option>
+                        </select>
+                    </td>
+                    <th>日期:</th>
+                    <td class="pn-fcontent">
+                        <select style="background-color:white;" name="condition.day" id="select_day"  class="Wdate" >
+                        <option value="">日</option>
+                        </select>
+                    </td>
+                </tr>
+               <tr>
+                   <th><span class="point">*</span>中心站：</th>
+                   <td class="pn-fcontent"  >
+                   <select name="condition.centerStationId" id="roadNo" onchange="selectStation(this.value)"> 
+										<option value="">全部</option> 
+										<c:forEach items="${centerStationList}" var="centerStation">
+											<option value="${centerStation.id}"
+												<c:if test="${centerStation.id == condition.centerStationId}"><c:out value="selected"/></c:if>>
+													${centerStation.orgName}</option>
+										</c:forEach>
+								</select>
+                   </td><th>收费站：</th>
+                   <td class="pn-fcontent"  >
+                   <select name="condition.stationId"  id="stationNo"  onchange="selectOperator(this.value)">
+									<input  type="hidden" id="stationId" value="${condition.stationId}"/>
+									<%-- <option value="">全部</option> 
+									<c:forEach items="${stationList}" var="station">
+												<option value="${ station.id }"
+													<c:if test="${station.id == stationNo}"><c:out value="selected"/></c:if>>
+													${station.orgName}</option>
+									</c:forEach> --%>
+								</select>    
+                   </td><th><span class="point">*</span>出入口站：</th>
+                   <td class="pn-fcontent"  >
+                        <select name="condition.enExFlag">
+							<option value="0">全部</option>
+      						<option value="1" <c:if test="${'1' == condition.enExFlag}"><c:out value="selected"/></c:if>>出口</option> 
+      						<option value="2" <c:if test="${'2' == condition.enExFlag}"><c:out value="selected"/></c:if>>入口</option> 
+						</select>
+                   </td>
+               </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <a class="btn btn-s-md btn-primary pull-right" id="submit" href="javascript:;">查询</a>
+        </div>
+    </div>
+    <div class="separator line"></div>
+    <div class="widget widget-table">  <!-- style="height:580px;overflow-y: auto;" -->
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h5>数据列表</h5>
+        </div>
+        <div class="widget-content widget-list widget-scroll" style="min-height:0px;padding-bottom:10px;>  <!--  style="min-height:500px;" -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                    <th rowspan="2">中心站</th>
+                         <th rowspan="2">收费站</th>
+                        <th rowspan="2">出入口</th>
+                        <th colspan="7">客车车流量</th>
+                        <th colspan="7">货车车流量</th>
+                    </tr>
+                    <tr>
+                        <th>一车型</th>
+                        <th>二车型</th>
+                        <th>三车型</th>
+                        <th>四车型</th>
+                        <th>五车型</th>
+                        <th>其他</th>
+                        <th>总计</th>
+                        <th>一车型</th>
+                        <th>二车型</th>
+                        <th>三车型</th>
+                        <th>四车型</th>
+                        <th>五车型</th>
+                        <th>其他</th>
+                        <th>总计</th>
+                    </tr>
+                </thead>
+                <tbody id="databody">
+
+                    <tr>
+                        <c:choose>
+									<c:when test="${condition.centerStationId==''}">
+										<td>全部</td>
+									</c:when>
+									<c:otherwise>
+								     	<td>${stationIdNameMap[condition.centerStationId]}</td>
+								    </c:otherwise>   
+						</c:choose>
+                        <c:choose>
+									<c:when test="${condition.stationId==''}">
+										<td>全部</td>
+									</c:when>
+									<c:otherwise>
+								     	<td>${stationIdNameMap[condition.stationId]}</td>
+								    </c:otherwise>   
+						</c:choose>
+                        <c:choose>
+									<c:when test="${condition.enExFlag=='1'}">
+										<td>出口</td>
+									</c:when>
+									<c:when test="${condition.enExFlag=='2'}">
+										<td>入口</td>
+									</c:when>
+									<c:otherwise>
+								     	<td>全部</td>
+								    </c:otherwise>   
+						</c:choose>
+                        <td>${flow.carsOneNum}</td>
+                        <td>${flow.carstwoNum}</td>
+                        <td>${flow.carsThreeNum}</td>
+                        <td>${flow.carsFourNum}</td>
+                        <td>${flow.carsFiveNum}</td>
+                        <td>${flow.carsTotalNum-flow.carsOneNum-flow.carstwoNum-flow.carsThreeNum-flow.carsFourNum-flow.carsFiveNum}</td>
+                        <td>${flow.carsTotalNum}</td>
+                        <td>${flow.truckOneNum}</td>
+                        <td>${flow.trucktwoNum}</td>
+                        <td>${flow.truckThreeNum}</td>
+                        <td>${flow.truckFourNum}</td>
+                        <td>${flow.truckFiveNum}</td>
+                        <td>${flow.truckTotalNum-flow.truckOneNum-flow.trucktwoNum-flow.truckThreeNum-flow.truckFourNum-flow.truckFiveNum}</td>
+                        <td>${flow.truckTotalNum}</td>
+                    </tr>
+          
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <jsp:include page="../include/pager.jsp" />
+        </div>
+    </div>
+    <!--图表插到这里-->	
+    <div id="flowByBar_container" style="height:350px;width:39%;float:left"></div>
+	<input id="barData" type="hidden" value="${barData}"/>
+	
+	<div id="flowByGraph_container" style="height:350px;width:39%;float:right"></div>
+	<input id="graphData" type="hidden" value="${graphData}"/>
+</form>
+</body>
+</html>

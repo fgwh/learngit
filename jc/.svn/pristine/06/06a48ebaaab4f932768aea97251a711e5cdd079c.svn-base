@@ -1,0 +1,87 @@
+﻿create table tb_msgPublish(
+	id varchar(64) primary key,
+	publishTime datetime not null,
+	theme varchar(100) not null,
+	content varchar(4000) not null,
+	publishMan varchar(80) not null
+)
+
+/*****黑、灰名单 *****/
+create table tb_proBlackList(
+ VehPlate	 VarChar(20) not null,
+ VehPlateColor	 smallint not null,
+ VehFlag	 tinyint  not null,
+ VehClass	 tinyint  not null,
+ InterceptOption tinyint  not null,
+ StartDate	 Datetime not null,
+ EndDate	 Datetime not null,
+ VehInfo	 VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_proGrayList(
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint  not null,
+ VehFlag	tinyint  not null,
+ VehClass	tinyint  not null,
+ VehInfo	VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_roBlackList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint ,
+ VehFlag	tinyint not null,
+ VehClass	tinyint ,
+ InterceptOption	tinyint not null,
+ StartDate	Datetime not null,
+ EndDate	Datetime not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	tinyint,
+ VehMidType	tinyint,
+ VehSmallType	tinyint,
+ VehCompany	VarChar(20),
+ VehModel       VarChar(20),
+ VehType	tinyint not null,
+ feeCount	int ,
+ feeMoney	bigint,
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ source	decimal(1) not null,
+ fileName	varchar(32) ,
+ uploadTime     Datetime,
+ JfStatus	decimal(1) not null,
+)
+
+create table tb_roGrayList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint not null,
+ VehFlag	tinyint not null,
+ VehClass	tinyint ,
+ VehType	tinyint not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	tinyint,
+ VehMidType	tinyint,
+ VehSmallType	tinyint,
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ Status	decimal(1) not null,
+ fileName	varchar(32) ,
+ UpdateTime	Datetime,
+ uploadTime     Datetime,
+ staffNo        VarChar(8),
+ opinion        VarChar(500),
+)
+
+create table tb_evidence(
+  id	Varchar(32) primary key,
+  type  decimal(1) not null,
+  Pid	Varchar(32)  not null,
+  fileURL	varchar(32) not null
+)
+
+/*****黑、灰名单 *****/

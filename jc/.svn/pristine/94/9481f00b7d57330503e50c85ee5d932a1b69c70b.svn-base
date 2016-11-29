@@ -1,0 +1,179 @@
+package com.hgsoft.security.service;
+
+import com.hgsoft.security.dao.BaseDao;
+import com.hgsoft.util.Order;
+import com.hgsoft.util.Pager;
+import com.hgsoft.util.Property;
+import com.hgsoft.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class BaseService<T extends Serializable> {
+	private static Logger logger = LoggerFactory.getLogger(BaseService.class);
+	private BaseDao<T> dao;
+
+	public List<T> query(Pager pager, T entity) {
+		return dao.query(pager, entity);
+	}
+	
+	public void save(T entity){
+		dao.save(entity);
+	}
+	
+	public void saveOrUpdate(T entity){
+		dao.saveOrUpdate(entity);
+	}
+
+	public void update(T entity) {
+		dao.update(entity);
+	}
+
+	public void delete(T entity) {
+		dao.delete(entity);
+	}
+	
+	public void deleteById(Serializable id) {
+		dao.delete(find(id));
+	}
+
+	public T find(Serializable id) {
+		T entity = (T)dao.find(id);
+		return entity;
+	}
+	
+	public List<T> findAll(){
+		return dao.findAll(Order.asc("id"));
+	}
+
+	public List<T> findByPager(Pager pager){
+		return getDao().findByPager(pager, Order.desc("id"));
+	}
+
+	public List<T> findByPager(Pager pager,Order order){
+		return getDao().findByPager(pager, order);
+	}
+
+	public List<T> findByPager(Pager pager, Order order, Property... propertys) {
+		return  getDao().findByPager(pager, new Order[] { order }, propertys);
+	}
+
+	public List<?> findByPager(String hql,Pager pager)
+	{
+		return dao.findByHql(hql, pager);
+	}
+
+	public BaseDao<T> getDao() {
+		return dao;
+	}
+
+	public void setDao(BaseDao<T> dao) {
+		this.dao = dao;
+	}
+
+	public T newEntityInstance(){
+		return getDao().newEntityInstance();
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	public List query(Pager pager, Object object,Map dateMap) {
+		return getDao().query(pager,object,dateMap);
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	public List query(Pager pager, Object object,Map dateMap,String orderName) {
+		return getDao().query(pager,object,dateMap,orderName);
+	}
+
+	/**
+	 * 简单查询
+	 * 用entity的字段值作为搜索条件进行搜索,等于null的会自动忽略。
+	 * @param pager 分页信息
+	 * @param entity 查询条件,字符串用like%值%,其他用=号,不支持in
+	 * @return 查询结果
+	 */
+	public List<T> simpleQuery(Pager pager, T entity, Order...orders){
+		return simpleQuery(pager, entity, null, orders);
+	}
+	/**
+	 * 简单查询
+	 * 用entity的字段值作为搜索条件进行搜索,等于null的会自动忽略。
+	 * @param pager 分页信息
+	 * @param entity 查询条件,字符串用like%值%,其他用=号,不支持in
+	 * @param config Map<字段名称, Property里的某一个方法> 用于改变搜索条件默认行为,
+	 * 		如将startStake的条件改为大于等于
+	 * @return 查询结果
+	 */
+	public List<T> simpleQuery(Pager pager, T entity, Map<String,Method> config, Order...orders){
+		List<Property> ps = new ArrayList<Property>();
+
+		if(entity!=null){
+
+			try {
+				for(Field field : entity.getClass().getDeclaredFields()){
+					field.setAccessible(true);
+					String name = field.getName();
+					Object value = field.get(entity);
+					if(value==null)continue;
+
+					if(config!=null && config.containsKey(name)){
+						ps.add((Property) (config.get(name).invoke(null, name, value)));
+					}else if(value instanceof String){
+						ps.add(Property.likeAnyWhere(field.getName(), (String)value));
+					}else{
+						ps.add(Property.eq(field.getName(), value));
+					}
+					field.setAccessible(false);
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(),e);
+			}
+		}
+
+		Property[] aps = ps.toArray(new Property[ps.size()]);
+		pager.setTotalSize(getDao().countByProperty("id", aps));
+		return getDao().findByPager(pager, orders, aps);
+
+	}
+
+
+	public void updateByHql(String hql){
+		getDao().updateByHql(hql);
+	}
+	
+	/**
+	 * 查询条件转换器
+	 * 
+	 * @param value 查询值，如 '王%'
+	 * @param pattern 查询方式，如 s.usename like 
+	 * @return
+	 */
+	public StringBuffer queryBuilder(List<String> value,List<String> pattern) {
+		StringBuffer sb = new StringBuffer("");
+		
+		if(value.size() != pattern.size()) {
+			return sb;
+		}else {
+			String val;
+			String pat;
+			for(int i=0; i<value.size(); i++) {
+				val = (String)value.get(i);
+				pat = (String)pattern.get(i);
+				if(!StringUtil.isTrimEmpty(val) && !StringUtil.isTrimEmpty(pat)) {
+					sb.append(pat).append(val.trim());
+				}
+			}
+		}		
+		
+		return sb;
+	}
+	public void batchDelete(String ... ids) {
+		dao.batchDelete(ids);
+	}
+}

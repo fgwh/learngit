@@ -1,0 +1,148 @@
+package com.hgsoft.main.carStatistic.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.xwork.StringUtils;
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.carStatistic.entity.CarStatistic;
+import com.hgsoft.security.dao.BaseDao;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.util.OrgUtils;
+import com.hgsoft.util.DateUtil;
+import com.hgsoft.util.Pager;
+
+@Repository
+public class CarStatisticDao extends BaseDao<CarStatistic> {
+	private final static String SPLIT_DIVISION = "&&&&";
+
+	public List<Object[]> findByCarStatisticEntity(Pager pager, CarStatistic entity, Admin operator){
+		
+		String titleStr = "select ExTime,ExRoadID,ExStationID,ExLaneID,ExLaneType,ExVehiclePlate,ExVehicleClass,EnStationID,stationName as enStationName,"
+				+ "ExCPCSnNo,ExCPUCardSnNo,DealStatus,AxisGroupNum,EnTime,EnVehicleClass,ExVehIdentifyPlate,ExOperatorID,"
+				+ "LaneEnSerialNo,LaneExSerialNo,CashMoney,dealStatusName,exVehicleStatus,EnRoadID,ExRoadID,EnNetRoadID,"
+				+ "ExNetRoadID,EnStationID,ExStationID,EnLaneID,ExLaneID,SquadDate,EnLaneType,ExLaneType ";
+		
+		String orderSql = " order by exTime Desc";
+		
+		int totalSize = this.executeCountSqlQuery(parseAllSql(entity ,operator));
+		pager.setTotalSize(totalSize);
+		return (List<Object[]>) this.findBySql((titleStr+parseAllSql(entity ,operator)+orderSql), pager);
+	}
+	
+	public String parseAllSql(CarStatistic entity, Admin operator){
+		
+		
+		StringBuilder addSql = new StringBuilder(" select *, dbo.f_getSpName(DealStatus) as dealStatusName from ");
+		
+		addSql.append("tb_laneExList_"+DateUtil.getYearByDate(entity.getStartTime())+" where 1=1 ");
+		
+		if(StringUtils.isNotBlank(entity.getStationNo())){
+			addSql.append(" and exStationId="+OrgUtils.getAllOrgMap().get(entity.getStationNo()).getOrgCode());
+		} else if(entity.getFlag()==0){
+			List<Org> orgList = OrgUtils.getSubOrgByParentOrgStationIdZJ(entity.getCentralStationId(), operator);
+			addSql.append(parseSql(orgList));
+		}
+		
+		if(StringUtils.isNotBlank(entity.getLaneEnSerialNo())){
+			addSql.append(" and laneEnSerialNo='"+entity.getLaneEnSerialNo().trim()+"'");
+		}
+		
+		if(StringUtils.isNotBlank(entity.getExVehiclePlate())){
+			addSql.append(" and exVehiclePlate like '%"+entity.getExVehiclePlate().trim()+"%'");
+		}
+		
+		if(StringUtils.isNotBlank(entity.getExCPCSnNo())){
+			addSql.append(" and exCPCSnNo = '"+entity.getExCPCSnNo().trim()+"'");
+		}
+		
+		if(StringUtils.isNotBlank(entity.getExCPUCardSnNo())){
+			addSql.append(" and exCPUCardSnNo = '"+entity.getExCPUCardSnNo().trim()+"'");
+		}
+		
+		if(StringUtils.isNotBlank(entity.getLaneExSerialNo())){
+			addSql.append(" and laneExSerialNo = '"+entity.getLaneExSerialNo().trim()+"'");
+		}
+		
+		addSql.append(" and CONVERT(datetime,exTime,23) >= '"+DateUtil.format(entity.getStartTime(), DateUtil.PATTERN_STRING_TIME)+"'");
+		
+		addSql.append(" and CONVERT(datetime,exTime,23) <= '"+DateUtil.format(entity.getEndTime(), DateUtil.PATTERN_STRING_TIME)+"'");
+		
+		
+		StringBuilder addSqlTwo = new StringBuilder(" from (select * from ( ");
+		
+		addSqlTwo.append(addSql).append(") laneTable where ").append(parseDealStatusArr(entity.getDealStatusArr())).append(") laneTableTwo ");
+		addSqlTwo.append(" left join tb_station station on laneTableTwo.EnStationID=station.stationID and laneTableTwo.EnRoadID=station.roadId where 1=1 "); //连表查询
+		
+		
+		
+		return addSqlTwo.toString();
+	}
+	
+	
+	public List<Object[]> findByDealStatusEntity(){
+		String sql = "select * from tb_dealStatus";
+		return (List<Object[]>) this.findBySql(sql, null);
+	}
+	
+	
+	public String parseSql(List<Org> orgList){
+		StringBuilder tempStr = new StringBuilder(" ");
+		if(null==orgList || orgList.size()==0){
+			return tempStr.toString();
+		} 
+		
+		tempStr.append(" and ( ");
+		for(int i=0;i<orgList.size();i++){
+			if(i<(orgList.size()-1)){
+				tempStr.append(" exStationId="+orgList.get(i).getOrgCode()+" or ");
+			} else{
+				tempStr.append(" exStationId="+orgList.get(i).getOrgCode()+" ) ");
+			}
+		}
+		
+		return tempStr.toString();
+	}
+	
+	public String parseDealStatusArr(String dealStatusArr){
+		if(!StringUtils.isNotBlank(dealStatusArr)){
+			return " 1=1 ";
+		}
+		
+		String[] tempArr = dealStatusArr.trim().split(SPLIT_DIVISION);
+		StringBuilder tempStr = new StringBuilder(" 1=1 "); 
+		for(String str:tempArr){
+			tempStr.append(" and CHARINDEX('"+SPLIT_DIVISION+str+SPLIT_DIVISION+"', dealStatusName)>0 ");
+		}
+		
+		return tempStr.toString();
+	}
+	
+	public List<Object[]> queryLaneEnSquadDate(String laneEnSeriaNo, String squadDate){
+		try{
+			Date formatDate = DateUtil.parse(squadDate, DateUtil.PATTERN_STRING_DATE);
+			int year = formatDate.getYear()+1900;
+			String sql = "select CONVERT(varchar(10), squadDate, 120) from tb_LaneEnList_"+year+" where LaneEnSerialNo='"+laneEnSeriaNo+"' union all select CONVERT(varchar(10), squadDate, 120) from tb_LaneEnList_"+(year-1)+" where LaneEnSerialNo='"+laneEnSeriaNo+"'";
+			return (List<Object[]>) this.findBySql(sql, null);
+		} catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	//通过出口站编号获取出口流水数据
+	public List<Object[]> queryLaneByLaneExSeriaNo(String laneExSeriaNo, Date exTime){
+		try{
+			int year = exTime.getYear()+1900;
+			String sql = "select top(1) LaneExSerialNo, LaneEnSerialNo, EnRoadID, ExRoadID, enNetRoadID, exNetRoadID, enStationID, exStationID, enLaneID, exLaneID, squadDate, enLaneType, exLaneType from tb_LaneExList_"+year+" where LaneExSerialNo='"+laneExSeriaNo+"'";
+			return (List<Object[]>) this.findBySql(sql, null);
+		} catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+}

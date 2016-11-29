@@ -1,0 +1,41 @@
+package com.hgsoft.main.jcManange.dao;
+
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.security.dao.BaseDao;
+@Repository
+public class GrayListDao extends BaseDao<RoGrayList>{
+	
+	public void audit(String id,String opinion,String status){
+		String sql=" update tb_roGrayList set opinion ='"+opinion+ "',status="+status+" where id='"+id+"'";		
+		getSession().createSQLQuery(sql).executeUpdate();
+	}
+	
+	
+	public void saveBlackList(RoBlackList roBlackList){
+		getSession().save(roBlackList);
+	}
+	
+	public void upload(String id,String fileName,String uploadTime){
+		String sql="update tb_roGrayList set fileName ='"+fileName+"',uploadTime = convert(datetime,'"+uploadTime+"') where id= '"+id+"'";		
+		getSession().createSQLQuery(sql).executeUpdate();
+	}
+	public String plateValidate(Conditions condition){
+		String sql="SELECT count(*) FROM tb_roGrayList where VehPlate='"+condition.getPlateNum()+condition.getCarNo()+"' and VehPlateColor='"+condition.getVehPlateColor()+"'";
+	    String ifExit=	getSession().createSQLQuery(sql).uniqueResult().toString();
+	          if("0".equals(ifExit)){
+	        	  return "notExist";
+	          }else{
+	        	  return "Exist";
+	          }
+	}
+	
+	
+	public void deleteByAuto(){
+		String sql="delete  from tb_roGrayList  where DATEDIFF(MONTH, tb_roGrayList.UpdateTime,getdate()) >=6 ";
+		getSession().createSQLQuery(sql).executeUpdate();
+	}
+}

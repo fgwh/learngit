@@ -1,0 +1,336 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.io.File;
+import java.util.Date;
+
+import com.hgsoft.security.entity.BaseEntity;
+
+public class RoGrayList implements BaseEntity{
+
+		private String id;
+			
+		private String vehPlate;
+			
+		private short vehPlateColor;
+			
+		private short vehFlag=0;
+			
+		private short vehClass=0;
+		
+		private short vehType;
+		
+		private short axisGroup=0;
+						
+		private String vehInfo;
+			
+		private short vehBigType;
+			
+		private short vehMidType;
+			
+		private short vehSmallType;	
+		
+		private int feeCount;
+		
+	    private long feeMoney;
+			
+		private String applicant;
+			
+		private Date applicateTime;
+			
+		private String applicateOrg;
+			
+		private int status;
+			
+		private String fileName;
+			
+		private Date updateTime;
+		
+		private Date uploadTime;
+		
+		private String staffNo;
+		
+		private String opinion;
+		
+		private Date creatime;
+				
+		//外部字段
+		private File file;
+		
+	    private String fileFileName;
+	       
+	    private String fileContentType;
+	    
+	    private String vehColorStr;
+	    
+	    private String vehClassStr;
+	    
+	    private String plateNum;  
+	    
+	    private String carNo;
+	    
+	    private String vehTypeStr;   //稽查种类
+	    
+	    private String axisGroupStr;   //轴组
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getVehPlate() {
+			return vehPlate;
+		}
+
+		public void setVehPlate(String vehPlate) {
+			this.vehPlate = vehPlate;
+		}
+
+		public short getVehPlateColor() {
+			return vehPlateColor;
+		}
+
+		public void setVehPlateColor(short vehPlateColor) {
+			this.vehPlateColor = vehPlateColor;
+		}
+
+		public short getVehFlag() {
+			return vehFlag;
+		}
+
+		public void setVehFlag(short vehFlag) {
+			this.vehFlag = vehFlag;
+		}
+
+		public short getVehClass() {
+			return vehClass;
+		}
+
+		public void setVehClass(short vehClass) {
+			this.vehClass = vehClass;
+		}
+
+		public short getVehType() {
+			return vehType;
+		}
+
+		
+		public short getAxisGroup() {
+			return axisGroup;
+		}
+
+		public void setAxisGroup(short axisGroup) {
+			this.axisGroup = axisGroup;
+		}
+
+		public void setVehType(short vehType) {
+			this.vehType = vehType;
+		}
+
+		public String getVehInfo() {
+			return vehInfo;
+		}
+
+		public void setVehInfo(String vehInfo) {
+			this.vehInfo = vehInfo;
+		}
+
+		public short getVehBigType() {
+			return vehBigType;
+		}
+
+		public void setVehBigType(short vehBigType) {
+			this.vehBigType = vehBigType;
+		}
+
+		public short getVehMidType() {
+			return vehMidType;
+		}
+
+		public void setVehMidType(short vehMidType) {
+			this.vehMidType = vehMidType;
+		}
+
+		public short getVehSmallType() {
+			return vehSmallType;
+		}
+
+		public void setVehSmallType(short vehSmallType) {
+			this.vehSmallType = vehSmallType;
+		}
+
+		public String getApplicant() {
+			return applicant;
+		}
+
+		public void setApplicant(String applicant) {
+			this.applicant = applicant;
+		}
+
+		public Date getApplicateTime() {
+			return applicateTime;
+		}
+
+		public void setApplicateTime(Date applicateTime) {
+			this.applicateTime = applicateTime;
+		}
+
+		public String getApplicateOrg() {
+			return applicateOrg;
+		}
+
+		public void setApplicateOrg(String applicateOrg) {
+			this.applicateOrg = applicateOrg;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public void setStatus(int status) {
+			this.status = status;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+
+		public Date getUpdateTime() {
+			return updateTime;
+		}
+
+		public void setUpdateTime(Date updateTime) {
+			this.updateTime = updateTime;
+		}
+
+		public Date getUploadTime() {
+			return uploadTime;
+		}
+
+		public void setUploadTime(Date uploadTime) {
+			this.uploadTime = uploadTime;
+		}
+
+		public String getStaffNo() {
+			return staffNo;
+		}
+
+		public void setStaffNo(String staffNo) {
+			this.staffNo = staffNo;
+		}
+
+		public String getOpinion() {
+			return opinion;
+		}
+
+		public void setOpinion(String opinion) {
+			this.opinion = opinion;
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public void setFile(File file) {
+			this.file = file;
+		}
+
+		public String getFileFileName() {
+			return fileFileName;
+		}
+
+		public void setFileFileName(String fileFileName) {
+			this.fileFileName = fileFileName;
+		}
+
+		public String getFileContentType() {
+			return fileContentType;
+		}
+
+		public void setFileContentType(String fileContentType) {
+			this.fileContentType = fileContentType;
+		}
+
+		public String getVehColorStr() {
+			return vehColorStr;
+		}
+
+		public void setVehColorStr(String vehColorStr) {
+			this.vehColorStr = vehColorStr;
+		}
+
+		public String getVehClassStr() {
+			return vehClassStr;
+		}
+
+		public void setVehClassStr(String vehClassStr) {
+			this.vehClassStr = vehClassStr;
+		}
+
+		public String getPlateNum() {
+			return plateNum;
+		}
+
+		public void setPlateNum(String plateNum) {
+			this.plateNum = plateNum;
+		}
+
+		public String getCarNo() {
+			return carNo;
+		}
+
+		public void setCarNo(String carNo) {
+			this.carNo = carNo;
+		}
+
+		public String getVehTypeStr() {
+			return vehTypeStr;
+		}
+
+		public void setVehTypeStr(String vehTypeStr) {
+			this.vehTypeStr = vehTypeStr;
+		}
+
+		public int getFeeCount() {
+			return feeCount;
+		}
+
+		public void setFeeCount(int feeCount) {
+			this.feeCount = feeCount;
+		}
+
+		public long getFeeMoney() {
+			return feeMoney;
+		}
+
+		public void setFeeMoney(long feeMoney) {
+			this.feeMoney = feeMoney;
+		}
+
+		public Date getCreatime() {
+			return creatime;
+		}
+
+		public void setCreatime(Date creatime) {
+			this.creatime = creatime;
+		}
+
+		public String getAxisGroupStr() {
+			return axisGroupStr;
+		}
+
+		public void setAxisGroupStr(String axisGroupStr) {
+			this.axisGroupStr = axisGroupStr;
+		}
+	    
+	    
+
+				
+		
+}

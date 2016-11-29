@@ -1,0 +1,232 @@
+package com.hgsoft.main.carStatistic.service;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hgsoft.cxf.common.PropertiesUtil;
+import com.hgsoft.main.carStatistic.dao.CarStatisticDao;
+import com.hgsoft.main.carStatistic.entity.CarStatistic;
+import com.hgsoft.main.carStatistic.entity.LaneExListImg;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.DateUtil;
+import com.hgsoft.util.Pager;
+
+import sun.misc.BASE64Decoder;
+
+@Service
+@Transactional
+public class CarStatisticService extends BaseService<CarStatistic> {
+	private static final String roadCode = PropertiesUtil.getProperty("ROAD_CODE");
+	private static final String provinceIp = PropertiesUtil.getProperty("PROVINCE_IP");
+	private static final String provincePort = PropertiesUtil.getProperty("PROVINCE_PORT");
+	private static final String fileDir = PropertiesUtil.getProperty("baseDir")+"//"+PropertiesUtil.getProperty("FILE_SAVE_DIR");
+	
+	
+	@Resource
+	private LaneExListImgService laneExListImgService;
+
+	@Resource
+	public void setDao(CarStatisticDao carStatisticDao) {
+		super.setDao(carStatisticDao);
+	}
+
+	public CarStatisticDao getCarStatisticDao() {
+		return (CarStatisticDao) this.getDao();
+	}
+
+	/**
+	 * 根据车辆信息条件查询所有的收费流水信息
+	 * 
+	 * @param entity
+	 * @param pager
+	 * @return
+	 */
+	public List<Object[]> queryAllCarStatisticMsg(CarStatistic entity, Pager pager, Admin operator) {
+		return this.getCarStatisticDao().findByCarStatisticEntity(pager, entity, operator);
+	}
+
+	public List<Object[]> queryAllDealStatusMsg() {
+		return this.getCarStatisticDao().findByDealStatusEntity();
+	}
+
+	public List<LaneExListImg> pictureMsgData(CarStatistic entity) {
+		List<LaneExListImg> imageList = new ArrayList<LaneExListImg>();
+		// 首先获取出口图片
+		List<LaneExListImg> exImageList = laneExListImgService.queryLaneExListImgByEnSeria(entity.getExSerialNo());
+		if (null == exImageList || exImageList.size() == 0) {
+			// 图片需要获取到本地，直接使用站级服务器获取
+			//String roadAddress = ""
+			imageList.add(null);
+		} else {
+			imageList.add(exImageList.get(0));
+		}
+
+		List<LaneExListImg> enImageList = laneExListImgService.queryLaneExListImgByEnSeria(entity.getEnSerialNo());
+		if ((enImageList == null || enImageList.size()==0)) {
+			// 使用省营运协会的接口获取数据(非本路段)
+			if(!roadCode.equals(entity.getEnRoadNo())){
+				imageList.add(getProvincePictureData(entity));
+			} else{
+				//直接使用站级服务器获取
+				imageList.add(null);
+			}
+		} else {
+			imageList.add(enImageList.get(0));
+		}
+
+		return imageList;
+	}
+
+	public LaneExListImg getProvincePictureData(CarStatistic entity) {
+		String validateURL = "http://"+provinceIp+":"+provincePort+"/openservice/services/http/entranceImage?ImageSerialNo="+entity.getEnSerialNo();
+		HttpURLConnection conn = null;
+		FileOutputStream fos = null;
+		try {
+			URL url = new URL(validateURL); // 创建URL对象
+			// 返回一个URLConnection对象，它表示到URL所引用的远程对象的连接
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(3000); // 设置连接超时为5秒
+			conn.setRequestMethod("POST"); // 设定请求方式
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.connect(); // 建立到远程对象的实际连接
+			
+			System.out.println("aaaa:"+conn.getHeaderField("responseCode"));
+			
+			// 判断是否正常响应数据
+			if (conn.getResponseCode()==HttpURLConnection.HTTP_OK && conn.getHeaderField("responseCode").equals("0")) {
+				
+				InputStream inputStream = conn.getInputStream();
+				byte[] data = readInputStram(inputStream);
+				
+				entity.setExTime(new Date());
+				File file = createDir(entity.getExTime());
+				fos = new FileOutputStream(file);
+				fos.write(data);
+				
+				return saveLaneImage(file, entity.getEnSerialNo(), 1, entity);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("省中心图片信息获取异常.........");
+			
+			return null;
+		} finally {
+			if (conn != null) {
+				conn.disconnect(); // 中断连接
+			}
+			
+			if(fos!=null){
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/***
+	 * 保存获取过来的图片
+	 * @param file
+	 * @param entity
+	 * @return
+	 */
+	public LaneExListImg saveLaneImage(File file, String pid, int type, CarStatistic entity){
+		LaneExListImg image = new LaneExListImg();
+		
+		image.setExListImageName(file.getName());
+		image.setExListFileType("jpg");
+		image.setExListImageSize(file.length());
+		image.setExListImageDate(entity.getExTime());
+		image.setExListImgeType(type); //入口车辆照片
+		image.setId(UUID.randomUUID().toString());
+		image.setPid(pid);
+		
+		laneExListImgService.save(image);
+		
+		return image;
+	}
+	
+	//通过时间创建文件
+	public File createDir(Date exTime) throws IOException{
+		String beforeFileName = DateUtil.format(exTime, DateUtil.PATTERN_STRING_DATE);
+		String dirName = fileDir+"//"+beforeFileName;
+		File dirFile = new File(dirName);
+		
+		if(!dirFile.exists() || dirFile.isDirectory()){
+			dirFile.mkdir();
+		} 
+		
+		
+		String fileName = dirName+"//"+UUID.randomUUID().toString()+".jpg";
+		File newFile = new File(fileName);
+		newFile.createNewFile();
+		
+		return newFile;
+	}
+	
+	
+	// 对字节数组字符串进行Base64解码并生成图片
+	public static boolean generateImage(String imgStr, String imgFilePath) throws IOException {
+		if (imgStr == null)  return false;  // 图像数据为空
+		BASE64Decoder decoder = new BASE64Decoder();
+		// Base64解码
+		byte[] bytes = decoder.decodeBuffer(imgStr);
+		for (int i = 0; i < bytes.length; ++i) {
+			if (bytes[i] < 0) {// 调整异常数据
+				bytes[i] += 256;
+			}
+		}
+		// 生成jpeg图片
+		OutputStream out = new FileOutputStream(imgFilePath);
+		out.write(bytes);
+		out.flush();
+		out.close();
+		return true;
+	}
+	
+	
+	//将获取到的值转化成二进制文件
+	public byte[] readInputStram(InputStream inputStream) throws IOException{
+		ByteArrayOutputStream outStream = null;
+		try{
+			outStream = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while((len = inputStream.read(buffer))!=-1){
+				outStream.write(buffer, 0, len);
+			}
+			
+			byte[] data = outStream.toByteArray();
+			return data;
+		} finally{
+			if(outStream!=null){
+				outStream.close();
+			}
+			
+			if(inputStream!=null){
+				inputStream.close();
+			}
+		}
+	}
+		
+}

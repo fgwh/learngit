@@ -1,0 +1,38 @@
+package com.hgsoft.main.report.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.hgsoft.main.jcManange.service.AbnormalCarDetailService;
+import com.hgsoft.report.AbstractReportAction;
+
+public class AbnorCarDetailReportAction extends AbstractReportAction{
+
+	
+	private String exportplateNum;
+	 @Resource
+	 AbnormalCarDetailService abnormalcardetailservice=new AbnormalCarDetailService();
+	 
+	 
+	 
+	 public void doExportExcel() throws Exception{
+		 List list=abnormalcardetailservice.getAbnorLiuShui(exportplateNum, null);
+		 exportXLS(list);
+	 }
+
+
+
+	public String getExportplateNum() {
+		return exportplateNum;
+	}
+
+
+
+	public void setExportplateNum(String exportplateNum) {
+		this.exportplateNum = exportplateNum;
+	}
+
+
+
+}

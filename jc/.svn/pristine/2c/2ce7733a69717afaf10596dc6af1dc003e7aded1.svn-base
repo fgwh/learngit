@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>黑名单管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome.min.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../../css/goods.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../theme/transparent/main.css" />
+    <script language="javascript" src="../../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../js/quartz/plugins/My97DatePicker/WdatePicker.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+</head>
+<body style="min-height:900px;">
+<form name="myForm" id="myForm" action="declare_list.do" method="post">
+    <ul class="breadcrumb">
+        <li><i class="icon-home icon-2x"></i></li>
+        <li>当前位置：黑名单管理</li>
+    </ul>
+    <div class="widget widget-table">
+        <div class="widget-content">
+            <div class="widget-header">
+                <h5>黑名单管理</h5>
+            </div>
+            <table class="pn-ftable" border="0" cellpadding="10">
+                <tbody>
+                <tr>
+                    <th>车牌：</th>
+                    <td class="pn-fcontent">
+                        <input type="text" value="" name=""/>
+                    </td>
+                    <th>车型：</th>
+                    <td class="pn-fcontent">
+                        <input type="text" value="" name=""/>
+                    </td>
+                    <th>客获取标：</th>
+                    <td class="pn-fcontent"  >
+                        <select name="" id="" onchange="">
+                            <option value="">全部</option>
+                            <option value="">选项二</option>
+                            <option value="">选项三</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>拦截选项：</th>
+                    <td class="pn-fcontent"  >
+                        <select name="" id="" onchange="">
+                            <option value="">全部</option>
+                            <option value="">选项二</option>
+                            <option value="">选项三</option>
+                        </select>
+                    </td>
+                    <th>拦截开始日期：</th>
+                    <td class="pn-fcontent">
+                        <input style="background-color:white;" type="text" name="" id=""  class="Wdate" value=""  onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})"/>
+                    </td>
+                    <th>拦截结束日期：</th>
+                    <td class="pn-fcontent">
+                        <input style="background-color:white;" type="text" name="" id="" class="Wdate" value=""  onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th>逃费类型——大类：</th>
+                    <td class="pn-fcontent"  >
+                        <select name="" id="" onchange="">
+                            <option value="">全部</option>
+                            <option value="">选项二</option>
+                            <option value="">选项三</option>
+                        </select>
+                    </td>
+                    <th>逃费类型——中类：</th>
+                    <td class="pn-fcontent"  >
+                        <select name="" id="" onchange="">
+                            <option value="">全部</option>
+                            <option value="">选项二</option>
+                            <option value="">选项三</option>
+                        </select>
+                    </td>
+                    <th>逃费类型——细类：</th>
+                    <td class="pn-fcontent"  >
+                        <select name="" id="" onchange="">
+                            <option value="">全部</option>
+                            <option value="">选项二</option>
+                            <option value="">选项三</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <a 	class="btn btn-s-md btn-danger pull-right" id="">删除</a>
+            <a 	class="btn btn-s-md btn-primary pull-right"data-toggle="modal" data-target="#myModal4" id="">修改</a>
+            <a 	class="btn btn-s-md  pull-right"data-toggle="modal" data-target="#myModal3" id="">添加</a>
+        </div>
+    </div>
+    <div class="separator line"></div>
+    <div class="widget widget-table">  <!-- style="height:580px;overflow-y: auto;" -->
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h5>黑名单列表</h5>
+        </div>
+        <div class="widget-content widget-list widget-scroll">  <!--  style="min-height:500px;" -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>序号 </th>
+                    <th >车牌颜色</th>
+                    <th>客车标识</th>
+                    <th>车型</th>
+                    <th>摘要信息</th>
+                    <th>拦截选项</th>
+                    <th>拦截开始</th>
+                    <th>拦截结束</th>
+                    <th>逃费类型</th>
+                    <th>逃费类型</th>
+                    <th>逃费类型</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="databody">
+                <tr>
+                    <td>1</td>
+                    <td>xxxx-xx-xx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xx</td>
+                    <td>xxxx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>
+                        <a href=""class="btn btn-warning" value="1" id="showxiangqing" data-toggle="modal" data-target="#myModal5">详情</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>xxxx-xx-xx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xx</td>
+                    <td>xxxx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>
+                        <a href=""class="btn btn-warning" value="1" id="showxiangqing" data-toggle="modal" data-target="#myModal5">详情</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>xxxx-xx-xx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xx</td>
+                    <td>xxxx</td>
+                    <td>xx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>xxx</td>
+                    <td>
+                        <a href=""class="btn btn-warning" value="1" id="showxiangqing" data-toggle="modal" data-target="#myModal5">详情</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <jsp:include page="../include/pager.jsp" />
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel4">黑名单修改</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="1" cellspacing="1" style="border:1px solid #ddd;"  class="pn-ftable dt-table showTable">
+                    <tr>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"/></td>
+                        <th>客货标识 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>车辆品牌:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车辆型号 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车种 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></tr>
+                    <tr>
+                        <th>逃费类型-大类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>逃费总次数:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr> <tr>
+                    <th>逃费类型-中类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th>逃费总金额:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                </tr>
+                    <tr>
+                        <th>逃费类型-细类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>描述:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>列入拦截名单:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <input type="radio" onclick="radioOnclick()" name="" value="1" style="font-size: 12px;"/>是
+                            <input onclick="radioOnclick()" type="radio" name="" style="margin-left: 20px; font-size: 12px;" value="2"/>否
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>申请人 :</th>
+                        <td class="motaiTd">
+                            <input type="text" value="" name=""/>
+                         </td>
+                        <th>申请时间 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                          </td>
+                        <th>申请机构 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>附件:</th>
+                        <td class="motaiTd" colspan="5">
+                            <a 	class="btn btn-s-md " id="">添加</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>说明:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer" id="footer4">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal5" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel5">黑名单详细信息</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="1" cellspacing="1" style="border:1px solid #ddd;"  class="pn-ftable dt-table showTable">
+                    <tr>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"/></td>
+                        <th>客货标识 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>车辆品牌:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车辆型号 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车种 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></tr>
+                    <tr>
+                        <th>逃费类型-大类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>逃费总次数:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr> <tr>
+                    <th>逃费类型-中类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th>逃费总金额:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                </tr>
+                    <tr>
+                        <th>逃费类型-细类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>描述:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>列入拦截名单:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <input type="radio" onclick="radioOnclick()" name="" value="1" style="font-size: 12px;"/>是
+                            <input onclick="radioOnclick()" type="radio" name="" style="margin-left: 20px; font-size: 12px;" value="2"/>否
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>申请人 :</th>
+                        <td class="motaiTd">
+                            <input type="text" value="" name=""/>
+                         </td>
+                        <th>申请时间 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                          </td>
+                        <th>申请机构 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>附件:</th>
+                        <td class="motaiTd" colspan="5">
+                            <a 	class="btn btn-s-md " id="">添加</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>说明:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer" id="footer5">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel3">黑名单登记</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="1" cellspacing="1" style="border:1px solid #ddd;"  class="pn-ftable dt-table showTable">
+                    <tr>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车牌 :</th><td class="motaiTd"><font id="" class="motaiTdFont"/></td>
+                        <th>客货标识 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>车辆品牌:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车辆型号 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>车种 :</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></tr>
+                    <tr>
+                        <th>逃费类型-大类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th>逃费总次数:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr> <tr>
+                    <th>逃费类型-中类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th>逃费总金额:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                </tr>
+                    <tr>
+                        <th>逃费类型-细类:</th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                        <th></th><td class="motaiTd"><font id="" class="motaiTdFont"></font></td>
+                    </tr>
+                    <tr>
+                        <th>描述:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>列入拦截名单:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <input type="radio" onclick="radioOnclick()" name="" value="1" style="font-size: 12px;"/>是
+                            <input onclick="radioOnclick()" type="radio" name="" style="margin-left: 20px; font-size: 12px;" value="2"/>否
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>申请人 :</th>
+                        <td class="motaiTd">
+                            <input type="text" value="" name=""/>
+                         </td>
+                        <th>申请时间 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                          </td>
+                        <th>申请机构 :</th>
+                        <td class="motaiTd">
+                            <select name="" id="" onchange="">
+                                <option value="">全部</option>
+                                <option value="">选项二</option>
+                                <option value="">选项三</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>附件:</th>
+                        <td class="motaiTd" colspan="5">
+                            <a 	class="btn btn-s-md " id="">添加</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>说明:</th>
+                        <td class="pn-fcontent" colspan="5">
+                            <textarea style="width:100%" id="" name="" rows="3" cols="50" maxlength="300" ></textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer" id="footer3">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<jsp:include page="include/declareDataPrint.jsp"/>
+<jsp:include page="include/declareDataHuan.jsp">
+    <jsp:param value="#myModal5" name="seletor"/>
+</jsp:include>
+</body>
+
+</html>

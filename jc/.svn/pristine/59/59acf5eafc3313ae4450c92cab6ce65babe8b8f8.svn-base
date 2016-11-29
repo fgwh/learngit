@@ -1,0 +1,124 @@
+package com.hgsoft.main.travelpath;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.entity.Conditions;
+import com.hgsoft.main.laneexlist.entity.LaneExList;
+import com.hgsoft.main.laneexlist.service.LaneExListService;
+import com.hgsoft.security.action.BaseAction;
+
+@Controller
+@Scope("prototype")
+public class TravelpathAction extends BaseAction {
+	private Conditions conditions = new Conditions(); // 查询条件
+	private Map map = new HashMap();
+	@Resource
+	private LaneExListService laneExListService;
+
+	// 查询
+	public String list() {
+		list = laneExListService.getListBySql(pager, operator, conditions);
+		return "list";
+	}
+
+	// 生成路径
+	public List<Integer> savePath() {
+		List<LaneExList> laneExList = laneExListService.getListBySql2(pager, operator, conditions);
+		long laneExNum = 0;
+		ArrayList<Integer> flagId = new ArrayList<>();
+		if (laneExList != null & laneExList.size() > 0) {
+			laneExNum = laneExList.size();
+			for (int i = 0; i < laneExList.size(); i++) {
+				LaneExList laneExList2 = (LaneExList) laneExList.get(i);
+				String iHex = laneExList2.getRealPath();
+				for (int j = 0; j < iHex.length();) {
+					String s = iHex.substring(j, j + 4);
+					j += 4;
+					flagId.add(Integer.parseInt(s, 16));
+				}
+			}
+		}
+		return flagId;
+
+	}
+
+	// 通过realPath获取地址 不分页
+	public String queryNameBypath() {
+		List flaglist = savePath();
+		list = laneExListService.getListBySql3(flaglist);
+//		map.put("status", laneExNum);
+		return "success";
+	}
+
+	// 导出txt
+	public String explortTXT() {
+		FileOutputStream outSTr = null;
+		BufferedOutputStream Buff = null;
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String path = request.getSession().getServletContext().getRealPath("upordown/LaneExList.txt");
+		String enter = "\r\n";
+		List<LaneExList> laneExList = laneExListService.getListBySql2(pager, operator, conditions);
+		StringBuffer write;
+		long laneExNum = 0;
+		try {
+			outSTr = new FileOutputStream(new File(path));
+			Buff = new BufferedOutputStream(outSTr);
+			if (laneExList != null & laneExList.size() > 0) {
+				laneExNum = laneExList.size();
+				for (int i = 0; i < laneExList.size(); i++) {
+					LaneExList laneExList1 = (LaneExList) laneExList.get(i);
+					write = new StringBuffer();
+					write.append("出口日期|出口流水号|出口车道号|出口识别车牌|出口车牌|交易状态");
+					write.append(enter);
+					write.append(laneExList1.getExTime() + "|" + laneExList1.getLaneExSerialNo() + "|"
+							+ laneExList1.getExLaneId() + "|" + laneExList1.getExVehIdentifyPlate() + "|"
+							+ laneExList1.getEnVehiclePlate());
+					write.append(enter);
+					Buff.write(write.toString().getBytes("UTF-8"));
+				}
+			}
+			Buff.flush();
+			Buff.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				Buff.close();
+				outSTr.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		map.put("status", laneExNum);
+		return "success";
+	}
+
+	public Conditions getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(Conditions conditions) {
+		this.conditions = conditions;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		this.map = map;
+	}
+}

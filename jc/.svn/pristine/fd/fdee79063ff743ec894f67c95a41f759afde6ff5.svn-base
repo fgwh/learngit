@@ -1,0 +1,23 @@
+package com.hgsoft.main.jcManange.dao;
+
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.security.dao.BaseDao;
+@Repository
+public class BlackListDao extends BaseDao<RoBlackList>{
+	
+	
+	
+	
+	public String plateValidate(Conditions condition){
+		String sql="SELECT count(*) FROM tb_roBlackList where VehPlate='"+condition.getPlateNum()+condition.getCarNo()+"' and VehPlateColor='"+condition.getVehPlateColor()+"'";
+	    String ifExit=	getSession().createSQLQuery(sql).uniqueResult().toString();
+	          if("0".equals(ifExit)){
+	        	  return "notExist";
+	          }else{
+	        	  return "Exist";
+	          }
+	}
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hgsoft.affix.entity.AffixFile" table="tb_affix_file">
+        <id name="id" type="java.lang.String">
+            <column name="id" />
+            <generator class="uuid" />
+        </id>
+        <property name="bizId" type="java.lang.String">
+            <column name="bizId" length="128" />
+        </property>
+        <property name="path" type="java.lang.String">
+            <column name="path" length="1000" />
+        </property>
+        <property name="fileName" type="java.lang.String">
+            <column name="fileName" length="200" />
+        </property>
+        <property name="fileSize" type="long">
+            <column name="fileSize" />
+        </property>
+        <property name="uploadUser" type="java.lang.String">
+            <column name="uploadUser" length="100"/>
+        </property>
+        <property name="uploadTime" type="java.util.Date">
+            <column name="uploadTime" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

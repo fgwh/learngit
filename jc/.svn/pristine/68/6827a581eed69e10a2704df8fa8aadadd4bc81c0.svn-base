@@ -1,0 +1,371 @@
+package com.hgsoft.security.action;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import org.apache.struts2.ServletActionContext;
+import com.hgsoft.base.action.JsonResult;
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.entity.Good;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.main.service.GoodService;
+import com.hgsoft.main.squadMana.entity.Squad;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.BaseEntity;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.security.service.ModuleService;
+import com.hgsoft.security.service.OrgService;
+import com.hgsoft.security.util.OrgUtils;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.Pager;
+import com.opensymphony.xwork2.ActionContext;
+
+/**
+ * @author liujiefeng
+ * @date May 19, 2010
+ * @Description action基类
+ */
+
+public class BaseAction<T extends BaseEntity>{
+	
+	protected String deviceType;//判断是否手机登陆
+	protected Map map = new HashMap();//用于移动端Json返回
+	/** 用于返回JSON格式的数据 */
+	protected JsonResult jsonResult;
+	protected BaseService<T> service;
+	protected Result result;//返回JSP结果
+	protected String message;//返回JSP详细信息
+	@SuppressWarnings("rawtypes")
+	protected List list;
+	protected Admin operator;
+	@Resource protected Pager pager;
+	@Resource private ModuleService moduleService;
+	protected List<Org> orgList = new ArrayList<Org>(); 
+	/** 字典服务类 */
+	@Resource
+	protected DictionaryService dicService;
+	@Resource
+	protected OrgService orgService;
+	@Resource
+	private GoodService goodService;
+	/** 通过在外部注入所需对象 **/
+	@Resource
+	protected DataSource dataSource;
+	
+	/** 实体对象,用于查询和增/改 */
+	protected T entity;
+	
+	/** 用于批量删除 */
+	protected String ids;		
+	
+	protected HttpServletResponse response;
+	
+	protected ServletContext servletContext;
+
+	protected String realPath;
+			
+	protected static final String SUCCESS = "success";
+	protected static final String ERROR = "error";
+	protected static final String INPUT = "input";
+	protected static final String LOGIN = "login";
+	protected static final String ADD = "add";
+	protected static final String EDIT = "edit";
+	protected static final String LIST = "list";
+	protected static final String RELIST = "relist";
+	protected static final String UPLOADER = "webuploader";
+	protected static final String MOBILE = "mobile";
+
+    protected HttpServletRequest request = ServletActionContext.getRequest();
+	@PostConstruct
+	public void init() {
+		operator = (Admin) ActionContext.getContext().getSession().get("operator");	
+	}
+	
+	/**
+	 * 信息列表
+	 * @return
+	 */
+	public String list(){
+		if(null == entity) {
+			entity = service.newEntityInstance();
+		}
+		this.list = service.query(getPager(), entity);		
+		return LIST;
+	}
+	
+	public String add(){
+		return ADD;
+	}
+	
+	/** 增 */
+	public String save(){
+		service.saveOrUpdate(entity);
+		this.message = "保存成功";
+		reset();
+		return RELIST;
+	}
+	
+	/** 改 */
+	public String update(){
+		service.update(entity);
+    	reset();
+    	return RELIST;
+	}
+	
+	/** 删 */
+    public String delete() {
+    	try {
+	    	entity = service.find(entity.getId());
+	    	service.delete(entity);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	reset();
+    	return RELIST;
+    }
+    
+    /** 批量删 */
+    public String batchDelete() {
+    	if(this.ids != null){
+        	service.batchDelete(ids.split(","));
+    	}
+    	reset();
+    	return RELIST;
+    }
+    
+    /** 编辑*/
+	public String edit(){
+		entity = service.find(entity.getId());
+		return EDIT;
+	}
+	public Pager getPager() {
+		return pager;
+	}
+	public void setPager(Pager pager) {
+		this.pager = pager;
+	}
+	protected void reset(){
+		this.entity = null;
+	}
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;  
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		
+		this.servletContext = servletContext;
+		
+		this.realPath = this.servletContext.getRealPath("/");
+		
+	}	
+	@SuppressWarnings({ "rawtypes" })
+	public List getList() {
+		return list;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public String getBasePath(){
+		return ServletActionContext.getRequest().getContextPath();
+	}
+	public void setMid(String id) {
+		ActionContext.getContext().getSession().put("currentPosition", moduleService.getCurrentPosition(id));
+	}
+	public String getResult(){
+		return result.toString();
+	}
+	
+	public static enum Result{
+		SUCCESS,FAIL,RCSUCCESS
+	}
+	public Date getNow(){
+		return new Date();
+	}
+	
+	protected void outMessage(String message) {
+		HttpServletResponse response = ServletActionContext.getResponse();
+		response.setContentType("text/html; charset=UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.print(message.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				out.flush();
+				out.close();
+			}
+		}
+	}
+	
+	/***
+	 * 根据当前用户，获取有权限的机构列表
+	 * @return
+	 */
+	public List<Org> getOrgList() {
+		orgList = OrgUtils.getSubOrgByParentOrgId(getOperator().getOrg().getId());
+		return orgList;
+	}
+	
+	 
+	/**
+	 * 提供getter，方便页面取值
+	 * @return
+	 */
+	public Admin getOperator() {
+		return operator;
+	}
+	public void setOperator(Admin operator) {
+		this.operator = operator;
+	}
+	protected List<DicItem> getDicItems(String type){
+		return dicService.getItems(type);
+	}
+	
+	protected Map<String,String> getDicItemsMap(String type){
+		return dicService.getItemsMap(type);
+	}
+	
+	protected Map<String,String> getDicItemsNameMap(String type){
+		return dicService.getItemsNameMap(type);
+	}
+	
+	public String getIds() {
+		return ids;
+	}
+
+	public void setIds(String ids) {
+		this.ids = ids;
+	}
+	
+	public String getDeviceType() {
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		this.map = map;
+	}
+
+	public JsonResult getJsonResult() {
+		return jsonResult;
+	}
+
+	public void setJsonResult(JsonResult jsonResult) {
+		this.jsonResult = jsonResult;
+	}
+
+	public BaseService<T> getService() {
+		return service;
+	}
+
+	public void setService(BaseService<T> service) {
+		this.service = service;
+	}
+	
+	/** 获取登录人所在机构的所有子机构 */
+	public List<Org> getStationList() {
+		return  OrgUtils.getSubOrgByParentOrgStationId(operator.getOrg().getId());
+	}
+	
+	/**  获取所有收费站 */
+	public List<Org> getAllStationList(){
+		return CacheUtil.getStationList();
+	}
+	/**  获取中心收费站 */
+	public List<Org> getCenterStationList(){
+		return CacheUtil.getCenterStationList();
+	}
+	/**  获取所有路段 */
+	public List<Org> getAllRoadList(){
+		return CacheUtil.getRoadList();
+	}
+	
+	/** 获取所有路段的信息 */
+	public List<Org> getRoadList() {
+		return OrgUtils.getSubOrgByParentOrgRoadId(operator.getOrg().getId());
+	}
+	/**所有机构*/
+	public static List<Org> getAllOrgList() {
+		return CacheUtil.getAllOrgList();
+	} 	
+	/**MAP所有机构<机构Id,机构名>*/
+	public static Map<String, String> getAllOrgMap() {
+		return CacheUtil.getAllOrgMap();
+	}
+	/**MAP所有机构<机构Id,机构编号>*/
+	public static Map<String, String> getAllOrgMapCode() {
+		return CacheUtil.getAllOrgMapCode();
+	}
+	/**获取车牌颜色的信息*/
+	public List<DicItem> getColorList(){
+		return dicService.getItems("vehPlateColor");
+	}
+	/**获取车型的信息*/
+	public List<DicItem> getClassList(){
+		return dicService.getItems("vehClass");
+	}
+	/**获取车种的信息*/
+	public List<DicItem> getTypeList(){
+		return dicService.getItems("vehType");
+	}
+	/**获取车型map*/
+	public Map<String,String> getClassMap(){
+		return dicService.getItemsMap("vehClass");
+	}
+	/**获取车牌颜色map*/
+	public Map<String,String> getColorMap(){
+		return dicService.getItemsMap("vehPlateColor");
+	}
+	/**获取车种map*/
+	public Map<String,String> getTypeMap(){
+		return dicService.getItemsMap("vehType");
+	}
+	/**机构顺序排列*/
+	public  List<Org> getOrderOrgList() {
+		return orgService.getAllAvailableOrgListForOrder();
+	} 
+	public String getDropNode() {
+		List<Good> goods = goodService.findAll(); 
+		StringBuffer sbd = new StringBuffer(); 
+		sbd.append("[");
+		for(Good good:goods){ 
+			sbd.append("{ id:").append(good.getId()).append(",pId:").append(good.getPid()).append(",name:'").append(good.getName()).append("'},");
+		} 
+		sbd.append("]"); 
+		return sbd.toString();
+	}
+	
+	public Map getAdminMap(){
+		return CacheUtil.getStaffNoNameMap();
+	}		
+	public Map getOrgMap(){
+		return CacheUtil.getAllOrgCodeNameMap();
+	} 
+	public List<Squad> getSquadList(){
+		return CacheUtil.getSquadList();
+	}	
+	public Map<String,String> getParentOrgMap(){
+		return CacheUtil.getParentOrgNameMap();
+	}
+}

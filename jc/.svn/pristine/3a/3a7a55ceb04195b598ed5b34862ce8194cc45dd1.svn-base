@@ -1,0 +1,278 @@
+package com.hgsoft.report;
+
+import java.io.File;
+import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+
+import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.util.ServletContextAware;
+import org.springframework.beans.factory.annotation.Value;
+
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.DateUtil;
+import com.opensymphony.xwork2.ActionContext;
+
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.HtmlExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterConfiguration;
+import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
+
+public abstract class AbstractReportAction implements ServletResponseAware, ServletContextAware {
+	
+	public HttpServletResponse response;
+	
+	public ServletContext servletContext;
+	
+	@Resource
+	protected DataSource dataSource;
+	/** 字典服务类 */
+	@Resource
+	protected DictionaryService dicService;
+	
+	private String realPath;
+	
+	@Value("${jdbc.driverClass}")
+	private String driver;
+	
+	@Value("${jdbc.jdbcUrl}")
+	private String connectString;
+	
+	@Value("${jdbc.username}")
+	private String user;
+	
+	@Value("${jdbc.password}")
+	private String password;
+	
+	public String reportName = "报表";
+	
+	protected String previewFile = "";
+	protected String exportFile = "";
+	protected String exportPdf = "";
+	
+	protected Map<String,Object> parameters = new HashMap<String,Object>();
+	
+	protected Admin operator;
+	
+
+	/**
+	 * 通过jasp文件进行报表预览
+     */
+	public void preview() throws Exception{
+		response.setContentType("text/html;charset=utf-8");
+		parameters.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.FALSE);// 分页
+		JasperPrint jasperPrint = fillData(previewFile,null);
+		SimpleHtmlExporterConfiguration cfg = new SimpleHtmlExporterConfiguration();
+		cfg.setFlushOutput(true);
+		HtmlExporter exporter = new HtmlExporter();
+		exporter.setConfiguration(cfg);
+		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+		exporter.setExporterOutput(new SimpleHtmlExporterOutput(response.getOutputStream()));
+		exporter.exportReport();
+		response.getOutputStream().close();
+	}
+	/**
+	 * 导出Excel报表
+     */
+	public void exportXLS(List list) throws Exception{
+		response.setContentType("application/x-download; charset=utf-8");//1
+		response.setHeader("Content-disposition", "attachment; filename="+URLEncoder.encode(reportName + DateUtil.format(new Date(), "yyyyMMdd") + ".xls","utf-8"));//2
+		parameters.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
+		JasperPrint jasperPrint = fillData(exportFile,list);
+		SimpleXlsxReportConfiguration cfg = new SimpleXlsxReportConfiguration();// 配置导出选项, 导出
+		cfg.setOnePagePerSheet(false);
+		cfg.setIgnoreCellBackground(false);
+		cfg.setIgnoreCellBorder(false);
+		cfg.setIgnorePageMargins(false);
+		cfg.setMaxRowsPerSheet(65535);
+		cfg.setRemoveEmptySpaceBetweenColumns(true);
+		cfg.setRemoveEmptySpaceBetweenRows(true);
+		cfg.setWhitePageBackground(false);
+		cfg.setDetectCellType(true);
+		cfg.setSheetNames(new String[]{reportName});
+		JRXlsExporter exporter = new JRXlsExporter();
+		exporter.setConfiguration(cfg);
+		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+		exporter.exportReport();
+		response.getOutputStream().close();
+	}
+
+	/**
+	 * 导出PDF报表
+     */
+	public void exportPDF() throws Exception{
+		response.setContentType("application/x-download; charset=utf-8");//1
+		response.setHeader("Content-disposition", "attachment; filename="+URLEncoder.encode(reportName + DateUtil.format(new Date(), "yyyyMMdd") + ".pdf","utf-8"));//2
+		parameters.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.FALSE);
+		JasperPrint jasperPrint = fillData(exportPdf,null);
+		//SimplePdfReportConfiguration pdf = new SimplePdfReportConfiguration();//配置导出选项, 导出
+		JRPdfExporter exporter = new JRPdfExporter();
+		//exporter.setConfiguration(pdf);
+		exporter.setExporterInput(new SimpleExporterInput(jasperPrint));
+		exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(response.getOutputStream()));
+		exporter.exportReport();
+		response.getOutputStream().close();
+	}
+
+	
+	protected JasperPrint fillData(String jasperFile,List list) throws Exception{
+		compile(jasperFile);
+		Connection conn = null;
+		if(null==list){
+		try {
+			conn = dataSource.getConnection();
+			return JasperFillManager.fillReport(realPath+jasperFile, getParameters(), conn);
+		}finally{
+			try {
+				if(conn!=null && !conn.isClosed()){
+					conn.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		}else{
+			return JasperFillManager.fillReport(realPath+jasperFile, getParameters(), new JRBeanCollectionDataSource(list));
+		}
+	}
+	
+	protected void compile(String jasperFile) throws Exception{
+		File j= new File(realPath+jasperFile);
+		File c= new File(realPath+jasperFile.replace(".jasper", ".jrxml"));
+		if(j.exists()){
+			if(c.exists() && c.lastModified()>j.lastModified()){
+				JasperCompileManager.compileReportToFile(c.getAbsolutePath(), j.getAbsolutePath());
+			}
+		}else{
+			if(c.exists()){
+				JasperCompileManager.compileReportToFile(c.getAbsolutePath(), j.getAbsolutePath());
+			}
+		}
+	}
+	
+	public String getLocation(){
+		return previewFile;
+	}
+	
+	protected Connection getConnection() throws Exception{
+		Class.forName(driver);
+		return DriverManager.getConnection(connectString, user, password);
+	}
+	
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;  
+	}
+	
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+		this.realPath = this.servletContext.getRealPath("/");
+	}
+
+	public Map<String, Object> getParameters() {
+		this.parameters.put("ReportTitle", getReportName());
+		this.parameters.put("operatorName",getOperatorName());
+		//this.parameters.put("squadNoNameMap", CacheUtil.getSquadNoNameMap());
+		//this.parameters.put("allOrgCodeNameMap", CacheUtil.getAllOrgCodeNameMap()); 
+		//this.parameters.put("staffNoNameMap", CacheUtil.getStaffNoNameMap()); 
+		//this.parameters.put("parentOrgMap", CacheUtil.getParentOrgNameMap());
+		this.parameters.put("operTypeNameMap", getOperTypeNameMap());
+		return parameters;
+	}
+	
+	
+	protected String getOperatorName() {
+		if(operator==null){
+			operator = (Admin) ActionContext.getContext().getSession().get("operator");
+		}
+		return operator.getName();
+	}
+	
+	
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
+	}
+
+	public String getPreviewFile() {
+		return previewFile;
+	}
+
+	public void setPreviewFile(String previewFile) {
+		this.previewFile = previewFile;
+	}
+
+	public String getExportFile() {
+		return exportFile;
+	}
+
+	public void setExportFile(String exportFile) {
+		this.exportFile = exportFile;
+	}
+	
+	public String getExportPdf() {
+		return exportPdf;
+	}
+	public void setExportPdf(String exportPdf) {
+		this.exportPdf = exportPdf;
+	}
+	protected Map<String,String> getDicItemsMap(String type){
+		return dicService.getItemsMap(type);
+	}
+	
+	public static Map<String, String> getStationIdNameMap() {
+		return CacheUtil.getStationIdNameMap();
+	}
+
+	/** 获取所有站的信息 */
+	public List<Org> getStationList() {
+		return CacheUtil.getStationList();
+	}
+	protected List<DicItem> getDicItems(String type){
+		return dicService.getItems(type);
+	}
+	 
+	public static Map<Integer, String> getSquadNoNameMap() {
+		return CacheUtil.getSquadNoNameMap();
+	}
+
+	public static Map<String, String> getRelatedRoleTypeNameMap() {
+		return CacheUtil.getRelatedRoleTypeNameMap();
+	}
+	
+	public static Map<String, String> getOperTypeNameMap(){
+		Map<String, String> map = new HashMap<>();
+		map.put("1", "添加");
+		map.put("2", "更新");
+		map.put("3", "删除");
+		map.put("4", "查询");
+		map.put("5", "移动端操作");
+		return map;
+	}
+	
+}

@@ -1,0 +1,88 @@
+/*即时通信*/
+#jstx { position: relative;}
+
+#message-box{ position:relative; }
+#message-box .top{ background-color:#efefef; line-height:40px; text-indent:20px; border:1px solid #f6f6f6; }
+#message-box .top .username{ font-weight:bold; margin-right:15px; }
+#message-box .middle{ border-top:1px solid #ddd; background-color:#eee; }
+#message-box .bottom{ position:relative; bottom:0; height:58px; border-top:1px solid #f6f6f6; background-color:#eee; }
+.timer{ line-height:35px; text-align:center; color: black; display: block; }
+.message-window{ height:380px; margin: 0; min-width: 455px;overflow-y: auto }
+.message-window li{ position:relative; overflow:auto; margin-top:15px; }
+.message-window .userImg{ margin:0 15px; }
+.message-window li.left .userImg,.message-window li.left .message-detail { float:left;}
+.message-window li.right .userImg,.message-window li.right .message-detail { float:right;}
+.message-window li .message { border:15px solid transparent;  background: #f9f9f9; line-height: 17px; margin-top: 3px; }
+.message-window .message-detail { width:85%;}
+.message-window .username { color: #000000;font-size: 16px;}
+.message-window .right .username { float: right; width: 100%; text-align: right;}
+.message-window .right .username span { float: right;}
+.message-window .message-time {  text-align: center; color: #B0B0B0; float: left; line-height: 25px;}
+.message-window li.left .userImg, .message-window li.right .userImg {
+	width:5%;
+}
+.message-window li.left .message, .message-window li.right .message {
+	/* width:90%; */
+	word-break: break-all;
+	font-weight: 400;
+	line-height: 20px;
+}
+.message-window li.left .message {
+	font-size: 18px;
+	float: left;
+	-moz-border-image: url(../images/left-dialog.png) 25 25 round;
+	-o-border-image: url(../images/left-dialog.png) 25 25 round;
+	-webkit-border-image: url(../images/left-dialog.png) 25 25 round;
+	border-image: url(../images/left-dialog.png) 25 25 round;
+}
+.message-window li.right .message {
+	float: right;
+	font-size: 18px;
+	-moz-border-image: url(../images/right-dialog.png) 25 25 round;
+	-o-border-image: url(../images/right-dialog.png) 25 25 round;
+	-webkit-border-image: url(../images/right-dialog.png) 25 25 round;
+	border-image: url(../images/right-dialog.png) 25 25 round;
+}
+
+#tip   {position:absolute;color:#333;display:none;}
+#tip s   {position:absolute;top:40px;left:-20px;display:block;width:0px;height:0px;font-size:0px;line-height:0px;border-color:transparent #BBA transparent transparent;border-style:dashed solid dashed dashed;border-width:10px;}
+#tip s i   {position:absolute;top:-10px;left:-8px;display:block;width:0px;height:0px;font-size:0px;line-height:0px;border-color:transparent #fff transparent transparent;border-style:dashed solid dashed dashed;border-width:10px;}
+#tip .t_box   {position:relative;background-color:#CCC;filter:alpha(opacity=50);-moz-opacity:0.5;bottom:-3px;right:-3px;}
+#tip .t_box div  {position:relative;background-color:#FFF;border:1px solid #ACA899;background:#FFF;padding:1px;top:-3px;left:-3px;}
+
+.audioTip{ max-height:150px;border:1px solid #DDD; }
+.tip   {max-height:150px;border:1px solid #DDD;}
+a.timer:hover, a.timer:focus{color:blue;}
+#group ul li{background-color: white;}
+
+.col-cont{background-color: #d3d3d3;height: 650px}
+
+.online{color: #8CBC2C;}
+.foldingbar {text-align: left}
+
+.searchUser{ padding: 5px; margin: 0; border: 1px #D5D5D5;width: 100% }
+.clear { display: none; position: absolute;width: 20px;height: 20px;font-size:20px;color: #000000; right:15px;margin:4px}
+.searchUser:valid + .clear { display: inline; }
+.searchUser::-ms-clear { display: none; }
+#userList{overflow-y: auto;  overflow-x: hidden;  height: 500px!important;}
+.console-header{width: 100%;height:30px;margin: 10px}
+#colsewindow{font-size: 22px; margin-right: 10px;}
+#console-container {  background-color:#efefef; border:1px solid #f6f6f6;  }
+.username{  font-size: 16px;  font-weight: bold;  }
+
+#menberList{width: 20%;  position: absolute;  top: 0px;  right: 0px;  margin: 50px 5px;display: none;background-color: #EFEFEF;  }
+.menber{width: 95%;  margin: 0 0 0 5px;}
+#menberList .groupName{text-align: center;  width: 98%;}
+#chatContent{resize: none;  width: 100%;  margin: 4px 0px 0px 0px;}
+.trash{position: absolute;  right: 0px;  font-size: 25px;  margin: -50px 38px;}
+
+.faceBtn{  font-size:12px;  width:25px;  height:25px;  line-height:25px;  padding-left:25px;  background:url(../css/face.gif) 4px 4px no-repeat;  cursor:pointer;  }
+
+.toolBtn{padding: 10px 20px 10px 20px;}
+
+#moreInfo{position: absolute;  text-align: center;  width: 100%;z-index: 999;}
+
+.group-trash{ position: relative; right: 0px; font-size: 25px; left: 80%; top: -50px;}
+.groupLi{height:77px;}
+
+#selectUserList{ overflow-y: auto; overflow-x: hidden; height: 480px !important;}

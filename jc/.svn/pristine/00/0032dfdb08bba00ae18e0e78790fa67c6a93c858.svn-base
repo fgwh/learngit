@@ -1,0 +1,29 @@
+package com.hgsoft.main.entity;
+
+
+/**
+ * 封装请求参数
+ * @author 郭志强
+ * @time 2016/9/12 15:39
+ */
+public class Conditions {
+
+    private String startQueryDate; // 开始时间
+    private String days;  // 天数
+
+    public String getStartQueryDate() {
+        return startQueryDate;
+    }
+
+    public void setStartQueryDate(String startQueryDate) {
+        this.startQueryDate = startQueryDate;
+    }
+
+    public String getDays() {
+        return days;
+    }
+
+    public void setDays(String days) {
+        this.days = days;
+    }
+}

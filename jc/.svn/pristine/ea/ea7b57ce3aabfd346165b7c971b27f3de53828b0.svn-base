@@ -1,0 +1,130 @@
+var log = {};
+$(function() {	
+	  $(":radio").click(function(){
+		 scope($(this).val());
+	     $("#myForm").submit(); 
+	  });
+
+	
+	//邦定搜索按钮，添加点击事件查询数据列表
+	$("#submit").on("click", function(event) {
+		//验证查询条件合法性
+		if (log.checkDate()) {
+			    scope($(":radio:checked").val());
+                $("#myForm").submit();
+           }
+		event.preventDefault();
+	});
+
+	//按回车键，查询数据列表
+	document.onkeydown = function(event) {
+		var ev = document.all ? window.event : event;
+		if (ev.keyCode == 13) {
+			//验证查询条件合法性
+			if (log.checkDate()) {
+				scope($(":radio:checked").val());
+                $("#myForm").submit();
+            }
+			ev.preventDefault();
+		}
+	};
+});
+
+//验证查询条件
+    log.checkDate = function() {
+        var v_start = $("#startQueryDate").val();//new Date($("#startQueryDate").val().replace("-", "/"));
+        var v_end = $("#endQueryDate").val();//new Date($("#endQueryDate").val().replace("-", "/"));
+        if (v_start > v_end) {
+            alert("结束时间不能小于开始时间");
+            return false;
+        }            
+        return true;
+    };
+//范围
+function scope(value){
+	 if(value==0){
+    	 $("#myForm").attr('action','blackList_list.do');
+    	 
+     }else{
+    	 $("#myForm").attr('action','blackList_proList.do');
+     }
+}
+
+function save(){
+
+	if(dataValidate()){
+	     $("#myForm").submit();
+		}
+} 
+
+
+function dataValidate(){
+	//不为空校验
+	 var flag=true;
+	 var all=$("*[dataValidate]");
+	 all.each(function(){
+		 if($(this).val()==""){
+			alert($(this).attr("dataValidate")+"不能为空!");
+			 flag=false;
+			 return false; 
+		 }
+	 });
+	  //时间校验
+		if($("input[name='roBlackList.startDate']").val()==""){
+	        alert("请输入开始时间！");
+	        return false;
+	    }
+	    if($("input[name='roBlackList.endDate']").val()==""){
+	        alert("请输入结束时间！");
+	        return false;
+	    }
+		 var startTime=$("input[name='roBlackList.startDate']").val();
+	    var start=new Date(startTime.replace("-", "/").replace("-", "/"));
+	    var endTime=$("input[name='roBlackList.endDate']").val();
+	    var end=new Date(endTime.replace("-", "/").replace("-", "/"));
+	    if(end<start){
+	        alert("开始时间要小于结束时间");
+	        return false;
+	    }
+	 
+		//文件类型验证
+	    
+	 	   var s=$("[name='roBlackList.file']").val();
+		   if(-1==s.indexOf("zip")&&-1==s.indexOf("rar")){
+			   alert("请选择zip或rar格式文件上传");
+	             return false;
+		   }   
+
+	
+	  //车牌 车牌颜色校验是否重复
+	    
+	    var  plateNum=$("#plateNums option:selected").attr("value");
+	    var carNo=$("input[name='roBlackList.carNo']").val();
+	    var vehPlateColor=$("#vehPlateColor option:selected").val();
+	    if(""!=plateNum&&""!=vehPlateColor&&""!=carNo){
+	    	$.ajax({
+	    		   type: "POST",
+	    		   url: uri+"admin/blackList_plateValidate.do",
+	    		   data: {'conditions.plateNum':plateNum,
+	    			           'conditions.carNo':carNo,
+	    			           'conditions.vehPlateColor':vehPlateColor
+	    		            },
+	    		   success: function(msg){
+	    			 if("notExist"==msg.validate){ 
+	    		         alert("改车辆未在黑名单中");
+	    		      }else if("Exist"==msg.validate){
+	    			    alert("该车辆已加入黑名单");  
+	    			    return false;
+	    		   }
+	    		}
+	    		});
+	    }else{
+	    	alert("请选择车牌号和颜色");
+	        return false;
+	    }
+	 
+	 return flag;
+}
+
+
+

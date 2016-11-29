@@ -1,0 +1,188 @@
+package com.hgsoft.main.jcManange.service;
+
+
+
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.main.jcManange.dao.GrayListDao;
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.Pager;
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class GrayListService extends BaseService<RoGrayList>{
+	
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Resource
+	public EvidenceService evidenceService;
+	
+	@Resource
+	private BlackListService blackListService;
+	
+	
+	@Resource
+	public void setDao(GrayListDao grayListDao) {
+		super.setDao(grayListDao);
+	}
+
+	public GrayListDao getGrayListDao() {
+		return (GrayListDao) this.getDao();
+	}
+
+	 public boolean plateValidate(Conditions condition){
+		 
+		 List rs=getGrayListDao().plateValidate(condition);
+		 if(rs.size()==0){
+			 return true;
+		 }else{
+			 if(rs.get(0).toString().equals(condition.getId())){
+				 return true;
+			 }			 
+	     }
+		 return false;
+		 
+	 }	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> queryAllMessageList(Pager pager,Conditions conditions,String[] selectName,String sqlName,Class clazz) {		
+						
+		List<Object[]> list = getDao().findByNamedQuery(pager, sqlName, selectName,conditions.toArray(selectName),clazz,"new");
+			
+		return list;
+	}
+	
+	
+	
+	public boolean saveRoGrayList(RoGrayList entity){	
+				
+		
+		Date uploadTime = new Date();
+		
+		if(!"".equals(entity.getVehPlate())){
+			entity.setVehPlate((entity.getPlateNum()+entity.getCarNo()).toUpperCase());
+		}else{
+			entity.setVehPlate(entity.getVehPlate().toUpperCase());
+		}
+		
+		if(entity.getFile()!=null){
+			
+			entity.setUploadTime(uploadTime);		
+			
+			String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+			
+			entity.setFileName(fileName);
+			
+			evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),uploadTime);
+			
+		}
+		
+		if(entity.getId()==null||"".equals(entity.getId())){
+			
+			entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+		}
+		
+		entity.setUpdateTime(uploadTime);									
+				
+		entity.setStatus(0);
+		
+		getGrayListDao().saveOrUpdate(entity);
+		
+		return  true;
+	}
+
+	
+	//审核
+	public boolean saveAudit(Conditions conditions){
+		
+		if("0".equals(conditions.getStatus())){
+			RoGrayList roGrayList = getGrayListDao().find(conditions.getId());
+			
+			RoBlackList roBlackList = new RoBlackList();
+			roBlackList.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+			roBlackList.setVehPlate(roGrayList.getVehPlate());
+			
+			roBlackList.setVehPlateColor(roGrayList.getVehPlateColor());
+			
+			roBlackList.setVehFlag(roGrayList.getVehFlag());
+			
+			roBlackList.setVehClass(roGrayList.getVehClass());
+			
+			roBlackList.setVehType(roGrayList.getVehType());
+			
+			roBlackList.setVehInfo(roGrayList.getVehInfo());
+			
+            roBlackList.setApplicant(roGrayList.getApplicant());
+			
+			roBlackList.setApplicateTime(roGrayList.getApplicateTime());
+			
+			roBlackList.setApplicateOrg(roGrayList.getApplicateOrg());
+			
+			roBlackList.setFeeCount(conditions.getFeeCount());
+			
+			roBlackList.setFeeMoney(conditions.getFeeMoney());
+			
+			roBlackList.setInterceptOption(Integer.parseInt(conditions.getInterceptOption()));
+			
+			roBlackList.setStartDate(conditions.getStartDate());
+			
+			roBlackList.setEndDate(conditions.getEndDate());
+			
+			roBlackList.setIntercept(0);
+			
+			roBlackList.setSource(1);
+			
+			roBlackList.setJfStatus(0);
+			
+			try{			
+			    blackListService.save(roBlackList);
+			    deleteById(conditions.getId());
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
+												
+		}else{
+			
+			getGrayListDao().audit(conditions.getId(),conditions.getOpinion(),conditions.getStatus());
+			
+			
+		}
+		
+		return true;
+	}
+	
+	
+	//上传证据链
+	 
+		public void upload(RoGrayList entity){
+			if(entity.getFile()!=null){
+				Date uploadTime = new Date();
+								
+				String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+							
+				evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),uploadTime);
+				
+				getGrayListDao().upload(entity.getId(),fileName,sdf.format(uploadTime));
+				
+			}	
+					
+		}
+		
+		
+		public  void deleteByAuto(){
+			getGrayListDao().deleteByAuto();			
+		}
+	
+}

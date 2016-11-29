@@ -1,0 +1,141 @@
+package com.hgsoft.main.jcManange.service;
+
+
+
+
+import com.hgsoft.main.jcManange.dao.BlackListDao;
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.Pager;
+import com.hgsoft.util.StringUtil;
+
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class BlackListService extends BaseService<RoBlackList>{
+
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Resource
+	public EvidenceService evidenceService;
+	
+	
+	@Resource
+	public void setDao(BlackListDao blackListDao) {
+		super.setDao(blackListDao);
+	}
+
+	public BlackListDao getBlackListDao() {
+		return (BlackListDao) this.getDao();
+	}
+
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> queryAllMessageList(Pager pager,Conditions conditions,String[] selectName,String sqlName,Class clazz) {		
+		List<Object[]> list=new ArrayList();
+		String vehFlag = conditions.getVehFlag();
+		String startQueryDate = conditions.getStartQueryDate();
+		String endQueryDate = conditions.getEndQueryDate();
+		String interceptOption = conditions.getInterceptOption();
+		if(StringUtil.isTrimEmpty(vehFlag)&&StringUtil.isTrimEmpty(startQueryDate)
+			&&StringUtil.isTrimEmpty(endQueryDate)&&StringUtil.isTrimEmpty(interceptOption)){
+			return list;
+		}
+		list= getDao().findByNamedQuery(pager, sqlName, selectName,conditions.toArray(selectName),clazz,"new");
+		return list;
+	}
+	
+	
+	
+	public boolean saveRoBlackList(RoBlackList entity){	
+		
+		
+		
+		if("".equals(entity.getVehPlate())||entity.getVehPlate()==null){
+			entity.setVehPlate((entity.getPlateNum()+entity.getCarNo()).toUpperCase());
+		}else{
+			entity.setVehPlate(entity.getVehPlate().toUpperCase());
+		}
+		
+		if(entity.getFile()!=null){
+			Date uploadTime = new Date();
+			
+			entity.setUploadTime(uploadTime);		
+			
+			String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+			
+			entity.setFileName(fileName);
+			
+			evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),uploadTime);
+			
+		}												
+		if(entity.getId()==null||"".equals(entity.getId())){
+			
+			entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+			
+			entity.setJfStatus(0);
+		}
+		
+		entity.setSource(0);
+		
+				
+		
+		getBlackListDao().saveOrUpdate(entity);
+		
+		return  true;
+	}
+
+     //车牌验证
+	 public boolean plateValidate(Conditions condition){
+		 List rs=getBlackListDao().plateValidate(condition);
+		 if(rs.size()==0){
+			 return true;
+		 }else{
+			 if(rs.get(0).toString().equals(condition.getId())){
+				 return true;
+			 }			 
+	     }
+		 return false;	
+	 }
+	 //费用追缴
+	 public int recovered(RoBlackList entity){	
+            int i=0;
+			if(entity.getFile()!=null){
+				Date uploadTime = new Date();
+										
+				String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+								
+				evidenceService.saveFile(fileName, entity.getFile(), 1, entity.getId(),uploadTime);	
+				
+				i= getBlackListDao().recovered(entity.getId());
+				
+			}	
+		 return i;
+		}
+	 
+	 
+	//上传证据链 0代表证据链 1代表追缴证据
+	 
+	public int  upload(RoBlackList entity){
+		int i=0;
+		if(entity.getFile()!=null){
+			Date uploadTime = new Date();
+							
+			String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+						
+			evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),uploadTime);
+			
+			i=getBlackListDao().upload(entity.getId(),fileName,sdf.format(uploadTime));			
+		}	
+		   return i;
+	}
+}

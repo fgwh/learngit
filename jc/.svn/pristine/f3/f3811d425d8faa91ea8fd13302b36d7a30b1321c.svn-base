@@ -1,0 +1,70 @@
+package com.hgsoft.main.jcManange.entity;
+
+
+
+public class ProGrayList {
+	
+	private String id;
+	
+	private String vehPlate;
+	
+	private int vehPlateColor;
+	
+	private int vehFlag;
+	
+	private int vehClass;
+	
+	private String vehInfo;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getVehPlate() {
+		return vehPlate;
+	}
+
+	public void setVehPlate(String vehPlate) {
+		this.vehPlate = vehPlate;
+	}
+
+	public int getVehPlateColor() {
+		return vehPlateColor;
+	}
+
+	public void setVehPlateColor(int vehPlateColor) {
+		this.vehPlateColor = vehPlateColor;
+	}
+
+	public int getVehFlag() {
+		return vehFlag;
+	}
+
+	public void setVehFlag(int vehFlag) {
+		this.vehFlag = vehFlag;
+	}
+
+	public int getVehClass() {
+		return vehClass;
+	}
+
+	public void setVehClass(int vehClass) {
+		this.vehClass = vehClass;
+	}
+
+	public String getVehInfo() {
+		return vehInfo;
+	}
+
+	public void setVehInfo(String vehInfo) {
+		this.vehInfo = vehInfo;
+	}
+	
+	
+	
+
+}

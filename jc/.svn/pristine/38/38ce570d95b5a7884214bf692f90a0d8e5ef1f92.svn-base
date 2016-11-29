@@ -1,0 +1,20 @@
+package com.hgsoft.main.laneenlist.service;
+
+
+import com.hgsoft.main.laneenlist.dao.LaneEnListDao;
+import com.hgsoft.main.laneenlist.entity.LaneEnList;
+import com.hgsoft.security.service.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * 入口流水service
+ * @author 郭志强
+ * @time 2016/9/9 13:26
+ */
+@Service
+public class LaneEnListService extends BaseService<LaneEnList> {
+    // 注入dao
+    @Autowired
+    private LaneEnListDao laneEnListDao;
+}

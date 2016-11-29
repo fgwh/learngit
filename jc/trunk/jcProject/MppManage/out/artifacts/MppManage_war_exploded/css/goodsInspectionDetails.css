@@ -1,0 +1,10 @@
+
+.imgFirstClass{width:100px;height:100px;border:1px #28C97D solid;}
+.imgsClass{width:100px;height:100px;margin-left: 10px;border:1px #28C97D solid;}
+.qianMingShow1{width:100px;height:100px;border:1px #28C97D solid;margin-left:10px;}
+.qianMingShow2{width:100px;height:100px;margin-left: 10px;border:1px #28C97D solid;}
+.motaiTd{height:30px;width:33.33%;font-size: 12px;white-space: normal;}
+.motaiTdFont{margin-left:10px;width:200px;font-size: 12px;}
+.displayClass {display:none;}
+.widget-list{ min-height:300px; }
+#imgshow{position:absolute;z-index:100100;border:1px solid #ccc;background:#FFF;padding:5px;color:#fff; display:none;}

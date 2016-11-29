@@ -1,0 +1,334 @@
+package com.hgsoft.excel;
+
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.DateTimeConverter;
+import com.hgsoft.util.UtilDateConverter;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.converters.SqlDateConverter;
+import org.apache.commons.beanutils.converters.SqlTimestampConverter;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+
+import javax.annotation.Resource;
+import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+//import com.ptgl.util.CommonTool;
+
+/**
+ * Excel导入成Model集合，Model集合导出成Excel
+ */
+public abstract class BaseExcel {
+
+    private static WebApplicationContext applicationContext = ContextLoader
+            .getCurrentWebApplicationContext();
+    static {
+        ConvertUtils.register(new UtilDateConverter(), Date.class);
+        ConvertUtils.register(new SqlDateConverter(null), java.sql.Date.class);
+        ConvertUtils.register(new SqlTimestampConverter(null), Timestamp.class);
+    }
+
+    @Resource
+    protected DictionaryService dictionaryService;
+
+    protected static int STARTROW = 1;
+
+    //protected static Log log = CommonTool.getLog(BaseExcel.class);
+
+    abstract public List readExcel(String excelPath);
+
+    abstract public List readExcel(String excelPath, ModelMapper mm);
+
+    abstract public void writeExcel(List modelList, ModelMapper mm, File file, String sheetStr);
+
+    protected String getPropertyValue(String propertyName, Object object) {
+        String value = null;
+        try {
+            //value = CommonTool.getProperty(object, propertyName);
+        } catch (Exception e) {
+//			System.out.println("获取对象属性值出错。", e);
+        }
+        return value == null ? "" : value;
+    }
+
+    /**
+     * 导入Excel文件，并把文件内数据生成Model集合
+     *
+     * @param excelPath 文件路径
+     * @param className Model的类全路径名
+     * @return Model集合
+     */
+    public List importSingleExcel(String excelPath, String className) {
+        ModelMapper mm = getModelMapper(className);
+        if (mm == null) {
+            System.out.println("没有配置该类对应的Excel文件格式：" + className);
+            return null;
+        }
+        Class clazz = null;
+        try {
+            clazz = Class.forName(mm.getClassName());
+        } catch (ClassNotFoundException ex) {
+            System.out.println("配置指定的类不存在：" + mm.getClassName());
+            throw new RuntimeException("类不存在:" + className);
+        }
+
+        List result = new ArrayList();
+        System.out.println("readExcel");
+        List valueMapList = readExcel(excelPath, mm);
+        for (Iterator iter = valueMapList.iterator(); iter.hasNext(); ) {
+            Map propValueMap = (Map) iter.next();
+            Object model;
+            try {
+                model = clazz.newInstance();
+            } catch (Exception e) {
+                System.out.println("实例化类" + clazz.getName() + "发生错误，请检查该类是否有默认构造方法。");
+                throw new RuntimeException("实例化类" + clazz.getName() + "发生错误");
+            }
+            System.out.println("fillProperties");
+            //也可以这这里进行映射的转换。转换完了以后再放进去
+            //在这里通过distinct 的转换。那么就要修改原来的model类
+
+
+            fillProperties(model, propValueMap, mm);
+            result.add(model);
+        }
+        return result;
+    }
+
+    public List importExcel(String excelPath) {
+        return readExcel(excelPath);
+    }
+
+    /**
+     * 导出Model集合为Excel文件
+     *
+     * @param modelList Model集合
+     * @param excelPath Excel文件完整路径
+     */
+    public void exportExcel(List modelList, String excelPath) {
+        exportExcel2(modelList, excelPath, "sheet1");
+    }
+
+    public void exportExcel2(List modelList, String excelPath, String sheetStr) {
+        if (modelList == null || modelList.size() == 0) {
+            return;
+        }
+        String className = modelList.get(0).getClass().getName();
+        ModelMapper mm = getModelMapper(className);
+        if (mm == null) {
+            System.out.println("没有配置该类对应的Excel文件格式：" + className);
+            return;
+        }
+        File file = new File(excelPath);
+        writeExcel(modelList, mm, file, sheetStr);
+    }
+
+    public void exportExcel(List modelList, File file, String id) {
+        exportExcel2(modelList, file, id, "sheet1");
+    }
+
+    public void exportExcel2(List modelList, File file, String id, String sheetStr) {
+        if (modelList == null || modelList.size() == 0) {
+            return;
+        }
+        ModelMapper mm = getModelMapper(id);
+        if (mm == null) {
+            System.out.println("没有配置该id的Excel文件格式：" + id);
+            return;
+        }
+        writeExcel(modelList, mm, file, sheetStr);
+    }
+
+    public void exportExcel(List modelList, String excelPath, String id) {
+        exportExcel2(modelList, excelPath, id, "sheet1");
+    }
+
+    public void exportExcel2(List modelList, String excelPath, String id, String sheetStr) {
+        File file = new File(excelPath);
+        exportExcel2(modelList, file, id, sheetStr);
+    }
+
+    protected ModelMapper getModelMapper(String classAllName) {
+        ModelMapper mm = (ModelMapper) getExcelModelConfig(classAllName).get(classAllName);
+        if (mm == null) {
+            System.out.println("没有配置该类对应的Excel文件格式：" + classAllName);
+            return null;
+        }
+        try {
+            Class.forName(mm.getClassName());
+        } catch (ClassNotFoundException ex) {
+            System.out.println("配置指定的类不存在：" + mm.getClassName());
+            throw new RuntimeException("类不存在:" + mm.getClassName());
+        }
+        return mm;
+    }
+
+    protected Map getExcelModelConfig(String id) {
+        return ExcelConfigLoader.getExcelModelConfig(id);
+    }
+
+    protected void fillProperties(Object bean, Map properties, ModelMapper mm) {
+        //值得映射要在这里处理好了。 要在这里写一个函数，进行值映射的转换。但是如果在这里结构也不是很好
+
+        PropertyDescriptor[] descriptors = PropertyUtils.getPropertyDescriptors(bean);
+
+        Map newProperties = new HashMap();
+        for (int i = 0; i < descriptors.length; i++) {
+            PropertyDescriptor descriptor = descriptors[i];
+            if (descriptor.getWriteMethod() != null && isSupportedType(descriptor.getPropertyType()) && properties.containsKey(descriptor.getName())) {
+                newProperties.put(descriptor.getName(), properties.get(descriptor.getName()));
+            }
+        }
+        DictionaryService dicService = (DictionaryService)applicationContext.getBean("dictionaryService");
+
+        // 将颜色转换为对应的数字  map k-v反转
+        Map<String, String> vehPlateColorMap = reverseMap(dicService.getItemsMap("vehPlateColor"));
+
+        Map<String, Integer> vehFlagMap = getVehFlagMap();
+        // 将车型转换为对应的数字  map k-v反转
+        Map<String, String> vehClassMap = reverseMap(dicService.getItemsMap("vehClass"));
+        // 获得车种map
+        Map<String, String> vehTypeMap = reverseMap(dicService.getItemsMap("vehType"));
+       // 获得轴组map
+        Map<String, String> axisGroupMap = reverseMap(dicService.getItemsMap("axisGroup"));
+        // 获得申请机构map
+        Map<String, String> orgCodeNameMap = reverseMap(CacheUtil.getAllOrgCodeNameMap());
+        // 获得拦截选项map
+        Map<String, Integer> interceptOptionMap = getInterceptOption();
+
+
+        //CommonTool.beanPopulate(bean, newProperties);
+        for (Object o : newProperties.keySet()) {
+            try {
+                Object value = newProperties.get(o);
+//				if(value.toString().equals("是")){
+//					value = 0;
+//				}else if(value.toString().equals("否")){
+//					value = 1;
+//				}
+
+                if (value.toString().equals("正常")) {
+                    value = 0;
+                } else if (value.toString().equals("违规")) {
+                    value = 1;
+                }
+
+                if (vehFlagMap.get(value) != null) {
+                    value = vehFlagMap.get(value);
+                }
+
+                if (vehClassMap.get(value) != null) {
+                    value = vehClassMap.get(value);
+                }
+
+                if (vehTypeMap.get(value) != null) {
+                    value = vehClassMap.get(value);
+                }
+                
+                if (axisGroupMap.get(value) != null) {
+                    value = axisGroupMap.get(value);
+                }
+
+                if (orgCodeNameMap.get(value) != null) {
+                    value = orgCodeNameMap.get(value);
+                }
+
+                if (vehPlateColorMap.get(value) != null) {
+                    value = vehPlateColorMap.get(value);
+                }
+                if (interceptOptionMap.get(value) != null) {
+                    value = interceptOptionMap.get(value);
+                }
+
+
+
+                // PropertyUtils.setProperty(bean,o.toString(),value);
+                // ConvertUtils.register(new DateLocaleConverter(),Date.class);
+
+//                System.out.println(o.toString());
+//                System.out.println(value);
+//                System.out.println(value.getClass().getName());
+				if (value.getClass().getName().equals("java.util.Date")) {
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					value = dateFormat.format(value);
+				}
+//				ConvertUtils.register(new DateTimeConverter(), Date.class);
+//                ConvertUtils.register(new DateConverter(), java.util.Date.class);
+
+
+
+                ConvertUtils.register(new DateTimeConverter(), java.util.Date.class);
+                BeanUtils.setProperty(bean, o.toString(), value);
+
+            } catch (Exception e) {
+            }
+        }
+
+
+    }
+
+    /**
+     * 封装客货标识map
+     *
+     * @return
+     */
+    private Map<String, Integer> getVehFlagMap() {
+        // 创建一个hashmap
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        // 货车--1
+        result.put("客车", 1);
+        // 客车--2
+        result.put("货车", 2);
+        // 非记重或不分客货 --0
+        result.put("非记重或不分客货", 0);
+        return result;
+
+    }
+
+    /**
+     * 封装拦截选项
+     *
+     * @return
+     */
+    private Map<String, Integer> getInterceptOption() {
+        // 创建一个map
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        // 出口---1
+        result.put("不拦截", 0);
+        // 入口---2
+        result.put("出口拦截", 1);
+        // 全部----3
+        result.put("入口拦截", 2);
+        result.put("出入口拦截", 3);
+        return result;
+    }
+
+    /**
+     * 反转map
+     *
+     * @param vehPlateColorMap
+     * @return
+     */
+    private Map<String, String> reverseMap(Map<String, String> map) {
+        // 创建一个Map
+        HashMap<String, String> result = new HashMap<>();
+        // 遍历map
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            result.put(entry.getValue(), entry.getKey());
+        }
+
+        return result;
+    }
+
+    private boolean isSupportedType(Class type) {
+        return (ConvertUtils.lookup(type) != null);
+    }
+
+
+}

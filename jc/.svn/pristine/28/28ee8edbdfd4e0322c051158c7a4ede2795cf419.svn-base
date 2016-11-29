@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %> 
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>识别率</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome.min.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../../css/goods.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../theme/transparent/main.css" />
+    <script language="javascript" src="${basePath}/js/jquery.min.js"></script>
+    <script type="text/javascript" src="${basePath}/js/quartz/plugins/My97DatePicker/WdatePicker.js"></script>
+    	<script type="text/javascript" src="${basePath}/js/communicate.js"></script>
+    <script src="${basePath}/js/bootstrap.min.js"></script>
+		<script language="javascript" src="${basePath}/js/jquery.min.js"></script>
+	<script language="javascript" src="${basePath}/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="${basePath}/js/echarts.js"></script>
+	<script type="text/javascript" src="${basePath}/js/charts.js"></script>
+	<script type="text/javascript" src="${basePath}/js/highcharts.js"></script>
+	<script type="text/javascript" src="${basePath}/js/line.js"></script>
+	<script type="text/javascript" src="${basePath}/js/bar.js"></script>
+	<script type="text/javascript" src="${basePath}/js/pie.js"></script>
+	<script type="text/javascript" src="${basePath}/js/util.js"></script>
+
+</head>
+<body>
+<form name="myForm" id="myForm" action="Recanalysis_getRecanalysis.do" method="post">
+    <ul class="breadcrumb">
+        <li><i class="icon-home icon-2x"></i></li>
+        <li>当前位置：识别率报表</li>
+    </ul>
+    <div class="widget widget-table">
+        <div class="widget-content">
+            <div class="widget-header">
+                <h5>识别率分析报表</h5>
+            </div>
+            <table class="pn-ftable" border="0" cellpadding="10">
+                <tbody>
+                <tr>
+                <input type="hidden"  id="sbl" value="${shibielv }"></hidden>
+                    <th><span class="point">*</span>中心站 :</th>
+                    <td class="pn-fcontent"  >
+                      <input type="hidden" id="seleSta" value="${conditions.centralStation }"/>
+                        <select name="conditions.centralStation" id="centralStation" onchange="selectStations(this.value)"> 
+								<option value="">全部</option> 
+								<c:forEach items="${Roadlists}" var="road">
+									<option value="${road[0]}" <c:if test="${road[0] == conditions.centralStation}"><c:out value="selected"/></c:if>>${road[1]}</option>
+								</c:forEach> 
+
+
+						</select>
+                    </td>
+                  <th>收费站 :</th>
+                    <td class="pn-fcontent"  >
+                        <select name="conditions.stationNo"  id="stationNo"  onchange="">
+							<input  type="hidden" id="stationId" value="${conditions.stationNo}"/>
+						</select> 
+                    <th><span class="point">*</span>出入口:</th>
+                    <td class="pn-fcontent"  >
+                        <select name="conditions.gateWay" id="gateWay" onchange="">
+                            <option value="">全部</option>
+                            <option value="ex"  <c:if test="${conditions.gateWay eq 'ex'}"><c:out value="selected"/></c:if>>出口</option>
+                            <option value="en" <c:if test="${conditions.gateWay  eq 'en'}"><c:out value="selected"/></c:if>>入口</option>
+                             <option value="all" <c:if test="${conditions.gateWay eq 'all'}"><c:out value="selected"/></c:if>>出入口</option>
+                        </select>
+                    </td>
+                </tr>
+                    <tr>
+                       	<th>车道</th>
+							<td class="pn-fcontent"><input type="text" name="conditions.enLane" id="enLane" maxlength="80"  value="${conditions.enLane } "/></td>
+                    <th><span class="point">*</span>起始时间 ：</th>
+                    <td class="pn-fcontent">
+                        <input name="conditions.startQueryDate" id="startQueryDate"  class="Wdate" style="background-color:white ;"value="${conditions.startQueryDate}"
+                               onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})" readonly="readonly" type="text" />
+                    </td>
+                    <th><span class="point">*</span>结束时间 ：</th>
+                    <td class="pn-fcontent">
+                        <input name="conditions.endQueryDate" id="endQueryDate"  class="Wdate"  style="background-color:white ;"value="${conditions.endQueryDate}"
+                               onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})" readonly="readonly" type="text" />
+                    </td>
+                </tr>
+                <tr>
+                 <th><span class="point">*</span>时间段:</th>
+                    <td style="font-size:12px;" colspan="5">
+                        <input type="hidden" id="period" value="${ conditions.period} ">
+                       	<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="00:00-03:00"    id="period"/>0:00-3:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="03:00-06:00"  id="period"/>03:00-06:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="06:00-09:00"  id="period"/>06:00-09:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="09:00-12:00"  id="period"/>09:00-12:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="12:00-15:00"  id="period"/>12:00-15:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="15:00-18:00" id="period"/>15:00-18:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="18:00-21:00"  id="period"/>18:00-21:00
+						<input style="width: 30px; border: 0;" type="checkbox" name="conditions.period" value="21:00-24:00"  id="period"/>21:00-24:00
+					</td> 
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /widget-content -->
+        <div class="widget-bottom">
+         <input name="uri" type="hidden" value="${uri}"/>
+            <a class="btn btn-s-md btn-primary pull-right" id="submit" href="javascript:;">查询</a>
+        </div>
+    </div>
+    <div class="separator line"></div>
+    <div class="widget widget-table">
+        <div class="widget widget-table" style="width:60%;float:left">
+            <div class="widget-header">
+                <i class="icon-th-list"></i>
+                <h5>数据列表</h5>
+            </div>
+            <div class="widget-content widget-list widget-scroll dataList">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>中心站</th>
+                        <th>收费站</th>
+                        <th>车道</th>
+                        <th>出入口</th>
+                        <th>时间段</th>
+                        <th>号码识别成功率</th>
+                        <th>号码识别失败率</th>
+                    </tr>
+                    </thead>
+                    <tbody id="databody">
+                    <tr>
+                        <td  id="cs"></td>
+                        <td id="sn"> ${conditions.orgName  }  </td>
+                        <td id="ce">${conditions.enLane } </td>
+                        <td id="cg">${conditions.churukou }</td>
+                        <td  id="cp">${conditions.shijianduan }</td>
+                        <td><fmt:formatNumber type="number" value="${shibielv*100}" maxFractionDigits="2"/>%</td>
+                        <td ><fmt:formatNumber type="number" value="${(1- shibielv)*100}" maxFractionDigits="2"/>%</td>
+                    </tr>
+              
+                    </tbody>
+                </table>
+            </div>
+         
+    	</div>
+    	       <!--图表插到这里-->
+           <div class="pull-left;"style="overflow-x:auto;width: 40%; height:350px;">
+	   	   		<div id="part_container" style="height:350px"></div>
+	   	   </div>
+        <script>
+        $(function() {
+            //邦定搜索按钮，添加点击事件查询数据列表
+            $("#submit").on("click", function(event) {
+                //验证查询条件合法性
+             if (check()) { 
+                    $("#myForm").submit();
+               } 
+                event.preventDefault();
+            });
+
+            //按回车键，查询数据列表
+            document.onkeydown = function(event) {
+                var ev = document.all ? window.event : event;
+                if (ev.keyCode == 13) {
+                    //验证查询条件合法性
+                    if (checkTime()) {
+                        $("#myForm").submit();
+                    }
+                    ev.preventDefault();
+                }
+            }; 
+            		
+    	    var id = $("#seleSta").val();
+  		    selectStations(id);
+    	
+        });
+        		
+		$(function(){
+			//DrawMobileBar("type_container",["一类","二类","三类","四类","五类"],[[100, 200, 220, 120, 100],[40, 80, 50, 80,80, 70]],["总数","正常"]);
+		    /* var source = $('#statisticsString').val();//源字符串： '标题;未通过车辆,通过车辆;项目一,项目二;45&50,55&60';
+		    //空数据则不显示
+		    if(source != '') {
+		    	source = '按车型统计柱状图;未通过车辆(辆),通过车辆(辆);' + source;
+			    //drawReportBarGraph("type_container",source,"按车型统计柱状图");
+			    drawRightBarGraph("type_container",source);
+		    } */
+		 
+			huidiao();
+			piechart();
+
+
+			
+		});
+		
+		
+		function check(){
+			
+		     
+			/* if($("#centralStation").val()==""){
+				alert("请选择中心站");
+				return false;
+			} */
+	/* 		if($("#toll").val()==""){
+							alert("请选择收费站");
+							return false;
+						} */
+			if($("#gateWay").val()==""){
+				 alert("请选择出入口");
+					return false;
+			}
+			var per=$("#period:checked").val();
+			if(per==""||per==undefined){
+				alert("请选择时间段");
+				return false;
+			}
+			
+			if($("#startQueryDate").val()==""){
+		        alert("请输入开始时间！");
+		        return false;
+		    }
+		    if($("#endQueryDate").val()==""){
+		        alert("请输入结束时间！");
+		        return false;
+		    }
+		    var startTime=$("#startQueryDate").val();
+		    var start=new Date(startTime.replace("-", "/").replace("-", "/"));
+		    var endTime=$("#endQueryDate").val();
+		    var end=new Date(endTime.replace("-", "/").replace("-", "/"));
+		    if(end<start){
+		        alert("开始时间要小于结束时间");
+		        return false;
+		    }
+
+            /*判断是否跨年*/
+            var s=startTime.substring(0,4);
+             if(0!=endTime.indexOf(s)){
+                  alert("不可跨年查询");
+            }
+             
+        
+          /*判断时间段是否连续*/
+       
+            var spCodesTemp = "";
+            var p=$("input[type='checkbox']:checked").each(function(i){
+                if(0==i){
+                 spCodesTemp = $(this).val();
+                }else{
+                 spCodesTemp += (","+$(this).val());
+                }
+               });
+            var periodArr=spCodesTemp.split(",");
+            
+            for(var n = 0;n<periodArr.length-1; n++) {
+           	   var p1=periodArr[n].substr(0,2);
+           	   var p2=periodArr[n+1].substr(0,2);
+           	   if(p1!=p2-3){
+           	   	 alert("时间段选择必须连续勾选");
+           	   	 return false;
+           	     }
+            }
+		    return true;
+		}
+		
+		function piechart(){
+		
+			var source = $('#sbl').val();//源字符串： '标题;未通过车辆,通过车辆;项目一,项目二;45&50,55&60';
+		    //空数据则不显示
+		    if(source != '') {
+	
+		    	var target=new Array();
+		    	var succ=parseFloat(source);
+		    	var item1=new  Object();
+		    	var item2=new  Object();
+		    	item1.name="成功率";
+		    	item1.value=succ;
+		    	var err=1-succ;
+		    	item2.name="失败率";
+		    	item2.value=err;
+		    	target.push(item1);
+		      	target.push(item2);
+		 /*    	console.dir(target); */
+		    	DrawMobilePie("part_container","识别率详情",target,"70%");
+		    }
+		} 
+		
+		
+		
+		function huidiao(){
+			var selText1  = $("#centralStation option:selected").html()
+	     	$("#cs").html(selText1);
+	     	
+	     	   var per=$("#period").val();
+			    var perArr=per.split(",");
+			    $("input[type='checkbox']").each(function(){
+			     if(-1!=per.indexOf($(this).val())){
+                  	$(this).attr("checked",true);		     
+			     }
+			    });
+			    
+			    
+			    
+		}
+        </script>
+    </div>
+</form>
+
+<script>
+
+function selectStations(id){
+	var option = "<option value=''>全部</option>";
+	$("#stationNo").empty();
+	$("#stationNo").append(option);
+	
+	if(!!id){
+	var roadNo = $("#centralStation option :selected").val();
+	if(null == id || "" == id){
+			id = roadNo;
+	}
+	var url=uri+"admin/Recanalysis_getStationSelectNameZJ.do";
+	params = {
+			'imgId':id,
+	};
+	var option = "<option value=''>全部</option>";
+	$("#stationNo").empty();
+	var stationNo=$("#stationNo").val();
+		var url=uri+"admin/Recanalysis_getStationSelectNameZJ.do";
+		params = {
+				'imgId':id,
+		};
+		$.get(url,params,function(jsonTemp){
+			 var nameList=jsonTemp.stList;
+			 var stationId=$("#stationId").val()
+				for (var a = 0; a < nameList.length; a++) {
+				    	var arr = nameList[a]; 
+				    	if(arr[1] == stationId){
+							option += "<option value='"+arr[1]+"' selected>"+arr[2]+"</option>"
+							var inp="<input type='hidden'  id='staName'   value='"+arr[2]+"'/>"
+							$("#stationId").append(inp);
+						}else{
+				    		option += "<option value='"+arr[1]+"'>"+arr[2]+"</option>"
+				  }
+				}
+			$("#stationNo").append(option);
+		});
+
+	}else{
+		$("#stationId").val('');
+	}
+	return ok=1;
+}
+
+
+
+
+</script>
+<script>
+
+</script>
+</body>
+</html>

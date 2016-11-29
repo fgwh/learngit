@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<package namespace="/admin" name="admin" extends="struts-default,json-default">
+		<interceptors>
+
+			<interceptor name="permission" class="permissionInterceptor" />
+			<interceptor name="illegalCharacter" class="illegalCharacterInterceptor"/> 
+			 <!-- <interceptor name="license" class="licenseInterceptor"></interceptor> 
+			<interceptor name="logInterceptor" class="operLogInterceptor"></interceptor> -->
+			<interceptor-stack name="permissionStack">
+
+				<interceptor-ref name="permission" /> 
+				<interceptor-ref name="illegalCharacter" /> 
+				<!--  <interceptor-ref name="license" />
+				<interceptor-ref name="logInterceptor" />-->
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="permissionStack" />
+
+		<global-results>
+			<result name="error">/WEB-INF/jsp/error.jsp</result>
+
+			<result name="login" type="redirectAction">/login.do?username=${username}
+			</result>
+			<result name="logout" type="redirect">${redirectUrl}</result>
+			<result name="dangerousInputValues">/WEB-INF/jsp/danVal.jsp</result>
+		</global-results>
+
+		<action name="sys_*" method="{1}" class="systemAction">
+			<result name="index">/WEB-INF/jsp/index.jsp</result>
+			<result name="top">/WEB-INF/jsp/top.jsp</result>
+			<result name="left">/WEB-INF/jsp/left.jsp</result>
+			<result name="right">/WEB-INF/jsp/right.jsp</result>
+			<result name="leftJson" type="json">
+				<param name="root">list</param>
+				<param name="excludeProperties">
+					\[\d+\](\.\w*)*\.display,
+					\[\d+\](\.\w*)*\.functions,
+					\[\d+\](\.\w*)*\.remark,
+					\[\d+\](\.\w*)*\.subsystem,
+					\[\d+\](\.\w*)*\.subsystems
+				</param>
+			</result>
+		</action>
+		<!-- 文件下载 李宇云-->
+		<action name="download_*" class="downloadAction">
+				<result name="success" type="stream">
+				<param name="contentType">${mimeType}</param>
+				<param name="inputName">inStream</param>
+				<param name="contentDisposition">attachment;filename="${filename}"</param>
+			</result>
+			<result name="error">/WEB-INF/jsp/error2.jsp</result> 
+		</action>
+
+		<action name="admin_*" method="{1}" class="adminAction">
+			<result name="browerError">/WEB-INF/jsp/jiance.html</result>
+			<result name="add">/WEB-INF/jsp/admin/add.jsp</result>
+			<result name="edit">/WEB-INF/jsp/admin/edit.jsp</result>
+			<result name="list">/WEB-INF/jsp/admin/list.jsp</result>
+			<result name="index">/WEB-INF/jsp/admin/index.jsp</result>
+			<result name="lookmyself">/WEB-INF/jsp/admin/lookmyself.jsp</result>
+			<result name="editmyself">/WEB-INF/jsp/admin/edit_myself.jsp</result>
+			<result name="updatemyself">/WEB-INF/jsp/admin/edit_myself.jsp</result>
+			<result name="datasource">/WEB-INF/jsp/admin/showDataSource.jsp</result>
+			<result name="info">/WEB-INF/jsp/admin/info.jsp</result>
+			<result name="saveTheme" type="json">
+				<param name="root">theme</param>
+			</result>
+			<result name="mobile" type="json">
+				<param name="includeProperties">map.*</param>
+				<param name="callbackParameter">map</param>
+			</result>
+			<result name="orgTreeJson" type="json">
+				<param name="root">orgList</param>
+				<param name="excludeProperties">
+					\[\d+\](\.\w*)*\.remark
+				</param>
+			</result>
+			<result name="tel" type="json">
+				<param name="root">dataMap</param>
+			</result>
+			<result name="relist" type="redirect">
+				admin_list.do
+			</result>
+		</action>
+
+		<action name="module_*" method="{1}" class="moduleAction">
+			<result name="edit">/WEB-INF/jsp/module/edit.jsp</result>
+		</action>
+
+		<action name="role_*" method="{1}" class="roleAction">
+			<result name="add">/WEB-INF/jsp/role/add.jsp</result>
+			<result name="edit">/WEB-INF/jsp/role/edit.jsp</result>
+			<result name="list">/WEB-INF/jsp/role/list.jsp</result>
+			<result name="relist" type="redirect">
+				role_list.do
+			</result>
+		</action>
+		<!--黑名单-->
+		<action name="blackList_*" method="{1}" class="blackListAction">
+			<result name="list">/WEB-INF/jsp/jcgl/blackList.jsp</result>
+			<result name="success" type="json">
+				<param name="root">map</param>
+			</result>
+			<result name="download" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">102400</param>
+			</result>
+		</action>
+		<!--灰名单-->
+		<action name="grayList_*" method="{1}" class="grayListAction">
+			<result name="list">/WEB-INF/jsp/jcgl/grayList.jsp</result>
+			<result name="success" type="json">
+				<param name="root">map</param>
+			</result>
+			<result name="download" type="stream">
+				<param name="contentType">application/octet-stream</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">attachment;filename="${fileName}"</param>
+				<param name="bufferSize">102400</param>
+			</result>
+            <result name="abnorlist" type="redirect">abnorCar_getAbnorCar.do</result>
+		</action>
+
+		<!--任务调度管理 -->
+		<action name="jobTask_*" method="{1}" class="jobTaskAction">
+			<result name="add">/WEB-INF/jsp/quartz/addJob.jsp</result>
+			<result name="list">/WEB-INF/jsp/quartz/jobList.jsp</result>
+			<result name="edit">/WEB-INF/jsp/quartz/updateJob.jsp</result>
+			<result name="logcheck">/WEB-INF/jsp/quartz/logcheck.jsp</result>
+			<result name="nameExist" type="json">
+				<param name="root">jobNameExist</param>
+			</result>
+			<result name="success" type="json">
+				<param name="root">map</param>
+			</result>
+		</action>
+		
+			<!--路径识别 -->
+		<action name="travelPath_*" method="{1}" class="travelpathAction"> 
+			<result name="list">/WEB-INF/jsp/travelPath/lujingshibie.jsp</result>
+			<result name="success" type="json">
+				<param name="root">map</param>
+			</result>
+			<result name="success2" type="json">
+				<param name="includeProperties">map.*</param>
+				<param name="callbackParameter">map</param>
+				</result>
+				
+			<result name="download" type="stream">
+				<param name="contentType">text/plain</param>
+				<param name="inputName">tXTList</param>
+				<param name="contentDisposition">attachment;filename="lujing.txt"</param>
+				<param name="bufferSize">102400</param>
+			</result>
+			
+		</action>
+
+		<!-- 运营维护管理 Created by User: 詹浦 -->
+		<action name="loginLog_*" method="{1}" class="loginLogAction">
+			<result name="list">/WEB-INF/jsp/log/loginLogList.jsp</result>
+		</action>
+
+		<!-- 基本参数配置 -->
+		<action name="basicParam_*" method="{1}" class="basicParamAction">
+			<result name="list">/WEB-INF/jsp/basicInfo/basicParamList.jsp
+			</result>
+			<result name="add">/WEB-INF/jsp/basicInfo/basicParamAdd.jsp</result>
+			<result name="edit">/WEB-INF/jsp/basicInfo/basicParamEdit.jsp
+			</result>
+			<result name="paramNameExsit" type="json">
+				<param name="root">nameExsit</param>
+			</result>
+			<result name="relist" type="redirect">
+				basicParam_list.do
+			</result>
+		</action>
+
+		<!-- 工班表管理 -->
+		<action name="squad_*" method="{1}" class="squadAction">
+			<result name="list">/WEB-INF/jsp/squad/squadList.jsp</result>
+			<result name="add">/WEB-INF/jsp/squad/squadAdd.jsp</result>
+			<result name="edit">/WEB-INF/jsp/squad/squadEdit.jsp</result>
+			<result name="listAdmin">/WEB-INF/jsp/squad/listAdmin.jsp
+			</result>
+			<result name="allotEdit">/WEB-INF/jsp/squad/allotEdit.jsp
+			</result>
+			<result name="message" type="json">
+				<param name="root">message</param>
+			</result>
+			<result name="relist" type="redirect">
+				squad_list.do
+			</result>
+		</action>
+
+		<!-- 任务日志信息查询 -->
+		<action name="qrtzLog_*" method="{1}" class="qrtzLogAction">
+			<result name="list">/WEB-INF/jsp/log/taskLog.jsp</result>
+		</action>
+
+		<!-- 操作日志 -->
+		<action name="operLog_*" method="{1}" class="operLogAction">
+			<result name="list">/WEB-INF/jsp/operLog/list.jsp</result>
+			<result name="mobile" type="json">
+				<param name="includeProperties">map.*</param>
+				<param name="callbackParameter">map</param>
+			</result>
+		</action>
+
+		<!-- 组织机构 -->
+		<action name="org_*" method="{1}" class="orgAction">
+			<result name="index">/WEB-INF/jsp/org/index.jsp</result>
+			<result name="edit">/WEB-INF/jsp/org/input.jsp</result>
+			<result name="orgchart">/WEB-INF/jsp/org/orgchart.jsp</result>
+			<result name="orgTreeJson" type="json">
+				<param name="root">list</param>
+				<param name="excludeProperties">
+					\[\d+\](\.\w*)*\.remark
+				</param>
+			</result>
+			<result name="success" type="json">
+				<param name="includeProperties">map.*</param>
+				<param name="callbackParameter">map</param>
+			</result>
+			<result name="relist" type="redirect">
+				org_list.do
+			</result>
+		</action>
+
+		<!-- 任务日志信息查询 -->
+		<action name="qrtzLog_*" method="{1}" class="qrtzLogAction">
+			<result name="list">/WEB-INF/jsp/log/taskLog.jsp</result>
+		</action>
+
+		<!-- 操作日志 -->
+		<action name="operLog_*" method="{1}" class="operLogAction">
+			<result name="list">/WEB-INF/jsp/operLog/list.jsp</result>
+			<result name="mobile" type="json">
+				<param name="includeProperties">map.*</param>
+				<param name="callbackParameter">map</param>
+			</result>
+		</action>
+
+		<!-- 字典信息管理 -->
+		<action name="dicItem_*" method="{1}" class="dicItemAction">
+			<result name="list">/WEB-INF/jsp/dicItem/dicItemList.jsp</result>
+			<result name="add">/WEB-INF/jsp/dicItem/dicItemAdd.jsp</result>
+			<result name="edit">/WEB-INF/jsp/dicItem/dicItemEdit.jsp</result>
+			<result name="frame" type="redirect">dicItem_list.do</result>
+			<result name="message" type="json">
+				<param name="root">message</param>
+			</result>
+			<result name="relist" type="redirect">
+				dicItem_list.do
+			</result>
+			<result name="success" type="json">
+				<param name="root">map</param>
+			</result> 
+		</action>	
+		
+		
+		<!-- 车辆信息管理 -->
+		<action name="carStatistic_*" method="{1}" class="carStatisticAction">
+		  	<result name="list">/WEB-INF/jsp/carStatistic/carStatistic.jsp</result>
+		  	<result name="success" type="json">
+				<param name="root">map</param>
+			</result> 
+		</action>
+		 <!-- 熊文才      文件流的读取 -->
+		<action name="checkPicture_*" method="{1}" class="checkPictureAction">
+				<result name="displayImgs" type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+		
+		<!-- 识别率分析 -->
+		<action name="Recanalysis_*" method="{1}" class="recanalysisAction">
+		  	<result name="list">/WEB-INF/jsp/Recanalysis/shibielv.jsp</result>
+		 	<result name="success" type="json">
+				<param name="root">map</param>
+			</result> 
+		</action>
+		
+		<!-- 消息发布管理 -->
+		<action name="msgPublish_*" method="{1}" class="msgPublishAction">
+			<result name="list">/WEB-INF/jsp/msgPublish/list.jsp</result>
+			<result name="add">/WEB-INF/jsp/msgPublish/add.jsp</result>
+			<result name="homeList">/WEB-INF/jsp/msgPublish/homeList.jsp</result> 
+			 
+			<result name="message" type="json">
+				<param name="root">message</param>
+			</result>
+			<result name="relist" type="redirect">
+				msgPublish_list.do
+			</result>
+		</action>
+		
+		<!-- 统计分析  交通流量统计 -->
+		<action name="trafficFlow_*" method = "{1}" class="trafficFlowStatisticalAction">
+		    <result name="traffic">/WEB-INF/jsp/trafficFlow/TrafficFlowStatistics.jsp</result>
+		</action> 
+
+		<!--导入报表通用的action-->
+		<action name="execellImport" class="com.hgsoft.excel.action.ExcelImportAction">
+			<result name="success"  type="json">
+				<param name="root">message</param>
+			</result>
+		</action>
+
+		<!-- 导出操作日志Excel -->
+		<action name="operaLogReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.OperaLogReportAction">
+			<param name="formName">operaLogFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">操作日志报表</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/operLog/template/operaLogReport.jasper</param><!--导出报表文件路径 -->
+		</action>
+		
+		<!-- 导出全省黑名单Excel -->
+		<action name="proBlackListReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.ProBlackListReportAction">
+			<param name="formName">proBlackListFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">全省黑名单</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/report/template/ProBlackList.jasper</param><!--导出报表文件路径 -->
+		</action>
+		
+		<!-- 导出路段黑名单Excel -->
+		<action name="roBlackListReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.RoBlackListReportAction">
+			<param name="formName">roBlackListFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">路段黑名单</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/report/template/RoBlackList.jasper</param><!--导出报表文件路径 -->
+		</action>
+		
+		<!-- 导出全省灰名单Excel -->
+		<action name="proGrayListReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.ProGrayListReportAction">
+			<param name="formName">proGrayListFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">全省灰名单</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/report/template/ProGrayList.jasper</param><!--导出报表文件路径 -->
+		</action>
+		
+		<!-- 导出路段灰名单Excel -->
+		<action name="roGrayListReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.RoGrayListReportAction">
+			<param name="formName">roGrayListFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">路段灰名单</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/report/template/RoGrayList.jasper</param><!--导出报表文件路径 -->
+		</action>
+		
+		<!-- 导出excel -->
+		<action name="report_*" method="{1}" class="reportAction">
+			<result name="reportStatus" type="json">
+				<param name="root">map</param>
+			</result>
+		</action>
+
+	      <!-- 异常稽查 -->
+			<action name="abnorCar_*" method="{1}" class="abnorCarAction">
+		   <result name="list">/WEB-INF/jsp/jcgl/AbnorCarList.jsp</result>
+		   <result name="success" type="json">
+		        <param name="root">map</param>
+		   </result>  
+		   </action>
+		<action name="deviceManage_*" method="{1}" class="deviceManageAction">
+			<result name="deviceList">/WEB-INF/jsp/deviceManage/deviceManage.jsp</result>
+			<result name="yushi">/WEB-INF/jsp/JZvideo/WebDemo(实况回放).html</result>
+		</action>
+		   
+		   <!--异常稽查导出  -->
+		   	<action name="abnorCarReport_*" method="doExportExcel"
+			class="com.hgsoft.main.report.action.AbnorCarDetailReportAction">
+			<param name="formName">abnorCarDetailFormName</param><!--表单名称，用于区分不同的报表共用同一个页面 -->
+			<param name="reportName">异常稽查流水</param><!--报表名称 -->
+			<param name="exportFile">WEB-INF/jsp/report/template/AbnorCarDetail.jasper</param><!--导出报表文件路径 -->
+		</action>
+		   
+		
+
+	</package>
+</struts>

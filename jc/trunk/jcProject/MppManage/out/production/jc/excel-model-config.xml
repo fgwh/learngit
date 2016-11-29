@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--这个是导入报表统一的配置文件，每添加导入一个报表，也要在下面添加模板的位置。-->
+<model>
+    <param>
+        <param-name>reloadable</param-name>
+        <param-value>true</param-value>
+    </param>
+    <param>
+        <param-name>resourceLocations-RoBlackList</param-name>
+        <param-value>roBlackList.xml</param-value>
+    </param>
+    <param>
+        <param-name>resourceLocations-RoGrayList</param-name>
+        <param-value>roGrayList.xml</param-value>
+    </param>
+</model>
+
+
+

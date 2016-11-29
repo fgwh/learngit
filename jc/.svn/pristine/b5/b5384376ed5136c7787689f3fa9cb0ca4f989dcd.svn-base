@@ -1,0 +1,87 @@
+USE [jc]
+GO
+
+/****** Object:  Table [dbo].[tb_LaneExList_2015]    Script Date: 09/20/2016 09:22:35 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[tb_LaneExList_2015](
+	[ExRecordNo] [smallint] NOT NULL,
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[LaneEnSerialNo] [char](16) NOT NULL,
+	[EnNetRoadID] [smallint] NULL,
+	[EnRoadID] [smallint] NOT NULL,
+	[ICInCardID] [bigint] NOT NULL,
+	[EnStationID] [int] NOT NULL,
+	[EnLaneID] [smallint] NOT NULL,
+	[EnLaneType] [smallint] NOT NULL,
+	[EnTime] [datetime] NOT NULL,
+	[EnVehicleClass] [tinyint] NOT NULL,
+	[EnVehicleStatus] [tinyint] NOT NULL,
+	[EnVehiclePlate] [char](12) NOT NULL,
+	[ExNetRoadID] [smallint] NOT NULL,
+	[ExRoadID] [smallint] NOT NULL,
+	[ExStationID] [int] NOT NULL,
+	[ExLaneID] [smallint] NOT NULL,
+	[ExLaneType] [smallint] NOT NULL,
+	[ExTime] [datetime] NOT NULL,
+	[SquadDate] [datetime] NOT NULL,
+	[ExCPCSnNo] [char](10) NULL,
+	[ExVehicleClass] [tinyint] NOT NULL,
+	[ExVehicleStatus] [tinyint] NOT NULL,
+	[ImageSerialNo] [int] NOT NULL,
+	[ExVehiclePlate] [char](12) NOT NULL,
+	[ExVehIdentifyPlate] [char](12) NOT NULL,
+	[CashMoney] [int] NOT NULL,
+	[VehicleClassMoney] [int] NOT NULL,
+	[DeviceStatus] [int] NOT NULL,
+	[RecordType] [smallint] NOT NULL,
+	[ExCPUCardSnNo] [char](16) NULL,
+	[ExCPUCardID] [bigint] NULL,
+	[ExCPUCardType] [tinyint] NOT NULL,
+	[WeightFlag] [tinyint] NOT NULL,
+	[VehCount] [smallint] NOT NULL,
+	[AxisNum] [tinyint] NOT NULL,
+	[AxisGroupNum] [tinyint] NOT NULL,
+	[TotalWeight] [bigint] NOT NULL,
+	[TotalWeightLimit] [bigint] NOT NULL,
+	[TollType] [tinyint] NOT NULL,
+	[AxisType] [varchar](50) NOT NULL,
+	[AxisWeightDetail] [varchar](50) NOT NULL,
+	[OverLoadWeight] [bigint] NOT NULL,
+	[PreVehType] [tinyint] NOT NULL,
+	[ExETCTermCode] [char](16) NOT NULL,
+	[OriginalPath] [varchar](256) NOT NULL,
+	[RealPath] [varchar](256) NOT NULL,
+	[RoadComb] [varchar](128) NOT NULL,
+	[RoadSStationComb] [varchar](256) NOT NULL,
+	[RoadEStationComb] [varchar](256) NOT NULL,
+	[RealPath01] [varchar](256) NOT NULL,
+	[ManualFlag] [tinyint] NOT NULL,
+	[VerifyCode] [int] NOT NULL,
+	[Spare1] [int] NULL,
+	[Spare2] [int] NULL,
+	[Spare3] [varchar](50) NULL,
+	[Spare4] [varchar](50) NULL,
+	[UploadTime] [datetime] NOT NULL,
+	[DealStatus] [bigint] NOT NULL,
+	[EnVehicleFlag] [tinyint] NULL,
+	[ExOperatorID] [bigint] NULL,
+	[EnOperatorID] [bigint] NULL,
+ CONSTRAINT [PK_tb_LaneExList_2015] PRIMARY KEY CLUSTERED 
+(
+	[LaneExSerialNo] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+

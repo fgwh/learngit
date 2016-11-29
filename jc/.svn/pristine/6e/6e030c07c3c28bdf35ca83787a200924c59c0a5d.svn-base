@@ -1,0 +1,193 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.io.File;
+import java.util.Date;
+
+public class RoGrayList {
+
+		private String id;
+			
+		private String vehPlate;
+			
+		private int vehPlateColor;
+			
+		private int vehFlag;
+			
+		private int vehClass;
+			
+			
+		private String vehInfo;
+			
+		private int vehBigType;
+			
+		private int vehMidType;
+			
+		private int vehSmallType;		
+			
+			
+		private String instructions;
+			
+		private String applicant;
+			
+		private Date applicateTime;
+			
+		private String applicateOrg;
+			
+		private int status;
+			
+		private String fileName;
+			
+		private Date updateTime;
+		
+		private Date uploadTime;
+		
+		private File file;
+		
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getVehPlate() {
+			return vehPlate;
+		}
+
+		public void setVehPlate(String vehPlate) {
+			this.vehPlate = vehPlate;
+		}
+
+		public int getVehPlateColor() {
+			return vehPlateColor;
+		}
+
+		public void setVehPlateColor(int vehPlateColor) {
+			this.vehPlateColor = vehPlateColor;
+		}
+
+		public int getVehFlag() {
+			return vehFlag;
+		}
+
+		public void setVehFlag(int vehFlag) {
+			this.vehFlag = vehFlag;
+		}
+
+		public int getVehClass() {
+			return vehClass;
+		}
+
+		public void setVehClass(int vehClass) {
+			this.vehClass = vehClass;
+		}
+
+		public String getVehInfo() {
+			return vehInfo;
+		}
+
+		public void setVehInfo(String vehInfo) {
+			this.vehInfo = vehInfo;
+		}
+
+		public int getVehBigType() {
+			return vehBigType;
+		}
+
+		public void setVehBigType(int vehBigType) {
+			this.vehBigType = vehBigType;
+		}
+
+		public int getVehMidType() {
+			return vehMidType;
+		}
+
+		public void setVehMidType(int vehMidType) {
+			this.vehMidType = vehMidType;
+		}
+
+		public int getVehSmallType() {
+			return vehSmallType;
+		}
+
+		public void setVehSmallType(int vehSmallType) {
+			this.vehSmallType = vehSmallType;
+		}
+
+		public String getInstructions() {
+			return instructions;
+		}
+
+		public void setInstructions(String instructions) {
+			this.instructions = instructions;
+		}
+
+		public String getApplicant() {
+			return applicant;
+		}
+
+		public void setApplicant(String applicant) {
+			this.applicant = applicant;
+		}
+
+		public Date getApplicateTime() {
+			return applicateTime;
+		}
+
+		public void setApplicateTime(Date applicateTime) {
+			this.applicateTime = applicateTime;
+		}
+
+		public String getApplicateOrg() {
+			return applicateOrg;
+		}
+
+		public void setApplicateOrg(String applicateOrg) {
+			this.applicateOrg = applicateOrg;
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public void setStatus(int status) {
+			this.status = status;
+		}
+
+		public Date getUpdateTime() {
+			return updateTime;
+		}
+
+		public void setUpdateTime(Date updateTime) {
+			this.updateTime = updateTime;
+		}
+
+		public String getFileName() {
+			return fileName;
+		}
+
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public void setFile(File file) {
+			this.file = file;
+		}
+
+		public Date getUploadTime() {
+			return uploadTime;
+		}
+
+		public void setUploadTime(Date uploadTime) {
+			this.uploadTime = uploadTime;
+		}
+
+	
+	
+}

@@ -1,0 +1,12 @@
+package com.hgsoft.security.entity;
+
+import java.io.Serializable;
+
+public interface BaseEntity extends Serializable{
+	
+	/** 获取ID */
+	String getId();
+
+	/** 设置ID */
+	void setId(String id);
+}

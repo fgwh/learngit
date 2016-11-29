@@ -1,0 +1,92 @@
+package com.hgsoft.main.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.main.dao.QrtzLogDao;
+import com.hgsoft.main.entity.QrtzLog;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.Pager;
+import com.hgsoft.util.StringUtil;
+
+/**
+ * quartz任务日志服务实现类
+ * 
+ * @version 1.0
+ * @date 2015-08-10
+ * @author wubiao
+ *
+ */
+@Service
+@SuppressWarnings({"unchecked"})
+public class QrtzLogService extends BaseService<QrtzLog> {
+
+	@Resource
+	private QrtzLogDao qrtzLogDao;
+	/**
+	 * 根据jobClassName构造QrtzLog
+	 * 
+	 * @param jobClassName
+	 * @return
+	 */
+	public QrtzLog getQrtzLogByClassName(String jobClassName) {
+		String sql = "select job_name,job_group from qrtz_job_details where job_class_name = '" + jobClassName + "'";
+		List<Object[]> attrAryList = qrtzLogDao.queryBySQL(sql, null);
+		QrtzLog qrtzLog = new QrtzLog();
+		if(null!=attrAryList && attrAryList.size()>0) {
+			Object[] attrAry = (Object[])attrAryList.get(0);
+			qrtzLog.setJobName((String)attrAry[0]);
+			qrtzLog.setJobGroup((String)attrAry[1]);
+			qrtzLog.setJobClassName(jobClassName);			
+		}
+		
+		return qrtzLog;
+	}
+
+    public List<Object[]> queryQrtzLog(Pager pager, Object... obj) {
+        StringBuffer sql = new StringBuffer(" from qrtz_log where 1 = 1 ");
+        if (obj != null && obj.length == 4) {
+            if (!StringUtil.isTrimEmpty((String) obj[0])) {
+                sql.append(" and Job_name like '%").append(obj[0].toString().trim()).append("%'");
+            }
+            if (!StringUtil.isTrimEmpty((String) obj[1])) {
+                sql.append(" and jobStatus= ").append(obj[1].toString().trim());
+            }
+            if (!StringUtil.isTrimEmpty((String) obj[2])) {
+                sql.append(" and convert(DATETIME, CREATETIME) >= CONVERT(DATETIME, '").append(obj[2].toString().trim()).append("')");
+            }
+            if (!StringUtil.isTrimEmpty((String) obj[3])) {
+                sql.append(" and convert(DATETIME, CREATETIME) <= CONVERT(DATETIME, '").append(obj[3].toString().trim()).append("')");
+            }
+        }
+       	int totalSize = qrtzLogDao.executeCountSqlQuery(sql.toString());
+        pager.setTotalSize(totalSize);
+        String execSql = "select Job_Name,\n" +
+        				 " Job_Group,\n" +
+        				 " Description,\n" +
+        				 " Job_Class_Name,\n" +
+        				 " CONVERT(varchar(20), createTime, 120)createTime,\n" +
+        				 " (case JobStatus when 0 then '失败' when 1 then '成功' end) JobStatus " + sql.toString() + " order by CreateTime desc";
+        
+        return (List<Object[]>)qrtzLogDao.findBySql(execSql, pager);
+    }
+	
+	public void saveQrtzLog(QrtzLog qrtzLog) {
+		
+		qrtzLogDao.save(qrtzLog);
+	}
+	
+	/* ================= get/set ================ */
+
+	public QrtzLogDao getQrtzLogDao() {
+		return qrtzLogDao;
+	}
+
+	public void setQrtzLogDao(QrtzLogDao qrtzLogDao) {
+		this.qrtzLogDao = qrtzLogDao;
+	}
+	
+}

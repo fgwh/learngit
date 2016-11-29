@@ -1,0 +1,112 @@
+﻿create table tb_msgPublish(
+	id varchar(64) primary key,
+	publishTime datetime not null,
+	theme varchar(100) not null,
+	content varchar(4000) not null,
+	publishMan varchar(80) not null
+)
+
+/*****黑、灰名单 *****/
+
+alter table tb_roBlackList add  axisGroup tinyint not null default 0
+
+
+alter table tb_roBlackList add  creatime Datetime 
+
+
+update tb_roBlackList set creatime=ApplicateTime 
+
+
+alter table tb_roGrayList add  axisGroup tinyint not null default 0
+
+alter table tb_roGrayList add  feeCount int  
+
+alter table tb_roGrayList add  feeMoney bigint not null default 0
+
+
+alter table tb_roGrayList add  creatime Datetime 
+
+
+update tb_roGrayList set creatime=UpdateTime 
+
+
+/*****黑、灰名单 *****/
+
+--------------------------------------打逃二期-----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--数据库字典添加异常种类
+
+
+--"AbnorType"	"倒卡"           	"1"	""	"0"	""
+--"AbnorType"	"ETC车型异常"	   	"2"	""	"1"     ""
+--"AbnorType"	"ETC车牌异常"		"3"	""	"2"	""
+--"AbnorType"	"有收费无标识"		"4"	""	"3"	""
+--"AbnorType"	"收费标识点异常"	"5"	""	"4"	""
+--"AbnorType"	"车型与轴组类型异常"	"6"	""	"5"	""
+
+
+--------------------------------------车牌合法性判断函数-----------------------------------------
+
+create function dbo.vehPlate_legal(@vehPlate varchar(10))
+returns bit
+as  
+begin
+	declare @num int,@vehChar varchar(2)
+	set @num=1	
+	    if(len(@vehPlate)!=7)
+	       return 1
+		while @num<=len(@vehPlate)
+		begin
+			set @vehChar=SUBSTRING(@vehPlate,@num,1)
+			if (@num=1)		
+			begin
+			   if(@vehChar not  in ('警','京','津','沪','渝','冀','豫','云','辽','黑','湘','皖','鲁','新','苏','浙','赣','鄂','桂','甘','晋','蒙','陕','吉','闽','贵','粤','青','藏','川','宁','琼'))
+				 return 1
+			end
+			else if (@num=2)
+			begin
+			   if(UNICODE(@vehChar) not  between 65 and 90 )
+				 return 1
+			end
+			else if (@num=7)
+			begin
+			   if( (UNICODE(@vehChar) not between 48 and 57) and (UNICODE(@vehChar) not between 65 and 90) and  @vehChar!='挂')
+				 return 1
+			end
+			else if(@num in(3,4,5,6))
+			begin
+			   if((UNICODE(@vehChar) not between 48 and 57) and (UNICODE(@vehChar) not  between 65 and 90) )
+				 return 1
+			end
+		    set @num=@num+1       
+		end
+  return 0
+end;
+
+--------------------------------------轴组-----------------------------------------
+  insert into sys_dic values('402881b357bd38750157bd417433000e','axisGroup','单轴单轮（每侧单轮胎）',1,1,1,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd4238460013','axisGroup','单轴双轮（每侧双轮胎）',2,2,2,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd43034b0019','axisGroup','并装双轴每侧各两单轮胎',3,3,3,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd442a60001e','axisGroup','并装双轴每侧各一单轮胎、双轮胎',4,4,4,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd453ef00024','axisGroup','并装双轴双联轴每侧双轮胎',5,5,5,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd45dc180029','axisGroup','并装三轴每侧三单轮胎',6,6,6,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd46c00e002e','axisGroup','并装三轴每侧各两单轮胎、一双轮胎',7,7,7,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd4765600033','axisGroup','并装三轴每侧各一单轮胎、两双轮胎',8,8,8,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd482a240038','axisGroup','并装三轴每侧三双轮胎',9,9,9,'轴组')
+
+

@@ -1,0 +1,51 @@
+.mediaContent{
+	width: 40px;
+	height: 40px;
+	float:left
+}
+
+.photo{	
+	background: url(icons.png) 7px -138px no-repeat;
+}
+
+.music {
+	background: url(icons.png) 7px -178px no-repeat;
+}
+
+.video {
+	background: url(icons.png) 7px -220px no-repeat;
+}
+
+.file {
+	background: url(icons.png) 7px -262px no-repeat;
+}
+
+.word{	
+	background: url(word.jpg);
+}
+
+.excell {
+	background: url(excell.png);
+}
+
+.ppt {
+	background: url(ppt.jpg);
+}
+
+.pdf {
+	background: url(pdf.jpg);
+}
+
+.mediaName{
+	width: 40px;
+	height: 40px;
+	float:left;
+	padding-top: 2px;
+}
+.mediaName a{
+	cursor:pointer;
+}
+
+.popupHiddenInput{
+	display:none;
+}

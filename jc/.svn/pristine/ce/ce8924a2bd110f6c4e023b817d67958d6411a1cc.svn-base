@@ -1,0 +1,98 @@
+package com.hgsoft.main.jcManange.action;
+
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.ProBlackList;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.service.BlackListService;
+import com.hgsoft.security.action.BaseAction;
+@Controller
+@Scope("prototype")
+public class BlackListAction extends BaseAction<RoBlackList>{
+	
+	@Resource
+	private BlackListService blackListService;
+	
+	private Conditions conditions = new Conditions() ;
+	
+
+	
+	public String list(){
+			
+		String[] selectName = new String[]{"plateNum","carNo","vehClass","vehFlag","vehPlateColor","interceptOption","vehBigType","vehMidType","vehSmallType","startQueryDate","endQueryDate"};
+		
+		list=blackListService.queryAllMessageList(pager, conditions, selectName, "roBlackList", RoBlackList.class);
+		
+		conditions.setDataSource("0");
+		
+		return  "list";
+	}
+	
+	public String proList(){
+		
+		String[] selectName = new String[]{"plateNum","carNo","vehClass","vehFlag","vehPlateColor","interceptOption","startQueryDate","endQueryDate"};
+		
+		list=blackListService.queryAllMessageList(pager, conditions, selectName, "proBlackList", ProBlackList.class);
+		
+		conditions.setDataSource("1");
+		return  "list";
+	}
+
+	
+	public String save(){
+		
+		blackListService.saveRoBlackList(entity);
+		
+		return list();
+	}
+	
+	
+	
+	public String delete(){
+		
+		blackListService.deleteById(conditions.getId());
+		
+		return list();
+		
+	}
+	
+	public String recovered(){
+		
+		
+		return "success";
+	}
+	
+	
+	public String plateValidate(){		
+		String validate=blackListService.plateValidate(conditions);
+		map.put("validate", validate);
+		return "success";
+	}
+	
+	
+	
+	
+	
+	public Conditions getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(Conditions conditions) {
+		this.conditions = conditions;
+	}
+	
+	
+	public void setRoBlackList(RoBlackList roBlackList) {
+		this.entity = roBlackList;
+	}
+
+	public RoBlackList getRoBlackList() {
+		return entity;
+	}
+	
+	
+}

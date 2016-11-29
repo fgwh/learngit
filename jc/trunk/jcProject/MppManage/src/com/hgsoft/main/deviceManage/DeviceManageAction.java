@@ -1,0 +1,49 @@
+package com.hgsoft.main.deviceManage;
+
+ 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.msgPublishManage.service.MsgPublishService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.security.entity.BaseEntity;
+import com.hgsoft.security.operLog.annotation.Description;
+
+@Controller
+@Scope("prototype")
+public class DeviceManageAction extends BaseAction<BaseEntity> {
+	private String showIp;
+	@Resource
+	MsgPublishService service;
+	@Description(details="设备管理")
+	public String showDeviceManage() {  
+		List<DicItem> deviceIp = dicService.getItems("deviceManage"); 
+		for (DicItem dicItem : deviceIp) {
+			showIp = dicItem.getValue();
+		} 
+		return "deviceList";
+	}
+	public String getShowIp() {
+		return showIp;
+	}
+	public void setShowIp(String showIp) {
+		this.showIp = showIp;
+	}
+
+
+
+
+	public  String videoManagement() {
+		return service.getVideoTypeName();
+
+	}
+
+
+
+
+}

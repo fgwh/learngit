@@ -1,0 +1,49 @@
+﻿
+
+/*****先执行 *****/
+
+alter table tb_roBlackList add  axisGroup tinyint not null default 0
+
+
+alter table tb_roBlackList add  creatime Datetime 
+
+
+alter table tb_roGrayList add  axisGroup tinyint not null default 0
+
+alter table tb_roGrayList add  feeCount int  
+
+alter table tb_roGrayList add  feeMoney bigint not null default 0
+
+
+alter table tb_roGrayList add  creatime Datetime 
+
+
+
+--数据库字典添加异常种类
+
+
+--"AbnorType"	"倒卡"           	"1"	""	"0"	""
+--"AbnorType"	"ETC车型异常"	   	"2"	""	"1"     ""
+--"AbnorType"	"ETC车牌异常"		"3"	""	"2"	""
+--"AbnorType"	"有收费无标识"		"4"	""	"3"	""
+--"AbnorType"	"收费标识点异常"	"5"	""	"4"	""
+--"AbnorType"	"车型与轴组类型异常"	"6"	""	"5"	""
+
+--------------------------------------轴组-----------------------------------------
+  insert into sys_dic values('402881b357bd38750157bd417433000e','axisGroup','单轴单轮（每侧单轮胎）',1,1,1,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd4238460013','axisGroup','单轴双轮（每侧双轮胎）',2,2,2,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd43034b0019','axisGroup','并装双轴每侧各两单轮胎',3,3,3,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd442a60001e','axisGroup','并装双轴每侧各一单轮胎、双轮胎',4,4,4,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd453ef00024','axisGroup','并装双轴双联轴每侧双轮胎',5,5,5,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd45dc180029','axisGroup','并装三轴每侧三单轮胎',6,6,6,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd46c00e002e','axisGroup','并装三轴每侧各两单轮胎、一双轮胎',7,7,7,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd4765600033','axisGroup','并装三轴每侧各一单轮胎、两双轮胎',8,8,8,'轴组')
+  insert into sys_dic values('402881b357bd38750157bd482a240038','axisGroup','并装三轴每侧三双轮胎',9,9,9,'轴组')
+
+
+
+/*****最后执行 *****/
+
+update tb_roBlackList set creatime=ApplicateTime 
+
+update tb_roGrayList set creatime=UpdateTime 

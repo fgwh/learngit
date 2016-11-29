@@ -1,0 +1,188 @@
+package com.hgsoft.main.statisticsAnalysis.entity;
+
+import java.io.Serializable;
+
+/** 交通道路信息流量
+ * @author  dje 
+ * @date    创建时间：2016年9月13日 下午3:12:41   
+ */
+
+public class TrafficFlow implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String centerStationId;//中心站
+	
+	private String stationId;//收费站
+	
+	private String exEnFlag;//出入口标识
+
+	private int carsOneNum;//一型客车数量
+	
+	private int carstwoNum;//二型客车数量
+	
+	private int carsThreeNum;//三型客车数量
+	
+	private int carsFourNum;//四型客车数量
+	
+	private int carsFiveNum;//五型客车数量
+	
+	private int carsOtherNum;//其他车型客车数量
+	
+	private int carsTotalNum;//客车数量总计
+	
+    private int truckOneNum;//一型货车数量
+	
+	private int trucktwoNum;//二型货车数量
+	
+	private int truckThreeNum;//三型货车数量
+	
+	private int truckFourNum;//四型货车数量
+	
+	private int truckFiveNum;//五型货车数量
+	
+	private int truckOtherNum;//其他车型货车数量
+	
+	private int truckTotalNum;//货车数量总计
+
+	public String getCenterStationId() {
+		return centerStationId;
+	}
+
+	public void setCenterStationId(String centerStationId) {
+		this.centerStationId = centerStationId;
+	}
+
+	public String getStationId() {
+		return stationId;
+	}
+
+	public void setStationId(String stationId) {
+		this.stationId = stationId;
+	}
+
+	public String getExEnFlag() {
+		return exEnFlag;
+	}
+
+	public void setExEnFlag(String exEnFlag) {
+		this.exEnFlag = exEnFlag;
+	}
+
+	public int getCarsOneNum() {
+		return carsOneNum;
+	}
+
+	public void setCarsOneNum(int carsOneNum) {
+		this.carsOneNum = carsOneNum;
+	}
+
+	public int getCarstwoNum() {
+		return carstwoNum;
+	}
+
+	public void setCarstwoNum(int carstwoNum) {
+		this.carstwoNum = carstwoNum;
+	}
+
+	public int getCarsThreeNum() {
+		return carsThreeNum;
+	}
+
+	public void setCarsThreeNum(int carsThreeNum) {
+		this.carsThreeNum = carsThreeNum;
+	}
+
+	public int getCarsFourNum() {
+		return carsFourNum;
+	}
+
+	public void setCarsFourNum(int carsFourNum) {
+		this.carsFourNum = carsFourNum;
+	}
+
+	public int getCarsFiveNum() {
+		return carsFiveNum;
+	}
+
+	public void setCarsFiveNum(int carsFiveNum) {
+		this.carsFiveNum = carsFiveNum;
+	}
+
+	public int getCarsOtherNum() {
+		return carsOtherNum;
+	}
+
+	public void setCarsOtherNum(int carsOtherNum) {
+		this.carsOtherNum = carsOtherNum;
+	}
+
+	public int getCarsTotalNum() {
+		return carsTotalNum;
+	}
+
+	public void setCarsTotalNum(int carsTotalNum) {
+		this.carsTotalNum = carsTotalNum;
+	}
+
+	public int getTruckOneNum() {
+		return truckOneNum;
+	}
+
+	public void setTruckOneNum(int truckOneNum) {
+		this.truckOneNum = truckOneNum;
+	}
+
+	public int getTrucktwoNum() {
+		return trucktwoNum;
+	}
+
+	public void setTrucktwoNum(int trucktwoNum) {
+		this.trucktwoNum = trucktwoNum;
+	}
+
+	public int getTruckThreeNum() {
+		return truckThreeNum;
+	}
+
+	public void setTruckThreeNum(int truckThreeNum) {
+		this.truckThreeNum = truckThreeNum;
+	}
+
+	public int getTruckFourNum() {
+		return truckFourNum;
+	}
+
+	public void setTruckFourNum(int truckFourNum) {
+		this.truckFourNum = truckFourNum;
+	}
+
+	public int getTruckFiveNum() {
+		return truckFiveNum;
+	}
+
+	public void setTruckFiveNum(int truckFiveNum) {
+		this.truckFiveNum = truckFiveNum;
+	}
+
+	public int getTruckOtherNum() {
+		return truckOtherNum;
+	}
+
+	public void setTruckOtherNum(int truckOtherNum) {
+		this.truckOtherNum = truckOtherNum;
+	}
+
+	public int getTruckTotalNum() {
+		return truckTotalNum;
+	}
+
+	public void setTruckTotalNum(int truckTotalNum) {
+		this.truckTotalNum = truckTotalNum;
+	}
+	
+
+}

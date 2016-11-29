@@ -1,0 +1,188 @@
+package com.hgsoft.main.travelpath;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.cxf.common.PropertiesUtil;
+import com.hgsoft.main.carStatistic.entity.CarStatistic;
+import com.hgsoft.main.carStatistic.entity.LaneExListImg;
+import com.hgsoft.main.carStatistic.service.CarStatisticService;
+import com.hgsoft.main.entity.Conditions;
+import com.hgsoft.main.laneexlist.entity.LaneExList2;
+import com.hgsoft.main.laneexlist.service.LaneExListService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.util.DateUtil;
+import com.hgsoft.util.Pager;
+
+@Controller
+@Scope("prototype")
+public class TravelpathAction extends BaseAction<LaneExList2> {
+	private static final String roadCode = PropertiesUtil.getProperty("ROAD_CODE");
+	private Conditions conditions = new Conditions(); // 查询条件
+	@Resource
+	private CarStatisticService carStatisticService;
+	private Map map = new HashMap();
+	@Resource
+	private LaneExListService laneExListService;
+	/* 获取实体, 用于JSP读取实体对象属性 */
+    public LaneExList2  getLaneExList2() {
+        return this.entity;
+    }
+    /* 设置实体, 用于STRUTS设置实体对象属性 */
+    public void setLaneExList2(LaneExList2 laneExList2) {
+        this.entity = laneExList2;
+    }
+    
+    private CarStatistic carStatistic;
+   
+	public CarStatistic getCarStatistic() {
+		return carStatistic;
+	}
+	public void setCarStatistic(CarStatistic carStatistic) {
+		this.carStatistic = carStatistic;
+	}
+	// 查询
+	public String list() {
+	    	if(entity == null){
+				entity = new LaneExList2();
+				String dateTemp = DateUtil.format(new Date(), DateUtil.PATTERN_STRING_DATE); 
+				entity.setStartTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+				entity.setEndTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+			}
+	    
+	    	list = laneExListService.queryAllLaneExList(entity, pager, operator);
+	    	//根据出口获取入口信息
+	    	
+	    	return "list";
+		
+	}
+	
+	public String exList() {
+		String testStr="";
+		List<Object[]> list = new ArrayList<Object[]>();
+		int Flag ;
+    	if(!roadCode.equals(entity.getEnRoadId())){ //使用省营运协会的接口获取数据(非本路段)
+    		Flag=1;
+    		try {
+				testStr=laneExListService.getProvinceEnList(entity);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else{
+			Flag=0;
+			list=laneExListService.queryAllLaneEnList(entity,pager,operator);
+		}
+    	
+    	map.put("test", testStr);
+		map.put("Flag", Flag);
+		map.put("list", list);
+		return "success";
+	
+}
+
+	// 通过realPath获取station中文名，不分页
+	public String queryNameBypath() {
+		List<Object[]> List2 = laneExListService.queryAllLaneExList2(entity, pager, operator);
+		long laneExNum = 0;
+		String time="";
+		ArrayList<Integer> flagIdList = new ArrayList<>();//标示点集合
+		if (List2 != null & List2.size() > 0) {
+			laneExNum = List2.size();
+			for (int i = 0; i < List2.size(); i++) {
+				Object[] oi = (Object[]) List2.get(i);
+				String iHex = oi [15].toString();
+				time =oi [0].toString();
+				for (int j = 0; j < iHex.length();) {
+					String s = iHex.substring(j, j + 4);
+					j += 4;
+					flagIdList.add(Integer.parseInt(s, 16));
+				}
+			}
+		}
+		list = laneExListService.queryNameBypath(flagIdList);
+		map.put("list", list);
+		map.put("time", time);
+		map.put("status", laneExNum);
+		return "success";
+	}
+
+	// 导出txt
+	public String explortTXT() {
+		FileOutputStream outSTr = null;
+		BufferedOutputStream Buff = null;
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String path = request.getSession().getServletContext().getRealPath("upordown/LaneExList.txt");
+		String enter = "\r\n";
+		list = laneExListService.queryAllLaneExList2(entity, pager, operator);
+		StringBuffer write;
+		long laneExNum = 0;
+		try {
+			outSTr = new FileOutputStream(new File(path));
+			Buff = new BufferedOutputStream(outSTr);
+			if (list != null & list.size() > 0) {
+				laneExNum = list.size();
+				for (int i = 0; i < list.size(); i++) {
+					Object[] oi = (Object[]) list.get(i);
+					write = new StringBuffer();
+					write.append("出口日期|出口流水号|出口车道号|出口识别车牌|出口车牌|交易状态");
+					write.append(enter);
+					write.append( oi [0]+ "|" + oi [1] + "|"
+							+ oi [4] + "|" + oi [6] + "|"+ oi [7] + "|"
+							+ oi [15]);
+					write.append(enter);
+					Buff.write(write.toString().getBytes("UTF-8"));
+				}
+			}
+			Buff.flush();
+			Buff.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				Buff.close();
+				outSTr.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		map.put("status", laneExNum);
+		return "success";
+	}
+
+	public Conditions getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(Conditions conditions) {
+		this.conditions = conditions;
+	}
+
+	public Map getMap() {
+		return map;
+	}
+
+	public void setMap(Map map) {
+		this.map = map;
+	}
+
+	/*车道类型*/
+	public Map<String,String> getLaneTypeMap() {	
+		return getDicItemsMap("laneType");
+	}
+}

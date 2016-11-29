@@ -1,0 +1,66 @@
+package com.hgsoft.main.msgPublishManage.action;
+
+import javax.annotation.Resource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import com.hgsoft.main.msgPublishManage.entity.MsgPublish;
+import com.hgsoft.main.msgPublishManage.service.MsgPublishService;
+import com.hgsoft.security.action.BaseAction;
+
+/**
+ * 信息发布服务类
+ * 
+ * @version 1.0
+ * @date 2016-09-10
+ * @author liyuyun
+ *
+ */
+@Controller
+@Scope("prototype")
+public class MsgPublishAction extends BaseAction<MsgPublish> {
+
+	public MsgPublish getMsgPublish() {
+		return this.entity;
+	}
+
+	public void setMsgPublish(MsgPublish msgPublish) {
+		this.entity = msgPublish;
+	}
+
+	// 注入Service
+	@Resource
+	public void setBaseService(MsgPublishService service) {
+		this.setService(service);
+	}
+	
+	@Resource
+	MsgPublishService service;
+	
+	public String add(){
+		service.add(entity,operator);
+		reset();
+		return RELIST;
+	}
+	/**
+	 * 登录首页显示
+	 * @return
+	 */
+	public String homeList(){
+		if(null == entity) {
+			entity = service.newEntityInstance();
+		}
+		this.list = service.query(getPager(), entity);	
+		return "homeList";
+	}
+	
+	public String homeDelete(){
+		try {
+	    	entity = service.find(entity.getId());
+	    	service.delete(entity);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	reset();
+    	return homeList();
+	}
+}

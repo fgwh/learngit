@@ -1,0 +1,379 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.io.File;
+import java.util.Date;
+
+import com.hgsoft.security.entity.BaseEntity;
+
+public class RoBlackList implements BaseEntity{
+
+    private String id;
+	
+    private String vehPlate;
+    
+    private String plateNum;
+    
+    private String carNo;
+	
+    private short vehPlateColor;
+	
+    private short vehFlag;
+	
+    private short vehClass;
+	
+    private short interceptOption;
+	
+    private Date startDate;
+	
+    private Date endDate;
+	
+    private String vehInfo;
+	
+    private short vehBigType;
+	
+    private short vehMidType;
+	
+    private short vehSmallType;
+	
+	
+    private String vehCompany;
+	
+    private short vehType;
+    
+    private short axisGroup;
+    
+    private String vehModel;
+	
+    private int feeCount;
+	
+    private long feeMoney;	
+	
+    private String applicant;
+	
+    private Date applicateTime;
+	
+    private String applicateOrg;
+	
+    private int source;
+	
+    private String fileName;
+	
+    private int jfStatus;
+    
+    private File file;
+    
+    private Date uploadTime;
+    
+    private Date creatime;
+    
+    
+    
+    //外部字段
+    private String fileFileName;
+       
+    private String fileContentType;
+    
+    private String vehColorStr;
+    
+    private String vehClassStr;
+    
+    private String vehTypeStr;
+    
+    private String interceptStr;
+    
+    private String axisGroupStr;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getVehPlate() {
+		return vehPlate;
+	}
+
+	public void setVehPlate(String vehPlate) {
+		this.vehPlate = vehPlate;
+	}
+
+	public String getPlateNum() {
+		return plateNum;
+	}
+
+	public void setPlateNum(String plateNum) {
+		this.plateNum = plateNum;
+	}
+
+	public String getCarNo() {
+		return carNo;
+	}
+
+	public void setCarNo(String carNo) {
+		this.carNo = carNo;
+	}
+
+	public short getVehPlateColor() {
+		return vehPlateColor;
+	}
+
+	public void setVehPlateColor(short vehPlateColor) {
+		this.vehPlateColor = vehPlateColor;
+	}
+
+	public short getVehFlag() {
+		return vehFlag;
+	}
+
+	public void setVehFlag(short vehFlag) {
+		this.vehFlag = vehFlag;
+	}
+
+	public short getVehClass() {
+		return vehClass;
+	}
+
+	public void setVehClass(short vehClass) {
+		this.vehClass = vehClass;
+	}
+
+	public short getInterceptOption() {
+		return interceptOption;
+	}
+
+	public void setInterceptOption(short interceptOption) {
+		this.interceptOption = interceptOption;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getVehInfo() {
+		return vehInfo;
+	}
+
+	public void setVehInfo(String vehInfo) {
+		this.vehInfo = vehInfo;
+	}
+
+	public short getVehBigType() {
+		return vehBigType;
+	}
+
+	public void setVehBigType(short vehBigType) {
+		this.vehBigType = vehBigType;
+	}
+
+	public short getVehMidType() {
+		return vehMidType;
+	}
+
+	public void setVehMidType(short vehMidType) {
+		this.vehMidType = vehMidType;
+	}
+
+	public short getVehSmallType() {
+		return vehSmallType;
+	}
+
+	public void setVehSmallType(short vehSmallType) {
+		this.vehSmallType = vehSmallType;
+	}
+
+	public String getVehCompany() {
+		return vehCompany;
+	}
+
+	public void setVehCompany(String vehCompany) {
+		this.vehCompany = vehCompany;
+	}
+
+
+
+	public short getVehType() {
+		return vehType;
+	}
+
+	public void setVehType(short vehType) {
+		this.vehType = vehType;
+	}
+
+	public String getVehModel() {
+		return vehModel;
+	}
+
+	public void setVehModel(String vehModel) {
+		this.vehModel = vehModel;
+	}
+
+	public int getFeeCount() {
+		return feeCount;
+	}
+
+	public void setFeeCount(int feeCount) {
+		this.feeCount = feeCount;
+	}
+
+	public long getFeeMoney() {
+		return feeMoney;
+	}
+
+	public void setFeeMoney(long feeMoney) {
+		this.feeMoney = feeMoney;
+	}
+
+	public String getApplicant() {
+		return applicant;
+	}
+
+	public void setApplicant(String applicant) {
+		this.applicant = applicant;
+	}
+
+	public Date getApplicateTime() {
+		return applicateTime;
+	}
+
+	public void setApplicateTime(Date applicateTime) {
+		this.applicateTime = applicateTime;
+	}
+
+	public String getApplicateOrg() {
+		return applicateOrg;
+	}
+
+	public void setApplicateOrg(String applicateOrg) {
+		this.applicateOrg = applicateOrg;
+	}
+
+	public int getSource() {
+		return source;
+	}
+
+	public void setSource(int source) {
+		this.source = source;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getJfStatus() {
+		return jfStatus;
+	}
+
+	public void setJfStatus(int jfStatus) {
+		this.jfStatus = jfStatus;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public Date getUploadTime() {
+		return uploadTime;
+	}
+
+	public void setUploadTime(Date uploadTime) {
+		this.uploadTime = uploadTime;
+	}
+
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	public String getVehColorStr() {
+		return vehColorStr;
+	}
+
+	public void setVehColorStr(String vehColorStr) {
+		this.vehColorStr = vehColorStr;
+	}
+
+	public String getVehClassStr() {
+		return vehClassStr;
+	}
+
+	public void setVehClassStr(String vehClassStr) {
+		this.vehClassStr = vehClassStr;
+	}
+
+	public String getVehTypeStr() {
+		return vehTypeStr;
+	}
+
+	public void setVehTypeStr(String vehTypeStr) {
+		this.vehTypeStr = vehTypeStr;
+	}
+
+	public String getInterceptStr() {
+		return interceptStr;
+	}
+
+	public void setInterceptStr(String interceptStr) {
+		this.interceptStr = interceptStr;
+	}
+
+	public short getAxisGroup() {
+		return axisGroup;
+	}
+
+	public void setAxisGroup(short axisGroup) {
+		this.axisGroup = axisGroup;
+	}
+
+	public Date getCreatime() {
+		return creatime;
+	}
+
+	public void setCreatime(Date creatime) {
+		this.creatime = creatime;
+	}
+
+	public String getAxisGroupStr() {
+		return axisGroupStr;
+	}
+
+	public void setAxisGroupStr(String axisGroupStr) {
+		this.axisGroupStr = axisGroupStr;
+	}
+
+
+
+				
+}

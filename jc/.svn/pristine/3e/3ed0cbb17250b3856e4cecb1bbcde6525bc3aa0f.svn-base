@@ -1,0 +1,474 @@
+package com.hgsoft.excel.service;
+
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.main.jcManange.service.BlackListService;
+import com.hgsoft.main.jcManange.service.GrayListService;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.BaseEntity;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.CacheUtil;
+import com.opensymphony.xwork2.ActionContext;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * Created by joe on 2016/7/27.
+ */
+@Service
+public class ExcelServcie extends BaseService<BaseEntity> {
+
+    /**
+     * 字典服务类
+     */
+    @Resource
+    protected DictionaryService dicService;
+
+    protected List<DicItem> getDicItems(String type) {
+        return dicService.getItems(type);
+    }
+
+    @Autowired
+    private BlackListService blackListService;
+
+    @Autowired
+    private GrayListService grayListService;
+
+
+    /**
+     * 根据传过来的list和实体类的名字保存实体
+     *
+     * @param baseEntityList
+     * @param entityName
+     * @return
+     */
+    public String saveBean(List baseEntityList, String entityName) {
+
+        switch (entityName) {
+            case "blackMD":
+                return this.formatRoBlackList(baseEntityList);
+            case "grayMD":
+                return this.formatRoGrayList(baseEntityList);
+        }
+        return null;
+    }
+
+
+    /**
+     * 保存灰名单
+     * @param baseEntityList
+     * @return
+     */
+    private String formatRoGrayList(List baseEntityList) {
+        Admin admin = (Admin) ActionContext.getContext().getSession().get("operator");
+        String staffNo = admin.getStaffNo();
+
+        ArrayList<RoGrayList> roGrayLists = new ArrayList<RoGrayList>();
+        StringBuilder resultSb = new StringBuilder();
+        for (int i = 0; i < baseEntityList.size(); i++) {
+            RoGrayList entity = (RoGrayList) baseEntityList.get(i);
+            // 对实体中的每个字符串进行校验
+            String validateResult = validateRoGrayList(entity, i);
+
+
+            // 对结果进行判定
+            if (StringUtils.isBlank(validateResult)) {
+                try {
+                    entity.setStaffNo(staffNo);
+                    entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+                    entity.setVehPlate(entity.getPlateNum() + entity.getCarNo());
+                    entity.setUpdateTime(new Date());
+                    this.grayListService.save(entity);
+                    System.out.println("保存成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                roGrayLists.add(entity);
+            } else {
+                resultSb.append(validateResult);
+            }
+
+        }
+        if (roGrayLists != null && roGrayLists.size() > 0 && StringUtils.isNotBlank(resultSb.toString())) {
+            for (RoGrayList roGrayList : roGrayLists) {
+                grayListService.delete(roGrayList);
+            }
+        }
+        return resultSb.toString();
+    }
+
+    /**
+     * 校验灰名单字段
+     * @param blackList
+     * @param count
+     * @return
+     */
+    public String validateRoGrayList(RoGrayList blackList, int count) {
+        StringBuilder resultSb = new StringBuilder();
+
+
+        int flagNum = 0;
+        // 对车牌进行校验
+        if (StringUtils.isEmpty(blackList.getPlateNum())) {
+            resultSb.append("第" + (count + 3) + "行" + "第1列车牌不能为空\n");
+            flagNum++;
+        } else if (!getAllProAbbr().contains(blackList.getPlateNum())) {
+            resultSb.append("第" + (count + 3) + "行" + "第1列车牌应该为各省简称\n");
+            flagNum++;
+        }
+
+        // 对车牌号进行校验
+        if (StringUtils.isEmpty(blackList.getCarNo())) {
+            resultSb.append("第" + (count + 3) + "行" + "第2列车牌号不能为空\n");
+            flagNum++;
+        } else {
+            String reg = "^[A-Z_a-z]{1}[警京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼]{0,1}[A-Z_a-z_0-9]{4}[A-Z_a-z_0-9挂学警港澳]{1}$";
+            if (!blackList.getCarNo().matches(reg)) {
+                resultSb.append("第" + (count + 3) + "行" + "第2列车牌号非法\n");
+                flagNum++;
+            }
+
+        }
+        // 对车牌颜色进行校验
+        if (dicService.getItemsMap("vehPlateColor").get(blackList.getVehPlateColor() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第3列车牌颜色不正确\n");
+            flagNum++;
+        }
+
+        if (flagNum == 0) {
+            blackList.setPlateNum(blackList.getPlateNum().toUpperCase());
+            blackList.setCarNo(blackList.getCarNo().toUpperCase());
+
+
+//            Conditions conditions = new Conditions();
+//            conditions.setPlateNum(blackList.getPlateNum());
+//            conditions.setCarNo(blackList.getCarNo());
+//            conditions.setVehPlate(blackList.getPlateNum() + blackList.getCarNo());
+//            conditions.setVehPlateColor(blackList.getVehPlateColor()+"");
+//            boolean b = grayListService.plateValidate(conditions);
+//            if (!b) {
+//                resultSb.append("第" + (count + 3) + "行" + "数据已经存在\n");
+//            }
+        }
+
+        // 对车型进行校验
+     /*   if (dicService.getItemsMap("vehClass").get(blackList.getVehClass() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第4列车型填写不正确\n");
+        }*/
+        // 对客货标识进行校验
+        if (blackList.getVehFlag() != 0 && blackList.getVehFlag() != 1 && blackList.getVehFlag() != 2) {
+            resultSb.append("第" + (count + 3) + "行" + "第5列客货标识填写不正确\n");
+        }
+        // 对车种进行校验
+        if (dicService.getItemsMap("vehType").get(blackList.getVehType() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第8列车种填写不正确\n");
+        }
+
+        // 对说明进行校验
+        if (StringUtils.isEmpty(blackList.getVehInfo())) {
+            resultSb.append("第" + (count + 3) + "行" + "第14列说明不能为空\n");
+        }
+
+        return resultSb.toString();
+
+    }
+
+    private String formatRoBlackList(List baseEntityList) {
+
+
+
+        ArrayList<RoBlackList> roBlackLists = new ArrayList<RoBlackList>();
+        StringBuilder resultSb = new StringBuilder();
+        List<DicItem> projectType = getDicItems("projectType");
+        for (int i = 0; i < baseEntityList.size(); i++) {
+            RoBlackList entity = (RoBlackList) baseEntityList.get(i);
+            // 对实体中的每个字符串进行校验
+            String validateResult = validateRoBlackList(entity, i);
+            // 对结果进行判定
+            if (StringUtils.isBlank(validateResult)) {
+                try {
+                    entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+                    entity.setVehPlate(entity.getPlateNum() + entity.getCarNo());
+
+                    blackListService.save(entity);
+                    System.out.println("保存成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                roBlackLists.add(entity);
+            } else {
+                resultSb.append(validateResult);
+            }
+
+        }
+        if (roBlackLists != null && roBlackLists.size() > 0 && StringUtils.isNotBlank(resultSb.toString())) {
+            for (RoBlackList roBlackList : roBlackLists) {
+                blackListService.delete(roBlackList);
+            }
+        }
+        return resultSb.toString();
+    }
+
+    /**
+     * 对路段灰名单进行校验
+     *
+     * @param blackList
+     * @param count
+     * @return
+     */
+    public String validateRoBlackList(RoBlackList blackList, int count) {
+
+        int flagNum = 0;
+
+
+        // 定义一个结果，用于返回
+        StringBuilder resultSb = new StringBuilder();
+
+        // 对车牌进行校验
+        if (StringUtils.isEmpty(blackList.getPlateNum())) {
+            resultSb.append("第" + (count + 3) + "行" + "第1列车牌不能为空\n");
+            flagNum++;
+        } else if (!getAllProAbbr().contains(blackList.getPlateNum())) {
+            resultSb.append("第" + (count + 3) + "行" + "第1列车牌应该为各省简称\n");
+            flagNum++;
+        }
+        // 对车牌号进行校验
+        if (StringUtils.isEmpty(blackList.getCarNo())) {
+            resultSb.append("第" + (count + 3) + "行" + "第2列车牌号不能为空\n");
+            flagNum++;
+        } else {
+            String reg = "^[A-Z_a-z]{1}[警京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼]{0,1}[A-Z_a-z_0-9]{4}[A-Z_a-z_0-9挂学警港澳]{1}$";
+            if (!blackList.getCarNo().matches(reg)) {
+                resultSb.append("第" + (count + 3) + "行" + "第2列车牌号非法\n");
+                flagNum++;
+            }
+
+        }
+        // 对车牌颜色进行校验
+        if (dicService.getItemsMap("vehPlateColor").get(blackList.getVehPlateColor() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第3列车牌颜色不正确\n");
+            flagNum++;
+        }
+
+        if (flagNum == 0) {
+            blackList.setPlateNum(blackList.getPlateNum().toUpperCase());
+            blackList.setCarNo(blackList.getCarNo().toUpperCase());
+
+//            Conditions conditions = new Conditions();
+//            conditions.setPlateNum(blackList.getPlateNum());
+//            conditions.setCarNo(blackList.getCarNo());
+//            conditions.setVehPlate(blackList.getPlateNum()+blackList.getCarNo());
+//            conditions.setVehPlateColor(blackList.getVehPlateColor() + "");
+//            boolean b = blackListService.plateValidate(conditions);
+//            if (!b) {
+//                resultSb.append("第" + (count + 3) + "行" + "数据已经存在\n");
+//            }
+
+        }
+        // 对车型进行校验
+     /*   if (dicService.getItemsMap("vehClass").get(blackList.getVehClass() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第4列车型填写不正确\n");
+        }*/
+        // 对客货标识进行校验
+        if (blackList.getVehFlag() != 0 && blackList.getVehFlag() != 1 && blackList.getVehFlag() != 2) {
+            resultSb.append("第" + (count + 3) + "行" + "第5列客货标识填写不正确\n");
+        }
+        // 对车种进行校验
+        if (dicService.getItemsMap("vehType").get(blackList.getVehType() + "") == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第8列车种填写不正确\n");
+        }
+
+        // 对说明进行校验
+        if (StringUtils.isEmpty(blackList.getVehInfo())) {
+            resultSb.append("第" + (count + 3) + "行" + "第14列说明不能为空\n");
+        }
+
+        // 对列入拦截名单进行校验
+//        if (blackList.getIntercept() != 0 && blackList.getIntercept() != 1) {
+//            resultSb.append("第" + (count + 3) + "行" + "第15列是否列入拦截不能为空\n");
+//        }
+
+        // 对申请人进行校验
+        if (StringUtils.isEmpty(blackList.getApplicant())) {
+            resultSb.append("第" + (count + 3) + "行" + "第16列申请人不能为空\n");
+        }
+        // 对申请时间进行校验
+        if (blackList.getApplicateTime() == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第17列申请时间不能为空或者格式不对\n");
+        }
+
+        // 对申请机构进行校验
+        if (CacheUtil.getAllOrgCodeNameMap().get(blackList.getApplicateOrg()) == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第18列申请机构不能为空或者非法\n");
+        }
+
+        // 对拦截选项进行校验
+        if (blackList.getInterceptOption() != 0 && blackList.getInterceptOption() != 1 && blackList.getInterceptOption() != 2 && blackList.getInterceptOption() != 3) {
+            resultSb.append("第" + (count + 3) + "行" + "第19列拦截选项不能非法\n");
+        }
+
+        // 对拦截开始时间进行校验
+        if (blackList.getStartDate() == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第20列拦截开始时间为空或者非法\n");
+        }
+
+        // 对拦截结束时间进行校验
+        if (blackList.getEndDate() == null) {
+            resultSb.append("第" + (count + 3) + "行" + "第21列拦截结束时间为空或者非法\n");
+        }
+
+        if (blackList.getStartDate() != null && blackList.getEndDate() == null) {
+            if (blackList.getStartDate().compareTo(blackList.getEndDate()) > 0) {
+                resultSb.append("第" + (count + 3) + "行" + "拦截开始时间不能大于结束时间\n");
+            }
+        }
+
+
+        return resultSb.toString();
+    }
+
+
+    /**
+     * 封装拦截选项
+     *
+     * @return
+     */
+    private Map<String, Integer> getInterceptOption() {
+        // 创建一个map
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        // 出口---1
+        result.put("出口", 1);
+        // 入口---2
+        result.put("入口", 2);
+        // 全部----3
+        result.put("全部", 3);
+        return result;
+    }
+
+
+    /**
+     * 封装所有的省份简称
+     *
+     * @return
+     */
+    public List<String> getAllProAbbr() {
+        ArrayList<String> resultList = new ArrayList<String>();
+
+        resultList.add("粤");
+        resultList.add("津");
+        resultList.add("沪");
+        resultList.add("渝");
+        resultList.add("京");
+        resultList.add("冀");
+        resultList.add("豫");
+        resultList.add("云");
+        resultList.add("辽");
+        resultList.add("黑");
+        resultList.add("湘");
+        resultList.add("皖");
+        resultList.add("鲁");
+        resultList.add("新");
+        resultList.add("苏");
+        resultList.add("浙");
+        resultList.add("赣");
+        resultList.add("鄂");
+        resultList.add("桂");
+        resultList.add("甘");
+        resultList.add("晋");
+        resultList.add("蒙");
+        resultList.add("陕");
+        resultList.add("吉");
+        resultList.add("闽");
+        resultList.add("贵");
+        resultList.add("青");
+        resultList.add("藏");
+        resultList.add("川");
+        resultList.add("宁");
+        resultList.add("琼");
+        resultList.add("台");
+        resultList.add("港");
+        resultList.add("澳");
+
+        return resultList;
+    }
+
+    /**
+     * 封装客货标识map
+     *
+     * @return
+     */
+    private Map<String, Integer> getVehFlagMap() {
+        // 创建一个hashmap
+        HashMap<String, Integer> result = new HashMap<String, Integer>();
+        // 货车--1
+        result.put("货车", 1);
+        // 客车--2
+        result.put("客车", 2);
+        // 非记重或不分客货 --0
+        result.put("非记重或不分客货", 0);
+        return result;
+
+    }
+
+    /**
+     * 反转map
+     *
+     * @param vehPlateColorMap
+     * @return
+     */
+    private Map<String, String> reverseMap(Map<String, String> map) {
+        // 创建一个Map
+        HashMap<String, String> result = new HashMap<>();
+        // 遍历map
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            result.put(entry.getValue(), entry.getKey());
+        }
+
+        return result;
+    }
+
+
+    public static void main(String[] args) throws ParseException {
+//        HashMap<String, String> hashMap = new HashMap<>();
+//        hashMap.put("1", "java");
+//
+//        String s = hashMap.get("2");
+//        int i;
+//        try {
+//            i = Integer.parseInt(s);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(s);
+//        System.out.println(i);
+//
+//        boolean matches = "g123g2".matches("^[A-Z_a-z]{1}[警京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼]{0,1}[A-Z_a-z_0-9]{4}[A-Z_a-z_0-9挂学警港澳]{1}$");
+//        System.out.println(matches);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        Date parse = format.parse("2015/09/30");
+        Date parse2 = format.parse("2015/04/30");
+
+        int i = parse.compareTo(parse2);
+        System.out.println(i);
+
+        if (i > 0) {
+//            System.out.println(“”“”“"非法时间");
+            System.out.println("非法时间");
+        }
+
+//        if (parse > parse2) {
+//            System.out.println();
+//        }
+    }
+
+}

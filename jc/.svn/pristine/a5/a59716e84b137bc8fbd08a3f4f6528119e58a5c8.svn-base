@@ -1,0 +1,259 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class AbnormalCarDetail implements Serializable{
+	
+	private static final long serialVersionUID = 8002761695528237158L;
+	// Fields
+
+
+	private String id;
+	private Integer enStationId; // 入口站编号
+	private Timestamp enTime; // 入口日期及时间
+	private Short enVehicleClass; // 入口车型
+	private Short enVehicleStatus; // 入口车种
+	private String enVehiclePlate; // 入口车牌号码
+	private Integer exStationId; // 出口站编号
+	private Timestamp exTime; // 出口日期及时间
+	private Short exVehicleClass; // 出口车型
+	private Short exVehicleStatus; // 出口车种
+	private String exVehiclePlate; // 出口车牌
+	private String exVehIdentifyPlate; // 出口识别车牌
+	private Long dealStatus;
+	private Short axisGroupNum; // 轴组数
+	private Long totalWeight; // 总轴重
+	private Long overLoadWeight; // 超限重量
+	private String realPath; // 收费路径信息
+	private Integer miles; // 
+	private String obuPlate; //obu车牌
+	private Float overLoadPersent;
+	private Short exceptionType; // 
+	private Short exvehicleFlag;
+	private int cashMoney;
+	private Integer enNetRoadID;
+	private Integer exNetRoadID;
+	private String laneEnSerialNo;  // 入口流水号
+	private String laneExSerialNo;   //出口流水号
+	private Short enLaneId; // 入口车道编号
+	private Short exLaneId; // 出口车道编号
+	private Short enRoadId; // 入口路段编号
+	private Short exRoadId; // 出口路段编号
+	private Timestamp squadDate; // 入口日期及时间
+	private Integer exOperatorID;
+	private Short auditStatus ;
+	private float OverLoadPercent;
+	
+	public float getOverLoadPercent() {
+		return OverLoadPercent;
+	}
+	public void setOverLoadPercent(float overLoadPercent) {
+		OverLoadPercent = overLoadPercent;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public Integer getEnStationId() {
+		return enStationId;
+	}
+	public void setEnStationId(Integer enStationId) {
+		this.enStationId = enStationId;
+	}
+	public Timestamp getEnTime() {
+		return enTime;
+	}
+	public void setEnTime(Timestamp enTime) {
+		this.enTime = enTime;
+	}
+	public Short getEnVehicleClass() {
+		return enVehicleClass;
+	}
+	public void setEnVehicleClass(Short enVehicleClass) {
+		this.enVehicleClass = enVehicleClass;
+	}
+	public Short getEnVehicleStatus() {
+		return enVehicleStatus;
+	}
+	public void setEnVehicleStatus(Short enVehicleStatus) {
+		this.enVehicleStatus = enVehicleStatus;
+	}
+	public String getEnVehiclePlate() {
+		return enVehiclePlate;
+	}
+	public void setEnVehiclePlate(String enVehiclePlate) {
+		this.enVehiclePlate = enVehiclePlate;
+	}
+	public Integer getExStationId() {
+		return exStationId;
+	}
+	public void setExStationId(Integer exStationId) {
+		this.exStationId = exStationId;
+	}
+	public Timestamp getExTime() {
+		return exTime;
+	}
+	public void setExTime(Timestamp exTime) {
+		this.exTime = exTime;
+	}
+	public Short getExVehicleClass() {
+		return exVehicleClass;
+	}
+	public void setExVehicleClass(Short exVehicleClass) {
+		this.exVehicleClass = exVehicleClass;
+	}
+	public Short getExVehicleStatus() {
+		return exVehicleStatus;
+	}
+	public void setExVehicleStatus(Short exVehicleStatus) {
+		this.exVehicleStatus = exVehicleStatus;
+	}
+	public String getExVehiclePlate() {
+		return exVehiclePlate;
+	}
+	public void setExVehiclePlate(String exVehiclePlate) {
+		this.exVehiclePlate = exVehiclePlate;
+	}
+	public String getExVehIdentifyPlate() {
+		return exVehIdentifyPlate;
+	}
+	public void setExVehIdentifyPlate(String exVehIdentifyPlate) {
+		this.exVehIdentifyPlate = exVehIdentifyPlate;
+	}
+	public Long getDealStatus() {
+		return dealStatus;
+	}
+	public void setDealStatus(Long dealStatus) {
+		this.dealStatus = dealStatus;
+	}
+	public Short getAxisGroupNum() {
+		return axisGroupNum;
+	}
+	public void setAxisGroupNum(Short axisGroupNum) {
+		this.axisGroupNum = axisGroupNum;
+	}
+	public Long getTotalWeight() {
+		return totalWeight;
+	}
+	public void setTotalWeight(Long totalWeight) {
+		this.totalWeight = totalWeight;
+	}
+	public Long getOverLoadWeight() {
+		return overLoadWeight;
+	}
+	public void setOverLoadWeight(Long overLoadWeight) {
+		this.overLoadWeight = overLoadWeight;
+	}
+	public String getRealPath() {
+		return realPath;
+	}
+	public void setRealPath(String realPath) {
+		this.realPath = realPath;
+	}
+	public Integer getMiles() {
+		return miles;
+	}
+	public void setMiles(Integer miles) {
+		this.miles = miles;
+	}
+	public String getObuPlate() {
+		return obuPlate;
+	}
+	public void setObuPlate(String obuPlate) {
+		this.obuPlate = obuPlate;
+	}
+	public Float getOverLoadPersent() {
+		return overLoadPersent;
+	}
+	public void setOverLoadPersent(Float overLoadPersent) {
+		this.overLoadPersent = overLoadPersent;
+	}
+	public Short getExceptionType() {
+		return exceptionType;
+	}
+	public void setExceptionType(Short exceptionType) {
+		this.exceptionType = exceptionType;
+	}
+	public Short getExvehicleFlag() {
+		return exvehicleFlag;
+	}
+	public void setExvehicleFlag(Short exvehicleFlag) {
+		this.exvehicleFlag = exvehicleFlag;
+	}
+	public int getCashMoney() {
+		return cashMoney;
+	}
+	public void setCashMoney(int cashMoney) {
+		this.cashMoney = cashMoney;
+	}
+	public Integer getEnNetRoadID() {
+		return enNetRoadID;
+	}
+	public void setEnNetRoadID(Integer enNetRoadID) {
+		this.enNetRoadID = enNetRoadID;
+	}
+	public Integer getExNetRoadID() {
+		return exNetRoadID;
+	}
+	public void setExNetRoadID(Integer exNetRoadID) {
+		this.exNetRoadID = exNetRoadID;
+	}
+	public String getLaneEnSerialNo() {
+		return laneEnSerialNo;
+	}
+	public void setLaneEnSerialNo(String laneEnSerialNo) {
+		this.laneEnSerialNo = laneEnSerialNo;
+	}
+	public String getLaneExSerialNo() {
+		return laneExSerialNo;
+	}
+	public void setLaneExSerialNo(String laneExSerialNo) {
+		this.laneExSerialNo = laneExSerialNo;
+	}
+	public Short getEnLaneId() {
+		return enLaneId;
+	}
+	public void setEnLaneId(Short enLaneId) {
+		this.enLaneId = enLaneId;
+	}
+	public Short getExLaneId() {
+		return exLaneId;
+	}
+	public void setExLaneId(Short exLaneId) {
+		this.exLaneId = exLaneId;
+	}
+	public Short getEnRoadId() {
+		return enRoadId;
+	}
+	public void setEnRoadId(Short enRoadId) {
+		this.enRoadId = enRoadId;
+	}
+	public Short getExRoadId() {
+		return exRoadId;
+	}
+	public void setExRoadId(Short exRoadId) {
+		this.exRoadId = exRoadId;
+	}
+	public Timestamp getSquadDate() {
+		return squadDate;
+	}
+	public void setSquadDate(Timestamp squadDate) {
+		this.squadDate = squadDate;
+	}
+	public Integer getExOperatorID() {
+		return exOperatorID;
+	}
+	public void setExOperatorID(Integer exOperatorID) {
+		this.exOperatorID = exOperatorID;
+	}
+	public Short getAuditStatus() {
+		return auditStatus;
+	}
+	public void setAuditStatus(Short auditStatus) {
+		this.auditStatus = auditStatus;
+	}
+
+}

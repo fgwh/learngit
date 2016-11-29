@@ -1,0 +1,47 @@
+package com.hgsoft.main.jcManange.service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.main.jcManange.dao.AbnormalCarDetailDao;
+import com.hgsoft.main.jcManange.entity.AbnormalCarDetail;
+import com.hgsoft.security.service.BaseService;
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class AbnormalCarDetailService extends BaseService<AbnormalCarDetail>{
+	@Resource
+	AbnormalCarDetailDao abnormalcardetaildao;
+	
+	public List<AbnormalCarDetail> getAbnorLiuShui(String plateNum,String num){
+		return abnormalcardetaildao.getAbnorLiuShui(plateNum, num);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * 标识点异常一
+	 */
+	public List<Object[]> identifyPointOne(String year,String beginDate,String endDate){
+		 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+	        Date date = new Date();
+	        year = sdf.format(date);
+		return abnormalcardetaildao.identifyPointOne(year, beginDate,endDate);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * 标识点异常二
+	 */
+	public List<Object[]> identifyPointTwo(String year,String beginDate,String endDate){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        Date date = new Date();
+        year = sdf.format(date);
+		return abnormalcardetaildao.identifyPointTwo(year, beginDate,endDate);
+	}
+}

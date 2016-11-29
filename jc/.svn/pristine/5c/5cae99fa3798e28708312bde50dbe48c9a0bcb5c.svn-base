@@ -1,0 +1,50 @@
+recharge=com.hgsoft.cxf.server.impl.RechargePay
+refund=com.hgsoft.cxf.server.impl.RefundPay
+transfer=com.hgsoft.cxf.server.impl.TransferPay
+##sqlPath=com.microsoft.sqlserver.jdbc.SQLServerDriver
+sqlPath=oracle.jdbc.driver.OracleDriver
+##xinyue data
+##sqlUrl=jdbc\:sqlserver\://192.168.1.51\:1433;databaseName\=jhxexlist
+##huruan data
+##sqlUrl=jdbc\:sqlserver\://192.168.1.44\:1433;databaseName\=XL_StationGB
+##sqlUrl=jdbc\:sqlserver\://192.168.1.44\:1433;databaseName\=huNanStation
+##sqlUrl=jdbc\:sqlserver\://192.168.1.128\:1433;databaseName\=SG_Road
+sqlUrl=jdbc\:oracle\:thin\:@172.31.234.177\:1521:orcl
+userName=C##_ltc_jx
+password=123456
+baseDir=D\:/datao
+IM_SAVE_PATH=im
+FILE_SAVE_DIR=laneListImage
+uploadPath=app
+operLogPath=operLog
+
+# 1 lianjie HuaRuanData bushi 1 lianjie XinYueData   data==hunan  connect HuNan Data data==hunanSuiYue connect HuNanSuiYue Data
+data=1
+
+##liushuishujuku
+########Don't easily modify here##########
+liushuiTable = TBL_EXITWASTE_
+operatorTable  = TBL_OPERATORDIC
+operatorTypeTable = TBL_OPERATORTYPECODE
+#partitionTable_head = TExitWaste_
+#partitionTable_sign = /
+########Don't easily modify here##########
+
+DBDRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
+DBURL=jdbc:sqlserver://192.168.1.250:1433;databaseName\=JZ_ROAD
+DBUSER=sa
+DBPASSWORD=123456789aB
+
+ROAD_CODE=86
+PROVINCE_IP=10.244.5.8
+PROVINCE_PORT=80
+LOCAL_PORT=5665
+LOCAL_PORTTWO=5666
+STATION_SERVER_IP=127.0.0.1
+STATION_SERVER_PORT=8586
+
+
+LOCALDBDRIVER=com.microsoft.sqlserver.jdbc.SQLServerDriver
+LOCALURL=jdbc:sqlserver://192.168.1.250:1433;databaseName\=jc
+LOCALUSER=sa
+LOCALPASSWORD=123456789aB

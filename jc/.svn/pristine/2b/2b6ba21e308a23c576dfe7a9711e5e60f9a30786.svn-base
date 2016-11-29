@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<models>
+    <model id="com.hgsoft.main.jcManange.entity.RoGrayList" className="com.hgsoft.main.jcManange.entity.RoGrayList"
+           startRow="3" title="路段灰名单">
+        <property name="plateNum" column="2" title="车牌" type="" width=""></property>
+        <property name="carNo" column="3" title="车牌号" type="" width=""></property>
+
+        <property name="vehPlateColor" column="4" title="车牌颜色" type="" width=""></property>
+        <property name="vehClass" column="5" title="车型" type="" width=""></property>
+        <property name="vehFlag" column="6" title="客货标识" type="" width=""></property>
+        <property name="vehType" column="7" title="车种" type="" width=""></property>
+
+        <property name="vehBigType" column="8" title="逃费类型-大类" type="" width=""></property>
+        <property name="vehMidType" column="9" title="逃费类型-中类" type="" width=""></property>
+        <property name="vehSmallType" column="10" title="逃费类型-细类" type="" width=""></property>
+
+        <property name="vehInfo" column="11" title="说明" type="" width=""></property>
+        <property name="applicant" column="12" title="申请人" type="" width=""></property>
+        <property name="applicateTime" column="13" title="申请时间" type="" width=""></property>
+        <property name="applicateOrg" column="14" title="申请机构" type="" width=""></property>
+        
+        <property name="feeCount" column="15" title="逃费总次数" type="" width=""></property>
+        <property name="feeMoney" column="16" title="逃费总金额" type="" width=""></property>
+        <property name="axisGroup" column="17" title="轴组" type="" width=""></property>
+    </model>
+</models>

@@ -1,0 +1,403 @@
+package com.hgsoft.security.util;
+
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.service.OrgService;
+import com.hgsoft.util.SpringInit;
+import com.hgsoft.util.StrTool;
+
+import java.util.*;
+
+public class OrgUtils {
+	private static Map<String,Org> orgMap;//以机构id为key的map
+	//private static Map<String,Org> orgCodeMap;//以orgCode为key的map
+	private static List<Org> orgList;
+	private static Map<String,Org> allOrgMap;
+
+	/** Map<机构名称,机构> */
+	private static Map<String,Org> orgNameMap;
+
+	/***
+	 * 初始化
+	 */
+	public static void init() {
+
+		OrgService orgService = (OrgService)SpringInit
+				.getApplicationContext().getBean(OrgService.class);
+
+		orgMap = new HashMap<String, Org>();
+		orgNameMap = new HashMap<String, Org>();
+		allOrgMap = new HashMap<String, Org>();
+
+		orgList = orgService.getAllOrgListForOrder();
+		if (orgList!=null && !orgList.isEmpty()){
+			for (Iterator<Org> iterator = orgList.iterator(); iterator.hasNext();) {
+				Org org = (Org) iterator.next();
+				allOrgMap.put(org.getId(), org);
+				if(0==org.getIsDelete()){
+					orgMap.put(org.getId(), org);
+
+					//				Integer count = cityStateCountMap.get(org.getCityState());
+					//				cityStateCountMap.put(org.getCityState(), count==null? 1: (count+1));
+					if(orgNameMap.containsKey(org.getOrgName())){
+						continue;
+						//throw new RuntimeException("数据错误，机构名称重复："+org.getOrgName());
+					}
+					orgNameMap.put(org.getOrgName(), org);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 以id为key的机构map
+	 * @return
+	 */
+	public static Map<String, Org> getOrgMap() {
+		if (orgMap == null || orgMap.isEmpty()){
+			init();
+		}
+		return orgMap;
+	}
+
+	/**
+	 * 以id为key的机构map
+	 * @return
+	 */
+	public static Map<String, Org> getAllOrgMap() {
+		if (allOrgMap == null || allOrgMap.isEmpty()){
+			init();
+		}
+		return allOrgMap;
+	}
+
+	/***
+	 * 获取整个机构列表
+	 * @return
+	 */
+	public static List<Org> getOrgList() {
+		if (orgList == null || orgList.isEmpty()){
+			init();
+		}
+		return orgList;
+	}
+
+	/**
+	 * 根据传入的机构ID，获取它的所有子机构
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getSubOrgByParentOrgId(String orgId){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+
+		List<Org> retList = new ArrayList<Org>();
+		System.out.println(OrgUtils.getOrgList().size());
+		for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+			Org org = iterator.next();
+			//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+			boolean isSubOrgFlag = false;
+			String orgIdTemp = org.getId();
+			while (OrgUtils.getOrgMap().get(orgIdTemp)!=null){
+				if (orgId.equals(OrgUtils.getOrgMap().get(orgIdTemp).getId())){
+					isSubOrgFlag = true;
+				}
+				orgIdTemp = OrgUtils.getOrgMap().get(orgIdTemp).getParentId();
+			}
+
+			if (isSubOrgFlag){
+				retList.add(org);
+			}
+		}
+		return retList;
+	}
+
+	/**
+	 * 根据传入的机构ID，获取它的所有子机构(包括删除内容)
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getAllSubOrgByParentOrgId(String orgId){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+		List<Org> retList = new ArrayList<Org>();
+		System.out.println(OrgUtils.getOrgList().size());
+		for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+			Org org = iterator.next();
+			//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+			boolean isSubOrgFlag = false;
+			String orgIdTemp = org.getId();
+			while (OrgUtils.getAllOrgMap().get(orgIdTemp)!=null){
+				if (orgId.equals(OrgUtils.getAllOrgMap().get(orgIdTemp).getId())){
+					isSubOrgFlag = true;
+				}
+				orgIdTemp = OrgUtils.getAllOrgMap().get(orgIdTemp).getParentId();
+			}
+
+			if (isSubOrgFlag){
+				retList.add(org);
+			}
+		}
+		return retList;
+	}
+
+	/**
+	 * 根据传入的机构ID，获取它的所有子收费站(自动过滤掉站级用户查看其它机构)
+	 * 郭军
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getSubOrgByParentOrgStationIdZJ(String orgId,Admin operator){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+		List<Org> retList = new ArrayList<Org>();
+		if(operator!=null&&operator.getOrg().getOrgType().equals("5")){
+			retList.add(operator.getOrg());
+		}else{
+			for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+				Org org = iterator.next();
+				//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+				boolean isSubOrgFlag = false;
+				String orgIdTemp = org.getId();
+				while (OrgUtils.getOrgMap().get(orgIdTemp)!=null && org.getOrgType().equals(OrgService.ORG_TYPE_STATION)){
+					if (orgId.equals(OrgUtils.getOrgMap().get(orgIdTemp).getId())){
+						isSubOrgFlag = true;
+					}
+					orgIdTemp = OrgUtils.getOrgMap().get(orgIdTemp).getParentId();
+				}
+
+				if (isSubOrgFlag){
+					retList.add(org);
+				}
+			}
+		}
+		return retList;
+	}
+	
+	/**
+	 * 根据传入的机构ID，获取它的所有子路段
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getSubOrgByParentOrgCenterId(String orgId){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+		List<Org> retList = new ArrayList<Org>();
+		for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+			Org org = iterator.next();
+			//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+			boolean isSubOrgFlag = false;
+			String orgIdTemp = org.getId();
+			while (OrgUtils.getOrgMap().get(orgIdTemp)!=null && org.getOrgType().equals(OrgService.ORG_TYPE_CENTERSTATION)){
+				if (orgId.equals(OrgUtils.getOrgMap().get(orgIdTemp).getId())){
+					isSubOrgFlag = true;
+				}
+				orgIdTemp = OrgUtils.getOrgMap().get(orgIdTemp).getParentId();
+			}
+
+			if (isSubOrgFlag){
+				retList.add(org);
+			}
+		}
+		//如果是站级用户登录 则获取他的上级路段机构
+		if(retList == null || retList.isEmpty()){ 
+			Org o = OrgUtils.getOrgMap().get(orgId);
+			System.out.println(o.getParentId());
+			retList.add(OrgUtils.getOrgMap().get(o.getParentId()));
+
+		}  
+		return retList;
+	}
+
+	/**
+	 * 根据传入的机构ID，获取它的所有子收费站
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getSubOrgByParentOrgStationId(String orgId){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+		List<Org> retList = new ArrayList<Org>();
+		for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+			Org org = iterator.next();
+			//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+			boolean isSubOrgFlag = false;
+			String orgIdTemp = org.getId();
+			while (OrgUtils.getOrgMap().get(orgIdTemp)!=null && org.getOrgType().equals(OrgService.ORG_TYPE_STATION)){
+				if (orgId.equals(OrgUtils.getOrgMap().get(orgIdTemp).getId())){
+					isSubOrgFlag = true;
+				}
+				orgIdTemp = OrgUtils.getOrgMap().get(orgIdTemp).getParentId();
+			}
+
+			if (isSubOrgFlag){
+				retList.add(org);
+			}
+		}
+		return retList;
+	}
+
+	/**
+	 * 根据传入的机构ID，获取它的所有子路段
+	 * @param orgId
+	 * @return
+	 */
+	public static List<Org> getSubOrgByParentOrgRoadId(String orgId){
+		if (StrTool.isBlankStr(orgId)){
+			return null;
+		}
+		if (OrgUtils.getOrgList()==null || OrgUtils.getOrgList().isEmpty()){
+			return null;
+		}
+
+		List<Org> retList = new ArrayList<Org>();
+		for (Iterator<Org> iterator = OrgUtils.getOrgList().iterator(); iterator.hasNext();) {
+			Org org = iterator.next();
+			//判断每个机构的所有父节点有没有含有orgId，有的则说明当前机构属于orgId的子机构
+			boolean isSubOrgFlag = false;
+			String orgIdTemp = org.getId();
+			while (OrgUtils.getOrgMap().get(orgIdTemp)!=null && org.getOrgLevel().toString().equals(OrgService.ORG_TYPE_ROAD)){
+				if (orgId.equals(OrgUtils.getOrgMap().get(orgIdTemp).getId())){
+					isSubOrgFlag = true;
+				}
+				orgIdTemp = OrgUtils.getOrgMap().get(orgIdTemp).getParentId();
+			}
+
+			if (isSubOrgFlag){
+				retList.add(org);
+			}
+		}
+		//如果是站级用户登录 则获取他的上级路段机构
+		if(retList == null || retList.isEmpty()){ 
+			Org o = OrgUtils.getOrgMap().get(orgId);
+			System.out.println(o.getParentId());
+			retList.add(OrgUtils.getOrgMap().get(o.getParentId()));
+
+		}  
+		return retList;
+	}
+
+	/***
+	 * 获取所有市州
+	 * @return
+	 */
+	public static List<String> getAllCityState(){
+		List<Org> orgList = getOrgList();
+
+		List<String> retList = new ArrayList<String>();
+
+		for (Iterator iterator = orgList.iterator(); iterator.hasNext();) {
+			Org org = (Org) iterator.next();
+			//			if (!retList.contains(org.getCityState())){
+			//				retList.add(org.getCityState());
+			//			}
+		}
+		return retList;
+	}
+
+	/***
+	 * 根据当前用户机构id，获取有权限的市州List<String>
+	 * @param orgId
+	 * @return
+	 */
+	public static List<String> getCityStateListByOrgId(String orgId){
+		List<String> cityStateList = new ArrayList<String>();
+		List<Org> orgTempList = OrgUtils.getSubOrgByParentOrgId(orgId);
+		for (Iterator iterator = orgTempList.iterator(); iterator.hasNext();) {
+			Org org = (Org) iterator.next();
+			//			if (StrTool.isBlankStr(org.getCityState())){
+			//				continue;
+			//			}
+			//			if (!cityStateList.contains(org.getCityState())){
+			//				cityStateList.add(org.getCityState());
+			//			}
+		}
+
+		Collections.sort(cityStateList);
+
+		return cityStateList;
+	}
+
+	/***
+	 * 根据市州名称，获取所有的对应机构List
+	 * @param cityState
+	 * @return
+	 */
+	public static List<Org> getOrgListByCityState(String cityState){
+		List<Org> orgList = getOrgList();
+		if (StrTool.isBlankStr(cityState)){
+			cityState = "";
+		}
+		List<Org> retList = new ArrayList<Org>();
+		for (Iterator iterator = orgList.iterator(); iterator.hasNext();) {
+			Org org = (Org) iterator.next();
+			//			if (cityState.equals(org.getCityState())){
+			//				retList.add(org);
+			//			}
+		}
+		return retList;
+	}
+
+
+
+	/**
+	 * 根据机构名称获取机构
+	 * @param orgName
+	 * @return
+	 */
+	public static Org getOrgByOrgName(String orgName){
+		return orgNameMap.get(orgName);
+	}
+
+	/**
+	 * 根据机构名称获取机构
+	 * @param name
+	 * @return
+	 */
+	public static Org getOrgByName(String name){
+		return orgNameMap.get(name);
+	}
+
+	/**
+	 * 机构是否存在
+	 * @param orgName
+	 * @return
+	 */
+	public static boolean isOrgExist(String orgName){
+		return orgNameMap.containsKey(orgName);
+	}
+
+	/**
+	 * 机构是否存在
+	 * @param orgName
+	 * @return
+	 */
+	public static boolean isOrgNotExist(String orgName){
+		return !orgNameMap.containsKey(orgName);
+	}	
+}

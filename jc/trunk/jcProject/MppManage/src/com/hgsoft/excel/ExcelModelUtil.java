@@ -1,0 +1,61 @@
+package com.hgsoft.excel;
+
+import java.io.File;
+import java.util.List;
+
+/**
+ * Excel导入成Model集合，Model集合导出成Excel
+ * 
+ * @author huj
+ * 
+ */ 
+public class ExcelModelUtil{ 
+        
+    private static BaseExcel baseExcel = new POIExcel();    
+ 
+    /**
+     * 导入Excel文件，并把文件内数据生成Model集合
+     * 
+     * @param excelPath
+     *            文件路径
+     * @param className
+     *            Model的类全路径名
+     * @return Model集合  
+     */
+	public static List importExcel(String excelPath, String className) {
+		return baseExcel.importSingleExcel(excelPath, className);
+	}
+	
+	/**
+     * 导入TreeExcel文件，并把文件内数据生成Model集合
+     * 
+     * @param excelPath
+     *            文件路径
+     * @param className
+     *            Model的类全路径名
+     * @return Model集合  
+     */
+	public static List importExcel(String excelPath) {
+		return baseExcel.importExcel(excelPath);
+	}
+	
+	/**
+	 * 导出Model集合为Excel文件
+	 * 
+	 * @param modelList
+	 *            Model集合
+	 * @param excelPath
+	 *            Excel文件完整路径 
+	 */
+	public static void exportExcel(List modelList, String excelPath) {
+        baseExcel.exportExcel(modelList,excelPath); 
+	}
+	
+	public static void exportExcel(List modelList, File file, String id) {
+        baseExcel.exportExcel(modelList,file, id); 
+	}
+    
+    public static void main(String args[]){
+    }
+   
+}

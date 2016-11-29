@@ -1,0 +1,109 @@
+package com.hgsoft.main.jcManange.action;
+
+import javax.annotation.Resource;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.ProBlackList;
+import com.hgsoft.main.jcManange.entity.ProGrayList;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.main.jcManange.service.BlackListService;
+import com.hgsoft.main.jcManange.service.GrayListService;
+import com.hgsoft.security.action.BaseAction;
+@Controller
+@Scope("prototype")
+public class GrayListAction extends BaseAction<RoGrayList>{
+	
+	@Resource
+	private GrayListService grayListService;
+	
+	private Conditions conditions = new Conditions() ;
+	
+
+	
+	public String list(){
+		
+		Subject currentUser = SecurityUtils.getSubject();
+		if (currentUser.isPermitted("jcManage:man")) {
+			conditions.setStaffNo(operator.getStaffNo());
+		} 
+			
+		String[] selectName = new String[]{"plateNum","carNo","vehClass","vehFlag","vehPlateColor","vehBigType","vehMidType","vehSmallType","staffNo"};
+		
+		list=grayListService.queryAllMessageList(pager, conditions, selectName, "roGrayList", RoGrayList.class);
+		
+		conditions.setDataSource("0");
+		
+		return  "list";
+	}
+	
+	public String proList(){
+		
+		String[] selectName = new String[]{"plateNum","carNo","vehClass","vehFlag","vehPlateColor"};
+		
+		list=grayListService.queryAllMessageList(pager, conditions, selectName, "proGrayList", ProGrayList.class);
+		
+		conditions.setDataSource("1");
+		return  "list";
+	}
+
+	
+	public String save(){
+		
+		entity.setStaffNo(operator.getStaffNo());
+		
+		grayListService.saveRoGrayList(entity);
+		
+		return list();
+	}
+	
+	public String delete(){
+		
+		grayListService.deleteById(conditions.getId());
+		
+		return list();
+		
+	}	
+	
+	
+	public String audit(){
+		
+		grayListService.saveAudit(conditions);
+		
+		map.put("status", true);
+		
+		return  "list";
+	}
+	
+	
+    public String upload(){
+		
+    	grayListService.upload(entity);
+		
+		return list();
+				
+	}
+    
+    
+	public Conditions getConditions() {
+		return conditions;
+	}
+
+	public void setConditions(Conditions conditions) {
+		this.conditions = conditions;
+	}
+	
+	
+	public void setRoGrayList(RoGrayList roGrayList) {
+		this.entity = roGrayList;
+	}
+
+	public RoGrayList getRoGrayList() {
+		return entity;
+	}
+}

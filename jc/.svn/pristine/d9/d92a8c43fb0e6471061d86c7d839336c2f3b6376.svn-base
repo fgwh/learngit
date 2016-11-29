@@ -1,0 +1,12 @@
+package com.hgsoft.main.jcManange.dao;
+
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.security.dao.BaseDao;
+@Repository
+public class GrayListDao extends BaseDao<RoGrayList>{
+	
+	
+
+}

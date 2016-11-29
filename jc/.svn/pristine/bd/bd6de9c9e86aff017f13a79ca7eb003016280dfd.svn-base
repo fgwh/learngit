@@ -1,0 +1,151 @@
+package com.hgsoft.security.action;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.security.entity.Module;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.entity.Role;
+import com.hgsoft.security.service.ModuleService;
+import com.hgsoft.security.service.OrgService;
+import com.hgsoft.security.service.RoleService;
+
+/**
+ * @author liujiefeng
+ * @date May 19, 2010
+ * @Description 角色权限管理
+ */
+
+@Controller
+@Scope("prototype")
+public class RoleAction extends BaseAction<Role> {
+		
+	 
+	private String nameIsExists;
+	
+	private String modules;
+	
+	//注入Service
+    @Resource
+    public void setBaseService(RoleService service) {
+        this.setService(service);
+    }
+    
+	@Resource
+	private RoleService roleService;
+	@Resource
+	private OrgService orgService;
+	@Resource
+	private ModuleService moduleService;
+
+	public String save() {
+        if(roleService.nameIsExists(entity)) {
+            nameIsExists = "名称已存在！";
+            return add();
+        }
+        roleService.saveModules(modules,entity);
+		roleService.save(entity);		
+        //authController.reCreateFilterChains();
+		message = "操作成功！";
+		return list();
+	}
+
+	public String update() {
+        if(roleService.nameIsExists(entity)) {
+            nameIsExists = "名称已存在！";
+            return edit();
+        }
+        roleService.saveModules(modules,entity);
+		roleService.update(entity);		
+        //authController.reCreateFilterChains();
+		message = "操作成功！";
+		return list();
+	}
+	
+	public void isExists() {
+		String desc = "";
+		String result;
+		if(roleService.nameIsExists(entity)) {
+			desc = "名称已存在！";
+			result = "{ \"name\": \""+ desc +"\" }";
+        }else if(roleService.typeIsExists(entity)) {
+        	desc = "角色类型已存在！";
+			result = "{ \"type\": \""+ desc +"\" }";
+        }else {
+        	result = "{}";
+        }
+		HttpServletResponse response = ServletActionContext.getResponse();
+		response.setCharacterEncoding("UTF-8");
+		Writer writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write(result);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			if(writer != null)
+			{
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public List<Module> getModuleList() {
+		return moduleService.findAll();
+	}
+
+	public String getNameIsExists() {
+	    return nameIsExists;
+	}
+
+	public void setNameIsExists(String nameIsExists) {
+	    this.nameIsExists = nameIsExists;
+	}
+
+	 
+	public List<DicItem> getRoleTypeList() {
+		return getDicItems("roleType");
+	}
+	
+	public Map<String,String> getRoleTypeMap() {	
+		return getDicItemsMap("roleType");
+	}
+	public List<DicItem> getOrgTypeList() {
+        return getDicItems("orgType");
+    }
+
+	public Org getOrg() { 
+		return orgService.find(this.operator.getOrg().getId());
+	}
+ 
+	public Role getRole() {
+		return entity;
+	}
+
+	public void setRole(Role role) {
+		this.entity = role;
+	}
+
+	public String getModules() {
+		return modules;
+	}
+
+	public void setModules(String modules) {
+		this.modules = modules;
+	}
+	
+	
+}

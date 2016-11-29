@@ -1,0 +1,209 @@
+﻿create table tb_msgPublish(
+	id varchar(64) primary key,
+	publishTime datetime not null,
+	theme varchar(100) not null,
+	content varchar(4000) not null,
+	publishMan varchar(80) not null
+)
+
+/*****黑、灰名单 *****/
+create table tb_proBlackList(
+ VehPlate	 VarChar(20) not null,
+ VehPlateColor	 smallint not null,
+ VehFlag	 tinyint  not null,
+ VehClass	 tinyint  not null,
+ InterceptOption tinyint  not null,
+ StartDate	 Datetime not null,
+ EndDate	 Datetime not null,
+ VehInfo	 VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_proGrayList(
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint  not null,
+ VehFlag	tinyint  not null,
+ VehClass	tinyint  not null,
+ VehInfo	VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_roBlackList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint ,
+ VehFlag	tinyint not null,
+ VehClass	tinyint ,
+ InterceptOption	tinyint not null,
+ StartDate	Datetime not null,
+ EndDate	Datetime not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	tinyint,
+ VehMidType	tinyint,
+ VehSmallType	tinyint,
+ VehCompany	VarChar(20),
+ VehModel       VarChar(20),
+ VehType	tinyint not null,
+ feeCount	int ,
+ feeMoney	bigint,
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ source	decimal(1) not null,
+ fileName	varchar(32) ,
+ uploadTime     Datetime,
+ JfStatus	decimal(1) not null,
+)
+
+create table tb_roGrayList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	smallint not null,
+ VehFlag	tinyint not null,
+ VehClass	tinyint ,
+ VehType	tinyint not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	tinyint,
+ VehMidType	tinyint,
+ VehSmallType	tinyint,
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ Status	decimal(1) not null,
+ fileName	varchar(32) ,
+ UpdateTime	Datetime,
+ uploadTime     Datetime,
+ staffNo        VarChar(8),
+ opinion        VarChar(500),
+)
+
+create table tb_evidence(
+  id	Varchar(32) primary key,
+  type  decimal(1) not null,
+  Pid	Varchar(32)  not null,
+  fileURL	varchar(32) not null
+)
+
+/*****黑、灰名单 *****/
+
+/*****创建车牌比对函数 逐位比对返回不同的个数*****/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[f_CompareSTR]') and xtype in (N'FN', N'IF', N'TF'))  
+drop function [dbo].[f_CompareSTR]  
+GO
+create function dbo.f_CompareSTR(@s1 varchar(12), @s2 varchar(12))
+returns int
+as
+begin
+declare @len int, @i int, @diff int
+select @len=len(@s1), @i=1, @diff=0
+if @len>7 set @s1=substring(@s1,2,@len)
+while @i<=@len
+begin
+    if substring(@s1,@i,1)<>substring(@s2,@i,1) set @diff+=1
+    set @i+=1
+end
+return @diff
+end
+go
+
+/****所有出口流水表 新增OBUPlate字段*****/
+alter table tb_LaneExList_2013 add OBUPlate varchar(12)
+alter table tb_LaneExList_2014 add OBUPlate varchar(12)
+alter table tb_LaneExList_2015 add OBUPlate varchar(12)
+alter table tb_LaneExList_2016 add OBUPlate varchar(12)
+alter table tb_LaneExList_2017 add OBUPlate varchar(12)
+alter table tb_LaneExList_2018 add OBUPlate varchar(12)
+alter table tb_LaneExList_2019 add OBUPlate varchar(12)
+
+
+
+
+
+
+--------------------------------------打逃二期-----------------------------------------
+
+
+
+
+CREATE  VIEW AbnormalCar WITH SCHEMABINDING  AS
+SELECT 
+ExVehiclePlate ,AuditStatus,
+sum(CASE WHEN ExceptionType='1' THEN 1 ELSE 0 END) as SwitchCard,sum(CASE WHEN ExceptionType='1' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecSwitchCard,
+sum(CASE WHEN ExceptionType='2' THEN 1 ELSE 0 END) AS ETCModelsNotMeet,sum(CASE WHEN ExceptionType='2' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecETCModelsNotMeet,
+sum(CASE WHEN ExceptionType='3' THEN 1 ELSE 0 END) AS ETCPlateNotMeet ,sum(CASE WHEN ExceptionType='3' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecETCPlateNotMeet,
+sum(CASE WHEN ExceptionType='4' THEN 1 ELSE 0 END) as ChargesNotIndetify,sum(CASE WHEN ExceptionType='4' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecChargesNotIndetify,
+sum(CASE WHEN ExceptionType='5' THEN 1 ELSE 0 END) as IndentifyPointExcep,sum(CASE WHEN ExceptionType='5' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecIndentifyPointExcep,
+sum(CASE WHEN ExceptionType='6' THEN 1 ELSE 0 END) as AxisGroupExcep,sum(CASE WHEN ExceptionType='6' AND SquadDate > convert(nvarchar(10),dateadd(m,-12,getdate()),120) THEN 1 ELSE 0 END) as RecAxisGroupExcep,
+CASE WHEN (SELECT  count(*) from dbo.tb_roBlackList where VehPlate=ExVehiclePlate)<>0 THEN 1 ELSE 0 END as HistoryEscape,
+ExVehicleFlag
+FROM dbo.tb_AbnormalCarDeatils acd where  acd.ExTime> convert(nvarchar(10),dateadd(m,-36,getdate()),120) GROUP BY ExVehiclePlate,AuditStatus,ExVehicleFlag
+
+
+
+-- ----------------------------
+-- Table structure for tb_AbnormalCarDeatils
+-- ----------------------------
+DROP TABLE [dbo].[tb_AbnormalCarDeatils]
+GO
+CREATE TABLE [dbo].[tb_AbnormalCarDeatils] (
+[id] varchar(50) NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[RealPath] varchar(255) NOT NULL ,
+[Miles] int NOT NULL ,
+[OBUPlate] varchar(12) NULL ,
+[OverLoadPercent] real NULL ,
+[ExceptionType] tinyint NOT NULL ,
+[ExVehicleFlag] tinyint NOT NULL ,
+[CashMoney] int NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[ExRoadID] smallint NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExOperatorID] int NOT NULL ,
+[AuditStatus] tinyint NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_AbnormalCarDeatils
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_AbnormalCarDeatils
+-- ----------------------------
+ALTER TABLE [dbo].[tb_AbnormalCarDeatils] ADD PRIMARY KEY ([id])
+GO
+
+
+
+
+数据库字典添加异常种类
+
+"AbnorType"	"倒卡"           	"1"	""	"0"	""
+"AbnorType"	"ETC车型异常"	   	"2"	""	"1"     ""
+"AbnorType"	"ETC车牌异常"		"3"	""	"2"	""
+"AbnorType"	"有收费无标识"		"4"	""	"3"	""
+"AbnorType"	"收费标识点异常"	"5"	""	"4"	""
+"AbnorType"	"车型与轴组类型异常"	"6"	""	"5"	""

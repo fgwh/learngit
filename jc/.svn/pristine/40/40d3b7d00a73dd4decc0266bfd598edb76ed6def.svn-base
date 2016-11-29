@@ -1,0 +1,272 @@
+  function showModal5(){
+	  
+    	var type=$("input[name='exceptionType']:checked").val();
+    	if(type==1){
+    		$("#etcPlate").hide();
+    		$("#etcModal").hide();
+    		$("#zhouzu").show();
+    	}else{
+    		$("#etcPlate").show();
+    		$("#etcModal").show();
+    		$("#zhouzu").hide();
+    	}
+    	$('#myModal5').modal('show');
+    	
+    }  
+  //查询
+  function searchList(){
+	  $("#myForm").submit();
+  }
+  
+  //表单清空
+  function resert(){
+		$('#myForm')[0].reset();
+  }
+  
+  function controlLine(){
+      for(var i=1; i<=13; i++){
+          if($(".configurationLine .line"+i).attr('checked')){
+              $(".ycls-table tr .a"+i).hide();
+          }else{
+              $(".ycls-table tr .a"+i).show();
+          }
+       }
+        $('#myModal4').modal('hide');
+    }
+
+//流水数据展示  
+ function  showLS(num,plateNum,SwitchCard,ChargesNotIndetify,IndentifyPointExcep,
+		 ETCPlateNotMeet,ETCModelsNotMeet,AxisGroupExcep){
+	 $("#exportplateNum").val(plateNum);
+	 var operaterName= $("#operaterName").val();
+	 $("#currentNum").val(num);//设置当前为那一条
+	 $("#liushui").empty();
+	  $("#Abnorlabel").empty();
+	 var divNode;
+		$.ajax({
+			   type: "POST",
+			   url: uri+"admin/abnorCar_getAbnorLiuShui.do",
+			   data: {"plateNum":plateNum},
+			   cache: false,
+			   success: function(msg){
+				   if(!!msg.AbnorLiuShui){
+					  var als=msg.AbnorLiuShui
+				   for (var i = 0; i < als.length; i++) {
+					   var element = als[i];
+					 divNode+='<tr name='+element.exceptionType+'><td><input type="checkbox" class="subCheckbox" value='+element.exceptionType+'   plateID='+element.id+'></input>'
+					if(!$("[name='hg']").find(".line1").prop("checked")){
+						divNode+= ' </td><td class="a1">'+operaterName+'</td>'
+					}
+					 if(!$("[name='hg']").find(".line2").prop("checked")){
+							divNode+= ' </td><td class="a2">'+element.miles+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line3").prop("checked")){
+							divNode+= ' </td><td class="a3">'+element.totalWeight+'</td>'
+						}
+					 /*if(!$("[name='hg']").find(".line4").prop("checked")){
+							divNode+= ' </td><td class="a4">'+element.+'</td>'
+						}*/
+					 if(!$("[name='hg']").find(".line5").prop("checked")){
+							divNode+= ' </td><td class="a5">'+element.enTime+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line6").prop("checked")){
+							divNode+= ' </td><td class="a6">'+element.exTime+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line7").prop("checked")){
+							divNode+= ' </td><td class="a7">'+element.axisGroupNum+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line8").prop("checked")){
+							divNode+= ' </td><td class="a8">'+element.enVehicleClass+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line9").prop("checked")){
+							divNode+= ' </td><td class="a9">'+element.exVehicleClass+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line10").prop("checked")){
+							divNode+= ' </td><td class="a10">'+element.obuPlate+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line11").prop("checked")){
+							divNode+= ' </td><td class="a11">'+element.exVehIdentifyPlate+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line12").prop("checked")){
+							divNode+= ' </td><td class="a12">'+element.realPath+'</td>'
+						}
+					 if(!$("[name='hg']").find(".line13").prop("checked")){
+							divNode+= ' </td><td class="a13">'+element.cashMoney+'</td>'
+						}
+					 divNode+='</tr>'
+				   }
+					   $("#liushui").append(divNode);
+					   
+					   //设置可以点击的 标签
+					   var  buttonNode='<span>车牌:'+plateNum+'</span>'
+					   if(SwitchCard!=0){
+						   buttonNode+=' <span> <a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(1)">倒卡'+SwitchCard+'次</a></span>'  
+					   }
+					   if(ChargesNotIndetify!=0){
+						   buttonNode+='  <span><a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(4)">有收费无标识'+ChargesNotIndetify+'次</a></span>'  
+					   }
+					   if(IndentifyPointExcep!=0){
+						   buttonNode+=' <span> <a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(5)">标识点异常'+IndentifyPointExcep+'次</a></span>'  
+					   }
+					   if(ETCPlateNotMeet!=0){
+						   buttonNode+='  <span><a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(3)">ETC车牌不符'+ETCPlateNotMeet+'次</a></span>'  
+					   }
+					   if(ETCModelsNotMeet!=0){
+						   buttonNode+='  <span><a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(2)">ETC车型不符'+ETCModelsNotMeet+'次</a></span>'  
+					   }
+					   if(AxisGroupExcep!=0){
+						   buttonNode+='  <span><a class="btn btn-s-md btn-primary pull-right" id="" onclick="addColor(6)">轴组'+AxisGroupExcep+'次</a></span>'  
+					   }
+					
+                      $("#Abnorlabel").append(buttonNode);				   
+					   
+					   
+					   
+					   $("#myModal1").modal({backdrop:false});
+			            $("#myModal1").modal({keyboard:false});
+			            $('#myModal1').modal('show');
+			}else{
+			    	$("#liushui").empty();
+			}
+		 },
+			   error:function(){
+				   alert("网络异常");
+			   }
+		});
+	 
+ }
+
+    //异常稽查流水
+    $(function(){
+       /* $('table.yccl-table tbody tr').dblclick(function(e){
+        	console.dir(e.target);
+            $("#myModal1").modal({backdrop:false});
+            $("#myModal1").modal({keyboard:false});
+            $('#myModal1').modal('show');
+        });*/
+        
+        
+        //异常稽查详情
+        $('table.ycls-table tbody  tr').dblclick(function(){
+            $("#myModal2").modal({backdrop:false});
+            $("#myModal2").modal({keyboard:false});
+            $('#myModal2').modal('show');
+        });
+        
+        /*全(不)选事件*/
+        $('#checkAll').click(function(){
+            $('input.subCheckbox').attr("checked",this.checked);
+        });
+    })
+    
+    
+    //上一条
+    function beforeLiuShui(){
+    	
+    	 var num=parseInt($("#currentNum").val())-1;
+    	 if(num<=0){
+    		 alert("没有上一条了");
+    		 return false;
+    	 }else{
+    		 $("[type='button'][value='"+num+"']").trigger("click");
+    	 }
+    }
+    
+    //下一条
+    function afterLiuShui(){
+    	 var num=parseInt($("#currentNum").val())+1;
+    	 var ele=$("[type='button'][value='"+num+"']");
+    	if(ele.length>0){
+    		ele.trigger("click");
+    	}else{
+    		alert("没有下一条了");
+    	} 
+    }
+    
+  function addColor(type){
+	  $("#liushui tr").css("color","#000");  
+	  $.each($("#liushui tr[name='"+type+"']"), function(i,val){  
+	 $(val).css("color","red");
+	});  
+  }  
+    
+  function exportExcel(){
+
+	  $("#exportForm").submit();
+  }
+  
+ //批量处理打开
+  function bachAction(){
+	  var element=$("#liushui  input[type='checkbox']:checked");
+	  if(element.length<=0){
+		  alert("请先勾选需要批量处理的流水");
+		  return false;
+	  }
+		  if(ifSameType()){
+			  //将车牌全部设置到隐藏域
+			  var batChplateID=""
+				  $("#liushui  input[type='checkbox']:checked").each(function(i){ 
+				     if(i==0){
+				    	 batChplateID+=$(this).attr("plateID");
+				     }else{
+				    	 batChplateID+=","+$(this).attr("plateID");
+				     }
+				  })
+				  alert(batChplateID);
+			  $("#batChplateID").val(batChplateID);
+			  $("#myModal3").modal({backdrop:false});
+			  $("#myModal3").modal({keyboard:false});
+			  $('#myModal3').modal('show');
+		  }
+  }
+	  
+	  //判断流水类型是否是同一类型
+function ifSameType(){
+		  var flag=true;
+		  var selectType;
+		  var element=$("#liushui  input[type='checkbox']:checked");
+		  $.each(element,function(i,selectNode){
+			  if(i==0){
+				  selectType=$(selectNode).val();
+			  }else{
+				  if(selectType!=$(selectNode).val()){
+					  flag=false;
+					  alert("请选择同一稽查类型批量处理");
+					  return false;
+				  }
+			  }
+		 })
+		 return flag;
+ }
+	  
+	  
+
+function abnorToGray(){
+
+	var formData = new FormData($( "#saveGrayForm" )[0]);
+	console.dir(formData);
+	$.ajax({
+		   type: "POST",
+		   url: uri+"admin/grayList_abnorToGray.do",
+		   data: formData,
+		   processData: false,
+		    contentType: false,
+		    cache: false,
+		   success: function(msg){
+		     if(msg.Msg==true){
+		    	 alert("上传成功");
+		     }else{
+		    	 alert("上传失败");
+		     }
+		    window.location.reload();
+		   },
+		   error:function(){
+			   alert("网络异常");				   
+		   }
+	});
+}
+	  
+  
+  
+
+    

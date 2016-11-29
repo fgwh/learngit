@@ -1,0 +1,206 @@
+package com.hgsoft.main.jcManange.dao;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.UUID;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.AbnormalCarDetail;
+import com.hgsoft.security.dao.BaseDao;
+
+@Repository
+public class AbnormalCarDetailDao extends BaseDao<AbnormalCarDetail> {
+	public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	// 获取流水
+	public List<AbnormalCarDetail> getAbnorLiuShui(String plateNum, String num) {
+		String sql = "select ac.id,ac.EnStationID,ac.EnTime,sd2.name as EnVehicleClass,ac.EnVehicleStatus,ac.EnVehiclePlate,ac.ExStationID,ac.ExTime,sd.name as ExVehicleClass,ac.ExVehicleStatus,"
+				+ "ac.ExVehiclePlate,ac.exVehIdentifyPlate,ac.DealStatus,ac.AxisGroupNum,ac.TotalWeight,ac.OverLoadWeight,ac.RealPath,ac.Miles,ac.OBUPlate,ac.OverLoadPercent,"
+				+ "ac.ExceptionType,ac.ExVehicleFlag,ac.CashMoney,ac.EnNetRoadID,ac.ExNetRoadID,ac.LaneExSerialNo,ac.LaneEnSerialNo,ac.EnLaneID,ac.ExLaneID,ac.EnRoadID,"
+				+ "ac.ExRoadID,ac.SquadDate,ac.ExOperatorID,ac.AuditStatus,ExcepDisplayType FROM tb_AbnormalCarDeatils ac LEFT JOIN sys_dic sd ON ac.ExVehicleClass=sd.value "
+				+ "LEFT JOIN sys_dic sd2 ON ac.EnVehicleClass=sd2.value where sd.type='vehClass' and sd2.type='vehClass' and ac.ExVehiclePlate='"
+				+ plateNum.trim() + "' and ac.ExTime>convert(nvarchar(10),dateadd(m,-36,getdate()),120)"
+				+ "and ac.AuditStatus='1' ";
+		List list = null;
+		try {
+			list = (List<AbnormalCarDetail>) findBySql(sql, null, AbnormalCarDetail.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// 批量删除
+	public void batchDelete(String... ids) {
+		if (ids == null || ids.length < 1) {
+			return;
+		}
+
+		StringBuffer sql = new StringBuffer();
+		if (ids.length > 0) {
+			sql.append("('").append(ids[0]).append("'");
+		}
+		for (int i = 1; i < ids.length; i++) {
+			sql.append(",'").append(ids[i]).append("'");
+		}
+		if (sql.length() > 0) {
+			sql.append(")");
+			// Query q= this.getSession().createSQLQuery("delete from tb_" +
+			// clazz.getSimpleName() + " where id in " + sql.toString());
+			Query q = this.getSession()
+					.createSQLQuery("delete from  tb_AbnormalCarDeatils   where id in " + sql.toString());
+			q.executeUpdate();
+			this.getSession().flush();
+		}
+	}
+
+	// 修改
+	public int updateAbnor(String id) {
+		String sql = "update  tb_AbnormalCarDeatils set AuditStatus='2' where id='" + id + "'";
+		return getSession().createSQLQuery(sql).executeUpdate();
+	}
+
+	// 通过ID查找AbnormalCarDetail对象
+	public List<Object> getAbnormalCarDetail(String id) {
+		String sql = "select ac.id,so.orgName,ac.EnTime,sd2.name as EnVehicleClass,sd3.name,ac.EnVehiclePlate,so2.orgName,ac.ExTime,sd.name as ExVehicleClass,sd4.name,"
+				+ " ac.ExVehiclePlate,ac.exVehIdentifyPlate,ac.DealStatus,ac.AxisGroupNum,ac.TotalWeight,ac.OverLoadWeight,ac.RealPath,ac.Miles,ac.OBUPlate,ac.OverLoadPercent,"
+				+ " ac.ExceptionType,ac.ExVehicleFlag,ac.CashMoney,ac.EnNetRoadID,ac.ExNetRoadID,ac.LaneExSerialNo,ac.LaneEnSerialNo,ac.EnLaneID,ac.ExLaneID,ac.EnRoadID,"
+				+ " ac.ExRoadID,ac.SquadDate,ac.ExOperatorID,ac.AuditStatus,ExcepDisplayType FROM tb_AbnormalCarDeatils ac LEFT JOIN sys_dic sd ON ac.ExVehicleClass=sd.value"
+				+ " LEFT JOIN sys_dic sd2 ON ac.EnVehicleClass=sd2.value"
+				+ " LEFT JOIN sys_org so ON so.orgCode=ac.EnStationID"
+				+ " LEFT JOIN sys_org so2 ON so2.orgCode=ac.ExStationID"
+				+ " LEFT JOIN sys_dic sd3 ON ac.EnVehicleStatus=sd3.value"
+				+ " LEFT JOIN sys_dic sd4 ON ac.ExVehicleStatus=sd4.value"
+				+ " where sd.type='vehClass' and sd2.type='vehClass' "
+				+ " and ac.ExTime>convert(nvarchar(10),dateadd(m,-36,getdate()),120)"
+				+ " and ac.AuditStatus='1' and sd3.type='vehType'" + " and  sd4.type='vehType' and ac.id='" + id + "'";
+		List<Object> list = (List<Object>) findBySql(sql, null);
+		return list;
+	}
+
+	// 标识点异常一
+	public List<Object[]> identifyPointOne(String year, String beginDate, String endDate) {
+		String sql = "select EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,OverLoadWeight,RealPath,Miles,ISNULL(OBUPlate,'')OBUPlate,(case when TotalWeightLimit='0' then 0 else ROUND(CAST(OverLoadWeight AS float)/TotalWeightLimit, 2) end ) as OverLoadPercent,ExVehicleFlag,CashMoney,EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID  from tb_laneExList_"
+				+ year + " where ExVehiclePlate in (select t.ExVehiclePlate from tb_laneExList_" + year
+				+ "t where t.CashMoney>0 and (t.RealPath='' or DATALENGTH(t.realPath)<5) and t.EnRoadID!='86' and (t.ExTime between  DATEADD(month, -3, getDate()) and  getDate()) group by t.ExVehiclePlate having count(*)>=2)";
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	// 标识点异常二
+	public List<Object[]> identifyPointTwo(String year, String beginDate, String endDate) {
+		String sql = "select EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,OverLoadWeight,RealPath,Miles,ISNULL(OBUPlate,'')OBUPlate,(case when TotalWeightLimit='0' then 0 else ROUND(CAST(OverLoadWeight AS float)/TotalWeightLimit, 2) end ) as OverLoadPercent,ExVehicleFlag,CashMoney,EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID  from tb_laneExList_ from tb_LaneExList_"
+				+ year
+				+ "b where (b.ExTime between  DATEADD(month, -3, getDate()) and  getDate())and  b.laneExSerialNo in (select a.LaneExSerialNo as LaneEnSerialNo from tb_ExPathPoint_"
+				+ year + " a group by a.LaneExSerialNo,a.RealPathPoint having count(*) > 1) ";
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	public List<Object[]> getPourCarException(String year, String beginDate, String endDate) {
+		String sql = "IF OBJECT_ID('tempdb..#temp') is not null drop table #temp "
+				+ "select  t.EnStationID,t.LaneEnSerialNo,t.EnTime,t.EnVehicleClass,t.EnVehicleStatus,t.EnVehiclePlate,t.ExStationID,t.ExTime,t.ExVehicleClass,"
+				+ "t.ExVehicleStatus,t.ExVehiclePlate, t.ExVehIdentifyPlate,t.DealStatus,t.AxisGroupNum,t.TotalWeight,t.OverLoadWeight,t.RealPath,t.Miles,ISNULL(t.OBUPlate,'')OBUPlate,"
+				+ "(case when t.TotalWeightLimit='0' then 0 else ROUND(CAST(t.OverLoadWeight AS float)/t.TotalWeightLimit, 2) end ) as OverLoadPercent,t.ExVehicleFlag,t.CashMoney,"
+				+ "t.EnNetRoadID,t.ExNetRoadID,t.LaneExSerialNo,t.EnLaneID,t.ExLaneID,t.EnRoadID,t.ExRoadID,t.SquadDate,t.ExOperatorID into #temp "
+				+ "from (	 select ExVehiclePlate from tb_LaneExList_" + year
+				+ " where  dbo.vehPlate_legal(ExVehiclePlate)=0 "
+				+ "and  FLOOR(DealStatus/POWER(2.0,7))%2 = 1 and  extime > convert(date,'" + beginDate
+				+ "') and extime < convert(date,'" + endDate + "') "
+				+ " group by ExVehiclePlate having COUNT(ExVehiclePlate) > =2 ) s left join tb_LaneExList_"+ year+"  t on s.ExVehiclePlate=t.ExVehiclePlate "
+				+ "select  * from  #temp f where f.LaneExSerialNo in(  "
+				+ "select a.LaneExSerialNo  from  ( select LaneExSerialNo,ExTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp) a, "
+				+ "( select LaneExSerialNo,EnTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) b "
+				+ "where  b.EnTime<a.ExTime and b.rows=a.rows+1 and a.ExVehiclePlate=f.ExVehiclePlate and b.ExVehiclePlate=a.ExVehiclePlate "
+				+ "union "
+				+ "select d.LaneExSerialNo from  ( select LaneExSerialNo,ExTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) c, "
+				+ "( select LaneExSerialNo,EnTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) d "
+				+ "where  d.EnTime<c.ExTime and d.rows=c.rows+1 and c.ExVehiclePlate=f.ExVehiclePlate and d.ExVehiclePlate=f.ExVehiclePlate ) ";
+
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	public List<Object[]> getAxisNumException(String year, String beginDate, String endDate) {
+		String sql = "select EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,OverLoadWeight,RealPath,Miles,ISNULL(OBUPlate,'')OBUPlate,(case when TotalWeightLimit='0' then 0 else ROUND(CAST(OverLoadWeight AS float)/TotalWeightLimit, 2) end ) as OverLoadPercent,ExVehicleFlag,CashMoney,EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID from tb_LaneExList_"
+				+ year + "  where SquadDate>='" + beginDate + "' and SquadDate <='" + endDate
+				+ "' and  AxisNum=2 and ExVehicleClass=5 and dbo.vehPlate_legal(ExVehiclePlate)=0 order by SquadDate desc";
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	public List<Object[]> getETCVehTypeException(String year, String beginDate, String endDate) {
+		String sql = "select  EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,"
+				+ "ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,OverLoadWeight,RealPath,Miles,ISNULL(OBUPlate,'')OBUPlate,"
+				+ "(case when TotalWeightLimit='0' then 0 else ROUND(CAST(OverLoadWeight AS float)/TotalWeightLimit, 2) end ) as OverLoadPercent,ExVehicleFlag,CashMoney,"
+				+ "EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID from tb_LaneExList_"
+				+ year + " where  EnLaneType=3 and extime > convert(date,'" + beginDate
+				+ "') and extime < convert(date,'" + endDate
+				+ "') and FLOOR(DealStatus/POWER(2.0,4))%2 = 1 and  ExVehiclePlate in "
+				+ "(select ExVehiclePlate from tb_LaneExList_" + year + " where  extime > convert(date,'" + beginDate
+				+ "') and extime < convert(date,'" + endDate + "') "
+				+ "and EnLaneType=3 and FLOOR(DealStatus/POWER(2.0,4))%2 = 1 and dbo.vehPlate_legal(ExVehiclePlate)=0 group by ExVehiclePlate having COUNT(ExVehiclePlate)>1) ";
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	public List<Object[]> getETCVehPlateException(String year, String beginDate, String endDate) {
+		String sql = "select  EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,"
+				+ "ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,OverLoadWeight,RealPath,Miles,ISNULL(OBUPlate,'')OBUPlate,"
+				+ "(case when TotalWeightLimit='0' then 0 else ROUND(CAST(OverLoadWeight AS float)/TotalWeightLimit, 2) end ) as OverLoadPercent,ExVehicleFlag,CashMoney,"
+				+ "EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID from tb_LaneExList_"
+				+ year + " where  extime > convert(date,'" + beginDate + "') and extime < convert(date,'" + endDate
+				+ "') and EnLaneType=4  and  ExVehiclePlate in ("
+				+ "ExVehiclePlate,ExVehIdentifyPlate,SUBSTRING(ExVehIdentifyPlate,2,LEN(ExVehIdentifyPlate)),OBUPlate from tb_LaneExList_"
+				+ year + " where  extime > convert(date,'" + beginDate + "') and extime < convert(date,'" + endDate
+				+ "') and ExLaneType=4 and dbo.f_CompareSTR(SUBSTRING(ExVehIdentifyPlate,2,LEN(ExVehIdentifyPlate)),OBUPlate)>3 "
+				+ " and dbo.vehPlate_legal(ExVehiclePlate)=0 and dbo.vehPlate_legal(OBUPlate)=0 and dbo.vehPlate_legal(ExVehIdentifyPlate)=0 group by ExVehiclePlate having COUNT(ExVehiclePlate)>1 ) ";
+		return (List<Object[]>) findBySql(sql, null);
+	}
+
+	public void saveAbnorCarList(List<Object[]> list, String ExceptionType) {
+		AbnormalCarDetail abnormal;
+		for (int i = 0; i < list.size(); i++) {
+			abnormal = new AbnormalCarDetail();
+			Object[] allDate = (Object[]) list.get(i);
+			abnormal.setEnStationId(Integer.valueOf(allDate[0].toString()));
+			abnormal.setLaneEnSerialNo(allDate[1].toString());
+			abnormal.setEnTime(Timestamp.valueOf(sdf.format(allDate[2])));
+			abnormal.setEnVehicleClass(Short.valueOf(allDate[3].toString()));
+			abnormal.setEnVehicleStatus(Short.valueOf(allDate[4].toString()));
+			abnormal.setEnVehiclePlate(allDate[5].toString());
+			abnormal.setExStationId(Integer.valueOf(allDate[6].toString()));
+			abnormal.setExTime(Timestamp.valueOf(sdf.format(allDate[7])));
+			abnormal.setExVehicleClass(Short.valueOf(allDate[3].toString()));
+			abnormal.setExVehicleStatus(Short.valueOf(allDate[9].toString()));
+			abnormal.setExVehiclePlate(allDate[10].toString());
+			abnormal.setExVehIdentifyPlate(allDate[11].toString());
+			abnormal.setDealStatus(Long.valueOf(allDate[12].toString()));
+			abnormal.setAxisGroupNum(Short.valueOf(allDate[13].toString()));
+			abnormal.setTotalWeight(Long.valueOf(allDate[14].toString()));
+			abnormal.setOverLoadWeight(Long.valueOf(allDate[15].toString()));
+			abnormal.setRealPath(allDate[16].toString());
+			abnormal.setMiles(Integer.valueOf(allDate[17].toString()));
+			abnormal.setObuPlate(allDate[18].toString());
+			abnormal.setOverLoadPercent(Float.valueOf(allDate[19].toString()));
+			abnormal.setExvehicleFlag(Short.valueOf(allDate[20].toString()));
+			abnormal.setCashMoney(Integer.valueOf(allDate[21].toString()));
+			abnormal.setEnNetRoadID(Integer.valueOf(allDate[22].toString()));
+			abnormal.setExNetRoadID(Integer.valueOf(allDate[23].toString()));
+			abnormal.setLaneExSerialNo(allDate[24].toString());
+			abnormal.setEnLaneId(Short.valueOf(allDate[25].toString()));
+			abnormal.setExLaneId(Short.valueOf(allDate[26].toString()));
+			abnormal.setEnRoadId(Short.valueOf(allDate[27].toString()));
+			abnormal.setExRoadId(Short.valueOf(allDate[28].toString()));
+			abnormal.setSquadDate(Timestamp.valueOf(sdf.format(allDate[29])));
+			abnormal.setExOperatorID(Integer.valueOf(allDate[30].toString()));
+			abnormal.setExceptionType(Short.valueOf(ExceptionType));
+			abnormal.setAuditStatus((short) 0);
+			abnormal.setId(UUID.randomUUID().toString());
+			save(abnormal);
+		}
+	}
+
+	public void deleteByReply() {
+		String sql = "delete a from (select row_num = row_number() over(partition by ExRoadID,ExStationID,SquadDate,ExOperatorID,ExVehiclePlate,DealStatus,EnRoadID,EnStationID,LaneExSerialNo order by id) from tb_AbnormalCarDeatils )a where row_num > 1";
+		getSession().createSQLQuery(sql).executeUpdate();
+	}
+}

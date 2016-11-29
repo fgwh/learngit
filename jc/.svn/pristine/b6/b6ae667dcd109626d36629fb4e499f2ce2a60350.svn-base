@@ -1,0 +1,102 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.util.Date;
+
+public class ProBlackList {
+	
+	private String id;
+	
+	private String vehPlate;
+	
+	private int vehPlateColor;
+	
+	private int vehFlag;
+	
+	private int vehClass;
+	
+	private int interceptOption;
+	
+	private Date startDate;
+	
+	private Date endDate;
+	
+	private String vehInfo;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getVehPlate() {
+		return vehPlate;
+	}
+
+	public void setVehPlate(String vehPlate) {
+		this.vehPlate = vehPlate;
+	}
+
+	public int getVehPlateColor() {
+		return vehPlateColor;
+	}
+
+	public void setVehPlateColor(int vehPlateColor) {
+		this.vehPlateColor = vehPlateColor;
+	}
+
+	public int getVehFlag() {
+		return vehFlag;
+	}
+
+	public void setVehFlag(int vehFlag) {
+		this.vehFlag = vehFlag;
+	}
+
+	public int getVehClass() {
+		return vehClass;
+	}
+
+	public void setVehClass(int vehClass) {
+		this.vehClass = vehClass;
+	}
+
+	public int getInterceptOption() {
+		return interceptOption;
+	}
+
+	public void setInterceptOption(int interceptOption) {
+		this.interceptOption = interceptOption;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getVehInfo() {
+		return vehInfo;
+	}
+
+	public void setVehInfo(String vehInfo) {
+		this.vehInfo = vehInfo;
+	}
+	
+	
+	
+	
+	
+
+}

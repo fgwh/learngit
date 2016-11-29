@@ -1,0 +1,11 @@
+消息发布   (首页地址)/admin/msgPublish_list.do
+
+删除消息  （功能模块）msgPublishAction:delMsg  是否隐藏选择是
+
+新增消息  （功能模块）msgPublishAction:addMsg  是否隐藏选择是
+
+识别率分析 /admin/Recanalysis_getRecanalysis.do
+识别率分析 RecanalysisAction：getRecanalysis 是否选择隐藏 选择否
+
+统计分析 
+    交通流量报表 (首页地址)/admin/trafficFlow_trafficFlowStatistics.do 不隐藏   (dje)

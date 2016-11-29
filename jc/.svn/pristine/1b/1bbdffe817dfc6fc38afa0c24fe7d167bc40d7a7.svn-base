@@ -1,0 +1,136 @@
+package com.hgsoft.main.carStatistic.service;
+
+import java.io.DataInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.hgsoft.cxf.common.PropertiesUtil;
+import com.hgsoft.main.carStatistic.dao.CarStatisticDao;
+import com.hgsoft.main.carStatistic.entity.CarStatistic;
+import com.hgsoft.main.carStatistic.entity.LaneExListImg;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.Pager;
+
+import sun.misc.BASE64Decoder;
+
+@Service
+@Transactional
+public class CarStatisticService extends BaseService<CarStatistic> {
+	private static final String roadIp = PropertiesUtil.getProperty("ROAD_IP");
+	private static final String roadPort = PropertiesUtil.getProperty("ROAD_PORT");
+	private static final String provinceIp = PropertiesUtil.getProperty("PROVINCE_IP");
+	private static final String provincePort = PropertiesUtil.getProperty("PROVINCE_PORT");
+	
+	
+	@Resource
+	private LaneExListImgService laneExListImgService;
+
+	@Resource
+	public void setDao(CarStatisticDao carStatisticDao) {
+		super.setDao(carStatisticDao);
+	}
+
+	public CarStatisticDao getCarStatisticDao() {
+		return (CarStatisticDao) this.getDao();
+	}
+
+	/**
+	 * 根据车辆信息条件查询所有的收费流水信息
+	 * 
+	 * @param entity
+	 * @param pager
+	 * @return
+	 */
+	public List<Object[]> queryAllCarStatisticMsg(CarStatistic entity, Pager pager, Admin operator) {
+		return this.getCarStatisticDao().findByCarStatisticEntity(pager, entity, operator);
+	}
+
+	public List<Object[]> queryAllDealStatusMsg() {
+		return this.getCarStatisticDao().findByDealStatusEntity();
+	}
+
+	public List<LaneExListImg> pictureMsgData(CarStatistic entity) {
+		List<LaneExListImg> imageList = new ArrayList<LaneExListImg>();
+		// 首先获取出口图片
+		List<LaneExListImg> exImageList = laneExListImgService.queryLaneExListImgByEnSeria(entity.getExSerialNo());
+		if (null == exImageList || exImageList.size() == 0) {
+			// 图片需要获取到本地，路段提供的接口获取
+			//String roadAddress = ""
+		} else {
+			imageList.add(exImageList.get(0));
+		}
+
+		List<LaneExListImg> enImageList = laneExListImgService.queryLaneExListImgByEnSeria(entity.getEnSerialNo());
+		if (enImageList == null || enImageList.size() == 0) {
+			// 使用省营运协会的接口获取数据
+			
+		} else {
+			imageList.add(enImageList.get(0));
+		}
+
+		return imageList;
+	}
+
+	public boolean getPictureData() {
+		String validateURL = "http://10.0.2.2:8080/testhttp1/TestServlet?name=yang&pwd=123123";
+		HttpURLConnection conn = null;
+		try {
+			URL url = new URL(validateURL); // 创建URL对象
+			// 返回一个URLConnection对象，它表示到URL所引用的远程对象的连接
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(5000); // 设置连接超时为5秒
+			conn.setRequestMethod("POST"); // 设定请求方式
+			conn.connect(); // 建立到远程对象的实际连接
+			// 返回打开连接读取的输入流
+			
+			DataInputStream dis = new DataInputStream(conn.getInputStream());
+			// 判断是否正常响应数据
+			if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+				System.out.println("网络错误异常！!!!");
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("这是异常！");
+		} finally {
+			if (conn != null) {
+				conn.disconnect(); // 中断连接
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	// 对字节数组字符串进行Base64解码并生成图片
+	public static boolean generateImage(String imgStr, String imgFilePath) throws IOException {
+		if (imgStr == null)  return false;  // 图像数据为空
+		BASE64Decoder decoder = new BASE64Decoder();
+		// Base64解码
+		byte[] bytes = decoder.decodeBuffer(imgStr);
+		for (int i = 0; i < bytes.length; ++i) {
+			if (bytes[i] < 0) {// 调整异常数据
+				bytes[i] += 256;
+			}
+		}
+		// 生成jpeg图片
+		OutputStream out = new FileOutputStream(imgFilePath);
+		out.write(bytes);
+		out.flush();
+		out.close();
+		return true;
+	}
+
+		
+}

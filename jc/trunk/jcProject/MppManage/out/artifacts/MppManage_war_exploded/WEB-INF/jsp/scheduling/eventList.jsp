@@ -1,0 +1,583 @@
+<%--
+	下达任务
+--%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css"
+			href="${basePath}/css/bootstrap.min.css" />
+		<link rel="stylesheet"
+			href="${basePath}/css/plugins/font-awesome/css/font-awesome.min.css" />
+		<link rel="stylesheet" type="text/css"
+			href="${basePath}/css/style.css" />
+		<link rel="stylesheet" type="text/css"
+			href="${basePath}/theme/${session.theme}/main.css" />
+		
+		<script language="javascript" src="${basePath}/js/jquery.min.js"></script>
+		<script type="text/javascript" src="${basePath}/js/highcharts.js"></script>
+		<script type="text/javascript" src="${basePath}/js/communicate.js"></script>
+		<script type="text/javascript" src="${basePath}/js/charts.js"></script>
+		<script type="text/javascript" src="${basePath}/js/bootstrap.min.js"></script>
+		<script type="text/javascript"
+			src="${basePath}/js/quartz/plugins/My97DatePicker/WdatePicker.js"></script>
+		<script type="text/javascript" src="${basePath}/js/util.js"></script>
+		<style type="text/css">
+			.addImage {
+				weight: 26px;
+				height: 26px;
+				padding-left: 5px;
+			}
+			
+			.usernameDiv{
+				width:270px;
+				height:30px;
+				float:left;
+			}
+			
+			.lowerTitle{
+				width:100%;
+				height:20px;
+				float:left;
+				background-color: #CDCDCD;
+				padding-left: 10px;
+			}
+			
+			.lowerContent{
+				width:50%;
+				float:left;
+			}
+			.zhddshowusername{
+				height:30px;
+				padding-top: 6px;
+				padding-left: 25%;
+				cursor:default;
+			}
+
+			.allUsernameContent{
+				height:200px; 
+				overflow:auto; 
+			}
+			
+			.zhddshowusername A:hover{color:#009933;text-decoration:none;}
+		</style>
+
+		<script language="javascript">
+			//显示标题中字数的显示
+			function cutstr(str){
+				var str1=str;
+				if(str.length>10){
+					str1=str.substring(0, 10);
+					str1 += "...";
+				}
+				document.write(str1);
+			}
+		</script>
+
+	</head>
+	<body>
+		<form name="myForm" id="myForm" action="scheduling_eventList.do"
+			method="post">
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home icon-2x"></i>
+				</li>
+				<li>
+					当前位置：${currentPosition}
+				</li>
+			</ul>
+			<div class="widget widget-table">
+				<div class="widget-content">
+					<table class="pn-ftable" border="0" cellpadding="10">
+						<tbody>
+							<tr>
+								<th>
+									主题 ：
+								</th>
+								<td class="pn-fcontent">
+									<input name="title" size="16" value="${title}" maxlength="16"
+										type="text" />
+								</td>
+								<th id="hiddenTitle">
+									状态 ：
+								</th>
+								<td class="pn-fcontent">
+									<select name="status" id="status">
+										<option value="7"><c:if test="${status=='7'}"></c:if>
+											全部
+										</option>
+										<option value="1" <c:if test="${status=='1'}">selected</c:if>>
+											新建
+										</option>
+										<option value="2" <c:if test="${status=='2'}">selected</c:if>>
+											接受
+										</option>
+										<option value="3" <c:if test="${status=='3'}">selected</c:if>>
+											挂起
+										</option>
+										<option value="4" <c:if test="${status=='4'}">selected</c:if>>
+											拒绝
+										</option>
+										<option value="5" <c:if test="${status=='5'}">selected</c:if>>
+											完成
+										</option>
+										<option value="6" <c:if test="${status=='6'}">selected</c:if>>
+											关闭
+										</option>
+									</select>
+								</td>
+							</tr>
+							<!-- 权限控制 -->
+							<shiro:hasPermission name="scheduling:listAll">
+								<tr>
+									<th>
+										创建者 ：
+									</th>
+									<td class="pn-fcontent selectUsername">
+										<input name="senderName" value="${senderName}" size="16" maxlength="16" type="text" />
+										<img src="${basePath}/theme/scheduling/icon-plus-friend.png" onclick="selectUsername('senderName');"
+											class="addImage" />
+									</td>
+
+									<th>
+										负责人 ：
+									</th>
+									<td class="pn-fcontent selectUsername">
+										<input name="recipientName" value="${recipientName}" size="16" maxlength="16" type="text" />
+										<img src="${basePath}/theme/scheduling/icon-plus-friend.png" onclick="selectUsername('recipientName');"
+											class="addImage" />
+									</td>
+								</tr>
+							</shiro:hasPermission>
+
+							<shiro:hasPermission name="scheduling:listPersonal">
+								<tr>
+									<th id="principalTitle">
+										发件人 ：
+									</th>
+									<td class="pn-fcontent selectUsername">
+										<input name="senderOrRecipientName" value="${senderOrRecipientName}" size="16" maxlength="16" type="text" /><img src="${basePath}/theme/scheduling/icon-plus-friend.png" onclick="selectUsername('senderOrRecipientName');"
+											class="addImage" />
+									</td>
+									<th>
+										任务类型：
+									</th>
+									<td>
+										<select name="type" id="type" onchange="changeUser();">
+											<option value="1" <c:if test="${type=='1'}">selected</c:if>>
+												接收任务
+											</option>
+											<option value="2" <c:if test="${type=='2'}">selected</c:if>>
+												下达任务
+											</option>
+										</select>
+									</td>
+								</tr>
+							</shiro:hasPermission>
+							<tr>
+								<th>
+									开始创建时间 ：
+								</th>
+								<td class="pn-fcontent">
+									<input name="startCreateTime" value="${startCreateTime}"
+										id="startCreateTime" class="Wdate"
+										style="background-color: white;"
+										onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen'})"
+										readonly="readonly" type="text" />
+								</td>
+								<th>
+									结束创建时间 ：
+								</th>
+								<td class="pn-fcontent">
+									<input name="endCreateTime" value="${endCreateTime}"
+										id="endCreateTime" class="Wdate"
+										style="background-color: white;"
+										onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen'})"
+										readonly="readonly" type="text" />
+								</td>
+							</tr>
+
+						</tbody>
+					</table>
+					
+				</div>
+				<!-- /widget-content -->
+				<div class="widget-bottom">
+						<a class="btn btn-s-md btn-primary pull-right" id="addAssignment">新增任务</a>
+						<a class="btn btn-s-md btn-primary pull-right" id="submit"
+							href="javascript:;">搜索</a>
+					</div>
+			</div>
+			<div class="separator line"></div>
+			<div class="widget widget-table">
+				<div class="widget-header">
+					<i class="icon-th-list"></i>
+					<h5>
+						数据列表
+					</h5>
+				</div>
+				<!-- /widget-header -->
+				<div class="widget-content widget-list">
+					<table class="table table-striped table-bordered">
+						<thead>
+							<tr>
+								<th>
+									序号
+								</th>
+								<th>
+									主题
+								</th>
+								<th>
+									创建者
+								</th>
+								<th>
+									接受人
+								</th>
+								<th>
+									开始时间
+								</th>
+								<th>
+									结束时间
+								</th>
+								<th>
+									状态
+								</th>
+								<th>
+									紧急程度
+								</th>
+								<th>
+									操作
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${list}" var="item" varStatus="status">
+								<tr>
+									<td>
+										${status.count}
+									</td>
+									<td>
+										<script type="text/javascript">cutstr('${item[1]}')</script>
+									</td>
+									<td>
+										${item[4]}
+									</td>
+									<td>
+										${item[5]}
+									</td>
+									<td>
+										${item[6]}
+									</td>
+									<td>
+										${item[7]}
+									</td>
+									<td>
+										<c:if test="${item[8] == 1}">
+											新建
+										</c:if>
+										<c:if test="${item[8] == 2}">
+											接受
+										</c:if>
+										<c:if test="${item[8] == 3}">
+											挂起
+										</c:if>
+										<c:if test="${item[8] == 4}">
+											拒绝
+										</c:if>
+										<c:if test="${item[8] == 5}">
+											完成
+										</c:if>
+										<c:if test="${item[8] == 6}">
+											关闭
+										</c:if>
+										<c:if test="${item[8] == 7}">
+											全部
+										</c:if>
+									</td>
+									<td style="width: 20px;">
+										<c:if test="${item[14] == 1}">
+											<font style="color:#6fc537;">正常</font>
+										</c:if>
+										<c:if test="${item[14] == 2}">
+											<font style="color:#FCD209;">紧急</font>
+										</c:if>
+										<c:if test="${item[14] == 3}">
+											<font style="color:#B86767;">十分紧急</font>
+										</c:if>
+									</td>
+									<td>
+										<a class="btn btn-s-md btn-info pull-center jumpShowAssignment" hrefLocation="scheduling_showAssignment.do?showScid=${item[0]}&showSenderId=${item[2]}&showRecipientId=${item[3]}&showPrincipalId=${item[12]}&showStatus=${item[8]}&showWorkId=${item[9]}">操作详情</a>
+									</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
+				<!-- /widget-content -->
+				<div class="widget-bottom">
+						<jsp:include page="../include/pager.jsp" />
+					</div>
+			</div>
+		</form>
+
+
+		
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">
+							用户列表
+						</h4>
+					</div>
+					<div class="modal-body">
+						<input type="hidden"  id="hiddenUsername" />
+						<div id="addUsernameContent" class="hiddenDiv">
+							<div class="keywordDiv">
+								<input class="keywordInputDiv" type="text"
+									placeholder="请输入搜索的关键字" maxlength="20" name="keyword"  style="width:100%; height:28px;" />
+							</div>
+							<hr />
+							<!-- div id="listErrorMsg" style="width:100%;"></div -->
+							<div id="usernameContent" class="allUsernameContent"></div>
+							<div id="searchUsernameContent" style="display:none;" class="allUsernameContent"></div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="closeWindow" class="btn btn-default" data-dismiss="modal">
+							关闭
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+
+		<!-- smallModal 接受和关闭所需要操作的功能 -->
+		<div class="modal fade bs-example-modal-sm" id="smallMyModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content" style="width:250px; height:120px;">
+				<div class="modal-header" id="modalHeadContent">
+		        	<h4 class="modal-title" id="myModalLabel"><center>是否执行该操作？</center></h4>
+		      	</div>
+				<div id="operatorButton" style="width:250px; height:60px;">
+					<div style="width:125px; height:60px; float:left;">
+			        	<button  id="operatorSureButton" type="button" class="btn btn-primary" data-dismiss="modal" style="margin-left:100px;margin-top:20px;">确定</button>
+					</div>
+				</div>
+		    </div>
+		  </div>
+		</div>
+		<!-- smallModal -->
+
+
+		
+		<script language="javascript">
+			var FIELD_TYPE = "&&&&";
+			var ROW_TYPE = "####";
+			var log = {};
+			$(function() {
+		
+				//邦定搜索按钮，添加点击事件查询数据列表
+				$("#submit").on("click", function(event) {
+					//验证查询条件合法性
+						if (log.checkDate()) {
+							$("#myForm").submit();
+						}
+						event.preventDefault();
+					});
+		
+				//按回车键，查询数据列表
+				document.onkeydown = function(event) {
+					var ev = document.all ? window.event : event;
+					if (ev.keyCode == 13) {
+						//验证查询条件合法性
+						if (log.checkDate()) {
+							$("#myForm").submit();
+						}
+						ev.preventDefault();
+					}
+				};
+				sortLowerCase();
+				
+				var url = uri + '/admin/scheduling_checkUsernames.do';
+			    params = {};
+			    GetSend(url, params, querySchedulingSucc, querySchedulingfail);
+			    
+			    
+			    $(".zhddshowusername").live("click", clickUsername);
+			    $("input[name='keyword']").live("input propertychange", clickCheckUsername);   //选择查询用户
+			    $(".jumpShowAssignment").live("click", jumpShowAssignment);
+			});
+			
+			function jumpShowAssignment(){
+				var hrefLoaction = uri + "admin/" + $(this).attr("hrefLocation").trim();
+				
+				var title = $("input[name='title']").val();
+				var status = $("#status").val();
+				var startCreateTime = $("input[name='startCreateTime']").val();
+				var endCreateTime = $("input[name='endCreateTime']").val();
+				var nodes = $("input[name='senderOrRecipientName']");
+			//alert(nodes);
+				if(nodes.length == 0){
+					var senderName = $("input[name='senderName']").val();
+					var recipientName = $("input[name='recipientName']").val();
+					hrefLoaction += "&title="+title+"&senderName="+senderName+"&recipientName="+recipientName+"&startCreateTime="+startCreateTime+"&endCreateTime="+endCreateTime+"&status="+status;
+				} else if(nodes.length == 1){
+					var type = $("#type").val();
+					var senderOrRecipientName = nodes.val();
+					hrefLoaction += "&title="+title+"&type="+type+"&senderOrRecipientName="+senderOrRecipientName+"&startCreateTime="+startCreateTime+"&endCreateTime="+endCreateTime+"&status="+status;
+				}
+				
+				window.location.href = hrefLoaction;
+			}
+			
+			$("#addAssignment").bind("click", function(){
+				var hrefLoaction = uri + "admin/scheduling_addAssignment.do";
+				window.location.href = hrefLoaction;
+			});
+			
+			function clickCheckUsername(){
+				$("#searchUsernameContent").empty();
+				var divNode = "";
+				var value = $(this).val().trim();
+				if(value == "" || value == null){
+					$("#usernameContent").show();
+					$("#searchUsernameContent").hide();
+					
+				} else{
+					var nodeArr = $("#usernameContent a[un*='"+value+"']");
+					if(nodeArr.length > 0){
+						for(var i=0;i<nodeArr.length;i++){
+							var html = nodeArr[i].parentNode.parentNode.innerHTML;
+							html = "<div class='lowerContent'>"+html+"</div>";
+							
+							divNode += html; 
+						}
+					} else{
+						divNode += "<div class='lowerContent'>没有查询内容</div>";
+					}
+					
+					$("#searchUsernameContent").html(divNode);
+					
+					
+					$("#usernameContent").hide();
+					$("#searchUsernameContent").show();
+				}
+				
+				divNode = "";
+			}
+			//选择搜索的用户
+			function clickUsername(){
+				//<a selectid="61" as="dengchunsheng" un="邓春盛">邓春盛[dengchunsheng]</a>s
+				var parentNode = $(this);
+				//var selectId = parentNode.children("a").attr("selectId").trim();
+				var un = parentNode.children("a").attr("un").trim();
+				//var as = parentNode.children("a").attr("as").trim();
+				
+				var inputValue = $("#hiddenUsername").val().trim();
+				$("input[name='"+inputValue+"']").attr("value", un);
+				
+				$("#closeWindow").click();
+			}
+			
+			
+			//在模态框中加入排序组合
+			function sortLowerCase(){
+				var divNode = '';
+				var liLenghs = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'other'];
+				for(var i=0;i<liLenghs.length;i++){
+					var id = "lowerCase_"+liLenghs[i];
+					var titleId = "lowerCaseTitle_" + liLenghs[i];
+					var contentId = "lowerCaseContent_" + liLenghs[i];
+					divNode += "<div id='"+id+"'><div id='"+titleId+"'></div><div id='"+contentId+"'></div></div>"
+				}
+				
+				divNode += "<div id='lowerCase_other'><div id='lowerCaseTitle_other'></div><div id='lowerCaseContent_other'></div></div>";
+				
+				$("#usernameContent").html(divNode);
+			}
+			
+			//验证查询条件
+			log.checkDate = function() {
+				var v_start = new Date($("#startCreateTime").val().replace("-", "/"));
+				var v_end = new Date($("#endCreateTime").val().replace("-", "/"));
+				if (v_start > v_end) {
+					$("#modalHeadContent").html("<h4 class='modal-title' id='myModalLabel'><center>结束时间不能小于起始时间</center></h4>");
+					$("#smallMyModal").modal({
+						keyboard: true
+					});
+					return false;
+				}
+				return true;
+			};
+			
+			
+			function selectUsername(obj){
+				$("input[name='keyword']").attr("value", "");
+				$("#usernameContent").show();
+				$("#searchUsernameContent").hide();
+				
+				$("#hiddenUsername").attr("value", obj);
+				$('#myModal').modal({
+					keyboard: true
+				});
+			}
+			
+			function querySchedulingSucc(jsonTemp){
+					$("input[name='keyword']").val("");
+					$("#usernameContent").empty();
+					sortLowerCase();
+					var map = jsonTemp.map;
+					var usernames = map.allusername;
+					var usernameArr = usernames.split(ROW_TYPE);
+					var nodeDiv = '';
+					if(usernames == null || '' == usernames){
+												
+					} else{
+						for(var i =0;i<usernameArr.length;i++){
+							var names = usernameArr[i].split(FIELD_TYPE);
+							if ((names[1] >= 'a' && names[1] <= 'z') || (names[1] >= 'A' && names[1] <= 'Z')) {
+								$("#lowerCaseTitle_" + names[1]).html("<div class='lowerTitle'><font style='font-size:16px;'>" + names[1].toUpperCase() + "</font></div>");
+								var value = names[3]+"["+names[2]+"]";
+            					$("#lowerCaseContent_" + names[1]).append("<div class='lowerContent'><div class='zhddshowusername'><a selectId='"+names[0]+"' as='"+names[2]+"' un='"+names[3]+"'>"+value+"</a></div></div>");
+							} else{
+								$("#lowerCaseTitle_other").html("<div class='lowerTitle'><font style='font-size:16px;'>其他</font></div>");
+								var value = names[3]+"["+names[2]+"]";
+            					$("#lowerCaseContent_other").append("<div class='lowerContent'><div class='zhddshowusername'><a selectId='"+names[0]+"' as='"+names[2]+"' un='"+names[3]+"'>"+value+"</a></div></div>");
+							}
+						}
+					}
+				}
+			
+			function querySchedulingfail(){
+				$("#modalHeadContent").html("<h4 class='modal-title' id='myModalLabel'><center>网络出现错误，请刷新重试</center></h4>");
+				$('#smallMyModal').modal({
+					keyboard: true
+				});
+			}
+			
+			function changeUser() {
+				var type = $("#type").val();
+				if (type == 1) {
+					$("#principalTitle").text("发件人：");
+				} else {
+					$("#principalTitle").text("责任人：");
+				}
+			}
+			
+			
+		</script>
+	</body>
+</html>

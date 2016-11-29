@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hgsoft.base.entity.Upload" table="tb_upload">
+        <id name="id" type="java.lang.String">
+            <column name="id" />
+            <generator class="uuid" />
+        </id>
+        <property name="uploadFileName" type="java.lang.String">
+            <column name="uploadFileName" length="100" />
+        </property>
+        <property name="uploadFileType" type="java.lang.String">
+            <column name="uploadFileType" length="100" />
+        </property>
+        <property name="pid" type="java.lang.String">
+            <column name="pid" length="32" />
+        </property>
+        <property name="uploadFileSize" type="java.lang.Long">
+            <column name="uploadFileSize" />
+        </property>
+        <property name="uploadTime" type="java.util.Date">
+            <column name="uploadTime" />
+        </property>
+        <property name="uploader" type="java.lang.String">
+            <column name="uploader" length="100" />
+        </property>
+        <property name="fileUrl" type="java.lang.String">
+            <column name="fileUrl" length="100"/>
+        </property>  
+        <property name="md5" type="java.lang.String">
+            <column name="md5" length="32"/>
+        </property>   
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,389 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.util.CacheUtil;
+import com.hgsoft.util.StringUtil;
+import com.ibm.icu.text.SimpleDateFormat;
+
+public class Conditions {
+	  private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	    //拦截开始时间	
+		private String startQueryDate = "";
+		//拦截结束时间
+		private String endQueryDate = "";
+	    //车型
+		private String vehClass = "";
+		//车牌省份
+		private String plateNum = "";
+		//车牌号码
+		private String carNo = "";
+		//客货车标识	
+		private String vehFlag = "";	
+		//车牌颜色
+		private String vehPlateColor = "";
+		//拦截选项
+		private String interceptOption = "";
+		//拦截类型-大类
+		private String vehBigType = "";
+	    //逃费类型-中类
+		private String vehMidType = "";
+		//逃费类型-细类
+		private String vehSmallType = "";
+		//数据源 0 路段 1全省
+        private String dataSource;
+		
+
+		public SimpleDateFormat getSdf() {
+			return sdf;
+		}
+
+
+
+
+
+
+
+
+
+		public void setSdf(SimpleDateFormat sdf) {
+			this.sdf = sdf;
+		}
+
+
+
+
+
+
+
+
+
+		public String getStartQueryDate() {
+			return startQueryDate;
+		}
+
+
+
+
+
+
+
+
+
+		public void setStartQueryDate(String startQueryDate) {
+			this.startQueryDate = startQueryDate;
+		}
+
+
+
+
+
+
+
+
+
+		public String getEndQueryDate() {
+			return endQueryDate;
+		}
+
+
+
+
+
+
+
+
+
+		public void setEndQueryDate(String endQueryDate) {
+			this.endQueryDate = endQueryDate;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehClass() {
+			return vehClass;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehClass(String vehClass) {
+			this.vehClass = vehClass;
+		}
+
+
+
+
+
+
+
+
+
+		public String getPlateNum() {
+			return plateNum;
+		}
+
+
+
+
+
+
+
+
+
+		public void setPlateNum(String plateNum) {
+			this.plateNum = plateNum;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehFlag() {
+			return vehFlag;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehFlag(String vehFlag) {
+			this.vehFlag = vehFlag;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehPlateColor() {
+			return vehPlateColor;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehPlateColor(String vehPlateColor) {
+			this.vehPlateColor = vehPlateColor;
+		}
+
+
+
+
+
+
+
+
+
+		public String getCarNo() {
+			return carNo;
+		}
+
+
+
+
+
+
+
+
+
+		public void setCarNo(String carNo) {
+			this.carNo = carNo;
+		}
+
+
+
+
+
+
+
+
+
+		public String getInterceptOption() {
+			return interceptOption;
+		}
+
+
+
+
+
+
+
+
+
+		public void setInterceptOption(String interceptOption) {
+			this.interceptOption = interceptOption;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehBigType() {
+			return vehBigType;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehBigType(String vehBigType) {
+			this.vehBigType = vehBigType;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehMidType() {
+			return vehMidType;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehMidType(String vehMidType) {
+			this.vehMidType = vehMidType;
+		}
+
+
+
+
+
+
+
+
+
+		public String getVehSmallType() {
+			return vehSmallType;
+		}
+
+
+
+
+
+
+
+
+
+		public void setVehSmallType(String vehSmallType) {
+			this.vehSmallType = vehSmallType;
+		}
+
+
+
+
+
+
+
+
+
+		public String getDataSource() {
+			return dataSource;
+		}
+
+
+
+
+
+
+
+
+
+		public void setDataSource(String dataSource) {
+			this.dataSource = dataSource;
+		}
+
+
+
+
+
+
+
+
+
+		//根据条件数组返回条件值数组
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		public Object[] toArray(String[] selectName){
+		
+			Object selectValue[] = new Object[selectName.length];
+			Map map= new HashMap();
+			int num=0;								
+			Field[ ] fields = this.getClass().getDeclaredFields( ); 
+			for ( Field field : fields )  
+	        {  
+	            // 如果不为空，设置可见性，然后返回  
+	            field.setAccessible( true );  	                      	
+	            	 try  
+	                 {     
+	            		 map.put(field.getName( ),field.get( this ));
+	            		 
+	                 }  
+	                 catch ( Exception e )  
+	                 {  
+	                     e.printStackTrace();  
+	                 } 	                
+	        
+	        }  
+			
+			for(String name : selectName){
+					selectValue[num]=map.get(name);	
+					num++;
+			}
+			return selectValue;
+		}
+		
+
+
+}

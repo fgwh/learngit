@@ -1,0 +1,78 @@
+package com.hgsoft.main.recanalysis.action;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.recanalysis.entity.Conditions;
+import com.hgsoft.main.recanalysis.service.RecanalysisService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.security.util.OrgUtils;
+
+@Controller
+@Scope("prototype")
+public class RecanalysisAction extends BaseAction{
+	
+	Conditions conditions=new Conditions();
+	protected Map map = new HashMap();
+	List<Object[]> Roadlists;
+	float shibielv;
+	private String imgId = "";
+	@Resource
+	RecanalysisService recanalysisservice;
+	
+	/**
+	 * 获取识别率分析数据
+	 * @return
+	 */
+	 public String getRecanalysis(){
+		 shibielv= recanalysisservice.getRecanalysisList(null, operator, conditions); 
+		 Roadlists= recanalysisservice.getOrgnameList();
+		 return LIST;
+	 }
+
+	 
+		public String getStationSelectNameZJ(){
+			map.put("stList", recanalysisservice.getStationName(imgId));
+			return "success";
+		}
+
+	 
+	 //========================get set==============================//
+	public Conditions getConditions() {
+		return conditions;
+	}
+	public void setConditions(Conditions conditions) {
+		this.conditions = conditions;
+	}
+	public List getRoadlists() {
+		return Roadlists;
+	}
+	public void setRoadlists(List<Object[]> roadlists) {
+		Roadlists = roadlists;
+	}
+	public float getShibielv() {
+		return shibielv;
+	}
+	public void setShibielv(float shibielv) {
+		this.shibielv = shibielv;
+	}
+	public String getImgId() {
+		return imgId;
+	}
+	public void setImgId(String imgId) {
+		this.imgId = imgId;
+	}
+	public Map getMap() {
+		return map;
+	}
+	public void setMap(Map map) {
+		this.map = map;
+	}
+}

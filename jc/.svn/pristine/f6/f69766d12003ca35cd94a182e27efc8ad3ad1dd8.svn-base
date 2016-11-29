@@ -1,0 +1,5 @@
+消息发布   /admin/msgPublish_list.do
+
+删除消息  msgPublishAction:delMsg  是否隐藏选择是
+
+新增消息  msgPublishAction:addMsg  是否隐藏选择是

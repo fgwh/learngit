@@ -1,0 +1,76 @@
+package com.hgsoft.main.jcManange.action;
+
+import javax.annotation.Resource;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.service.AbnorCarService;
+import com.hgsoft.main.jcManange.service.AbnormalCarDetailService;
+import com.hgsoft.security.action.BaseAction;
+
+@Controller
+@Scope("prototype")
+public class AbnorCarAction extends BaseAction{
+	
+	private Conditions condition=new Conditions();
+	private String plateNum;
+	private String num;
+	
+	
+	@Resource
+	AbnorCarService abnorcarservice;
+	@Resource
+	AbnormalCarDetailService abnormalcardetailservice;
+	 
+	public String getAbnorCar(){
+		list=abnorcarservice.getAbnorCar(condition, pager);
+		return LIST;
+	}
+	
+	
+	public String getAbnorLiuShui(){
+		list=abnormalcardetailservice.getAbnorLiuShui(plateNum, num);
+		map.put("AbnorLiuShui", list);
+		return SUCCESS;
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//------------------------------get set--------------------------------//
+	public Conditions getCondition() {
+		return condition;
+	}
+	public void setCondition(Conditions condition) {
+		this.condition = condition;
+	}
+	public String getPlateNum() {
+		return plateNum;
+	}
+	public void setPlateNum(String plateNum) {
+		this.plateNum = plateNum;
+	}
+	public String getNum() {
+		return num;
+	}
+
+	public void setNum(String num) {
+		this.num = num;
+	}
+
+	
+}

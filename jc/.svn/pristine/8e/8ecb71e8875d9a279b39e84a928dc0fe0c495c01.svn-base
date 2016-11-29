@@ -1,0 +1,113 @@
+package com.hgsoft.main.jcManange.service;
+
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.job.AutoGetProBlackList;
+import com.hgsoft.job.JobLog;
+import com.hgsoft.main.entity.QrtzLog;
+import com.hgsoft.main.jcManange.dao.ProBlackListDao;
+import com.hgsoft.main.jcManange.entity.PK;
+import com.hgsoft.main.jcManange.entity.ProBlackList;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.DBUtil;
+import com.hgsoft.util.JDBCFrame;
+
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class ProBlackListService extends BaseService<ProBlackList>{
+	
+	private static Logger logger = Logger.getLogger(AutoGetProBlackList.class);
+	 @Autowired
+	 private  ProBlackListDao proBlackListDao;
+
+	 @SuppressWarnings("unused")
+	private  List<ProBlackList>	getProBlackList(){
+		  
+		  JDBCFrame jdbcFrame = new JDBCFrame(DBUtil.getConnection());
+		  
+		  String sql="SELECT VehiclePlate  as vehPlate\n"+
+		                    ",VehiclePlateColor as vehPlateColor\n"+
+		                    ",VehicleFlag as vehFlag\n"+
+		                    ",VehicleClass as vehClass\n"+
+		                    ",InterceptOption as interceptOption\n"+
+		                    ",StartDate as startDate\n"+
+		                    ",EndDate as endDate\n"+
+		                    ",VehicleInfo as vehInfo FROM tb_VehPlateBlack";
+		  
+		  List<ProBlackList> proBlackList= null;
+		  
+		  try {
+			  proBlackList = jdbcFrame.findMoreRefResult(sql, null, ProBlackList.class);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            jdbcFrame.releaseConn();
+	        }
+
+	        return proBlackList;
+		  
+		  
+	  }
+
+	@SuppressWarnings("unused")
+	private boolean emptyTable(){
+		JDBCFrame jdbcFrame = new JDBCFrame(DBUtil.getLocalConnection());
+		
+		String sql="delete  tb_proBlackList ";
+		
+		boolean flag = false;
+		
+		try {
+		    jdbcFrame.updateByPreparedStatement(sql, null);
+			flag =true; 
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        } finally {
+	            jdbcFrame.releaseConn();
+	        }
+		
+		return flag;
+		
+	}
+	
+	
+	public  void  saveProBlackList(QrtzLog qrtzLog){
+		
+		List<ProBlackList>  proBlackList =getProBlackList();
+		
+		boolean flag=emptyTable();
+		if(proBlackList.size()!=0&&flag){
+		   int count=0;
+		   try{
+	           for(ProBlackList balckList:proBlackList){
+	        	   PK pk=new PK();
+	        	   pk.setVehPlate(balckList.getVehPlate());
+	        	   pk.setVehPlateColor(balckList.getVehPlateColor());
+	        	   balckList.setPk(pk);
+	    	       proBlackListDao.save(balckList);
+	    	       count++;        	   
+	           }
+	           logger.info( count + "条全省黑名单数据保存到本地数据库成功。");
+               qrtzLog.setDescription(count + "条全省黑名单数据保存到本地数据库成功。");
+               qrtzLog.setJobStatus(JobLog.JOB_STATUS_SUCC);
+		   }catch(Exception e){
+    		   e.printStackTrace();
+    	   }
+        	   
+			
+		}else{
+			logger.info("获取全省黑名单数据失败。");
+			qrtzLog.setDescription("获取全省黑名单数据失败。");
+            qrtzLog.setJobStatus(JobLog.JOB_STATUS_FAIL);
+			
+		}
+		
+		
+		
+	}
+	
+}

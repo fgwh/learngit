@@ -1,0 +1,84 @@
+var log = {};
+$(function() {	
+	  $(":radio").click(function(){
+		 scope($(this).val());
+	     $("#myForm").submit(); 
+	  });
+
+	
+	//邦定搜索按钮，添加点击事件查询数据列表
+	$("#submit").on("click", function(event) {
+		//验证查询条件合法性
+		if (log.checkDate()) {
+			    scope($(":radio:checked").val());
+                $("#myForm").submit();
+           }
+		event.preventDefault();
+	});
+
+	//按回车键，查询数据列表
+	document.onkeydown = function(event) {
+		var ev = document.all ? window.event : event;
+		if (ev.keyCode == 13) {
+			//验证查询条件合法性
+			if (log.checkDate()) {
+				scope($(":radio:checked").val());
+                $("#myForm").submit();
+            }
+			ev.preventDefault();
+		}
+	};
+});
+
+//验证查询条件
+    log.checkDate = function() {
+        var v_start = $("#startQueryDate").val();//new Date($("#startQueryDate").val().replace("-", "/"));
+        var v_end = $("#endQueryDate").val();//new Date($("#endQueryDate").val().replace("-", "/"));
+        if (v_start > v_end) {
+            alert("结束时间不能小于开始时间");
+            return false;
+        }            
+        return true;
+    };
+//范围
+function scope(value){
+	 if(value==0){
+    	 $("#myForm").attr('action','grayList_list.do');
+    	 
+     }else{
+    	 $("#myForm").attr('action','grayList_proList.do');
+     }
+}
+
+
+var fileDate = '';
+function showxiangqing(id,vehPlate,vehPlateColor,vehFlag,vehClass,vehInfo,
+		vehBigType,vehMidType,vehSmallType,applicant,applicateTime,applicateOrg,
+		fileName,uploadTime,status){
+	 fileDate=uploadTime.substring(0,10);
+	 $("[name='vehPlate']").text(vehPlate);
+	 $("[name='vehPlateColor']").text(vehPlateColor);
+	 $("[name='vehFlag']").text(vehFlag==0?'货车':'客车');
+	 $("[name='vehClass']").text(vehClass);
+	 $("[name='vehInfo']").text(vehInfo);
+	 $("[name='vehBigType']").text(vehBigType);
+	 $("[name='vehMidType']").text(vehMidType);
+	 $("[name='vehSmallType']").text(vehSmallType);
+	 $("[name='applicant']").text(applicant);
+	 $("[name='applicateTime']").text(applicateTime.substring(0,10));
+	 $("[name='applicateOrg']").text(applicateOrg);
+	 $("[name='fileName']").val(fileName);
+	 $("#myModal4").modal('show');
+	
+}
+
+//文件下载
+function onloadFile(){
+	var fileName=$("[name='fileName']").val();
+	window.location.href="download_execute.do?filename="+encodeURI(encodeURI(fileName))+"&fileDate="+fileDate;
+}
+
+
+function save(){
+	 $("#saveForm").submit();
+}

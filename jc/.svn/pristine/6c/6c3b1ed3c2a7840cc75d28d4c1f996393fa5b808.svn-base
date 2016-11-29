@@ -1,0 +1,30 @@
+package com.hgsoft.main.jcManange.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.main.jcManange.dao.AbnorCarDao;
+import com.hgsoft.main.jcManange.dao.AbnormalCarDetailDao;
+import com.hgsoft.main.jcManange.dao.GrayListDao;
+import com.hgsoft.main.jcManange.entity.AbnormalCarDetail;
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.Pager;
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class AbnorCarService extends BaseService{
+	
+	
+	@Resource
+	AbnorCarDao abnorcardao;
+
+	
+	public List<Object[]> getAbnorCar(Conditions  conditions,Pager pager){
+		return abnorcardao.getAbnorCar(conditions, pager);
+	}
+
+	
+}

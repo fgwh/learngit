@@ -1,0 +1,19 @@
+package com.hgsoft.main.carStatistic.dao;
+
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.carStatistic.entity.CarStatistic;
+import com.hgsoft.main.carStatistic.entity.LaneExListImg;
+import com.hgsoft.security.dao.BaseDao;
+
+@Repository
+public class LaneExListImgDao extends BaseDao<LaneExListImg> {
+	
+	public List<LaneExListImg> findImageBySeria(CarStatistic entity){
+		String hql = " from LaneExListImg where pid='"+entity.getExSerialNo()+"' or pid='"+entity.getEnSerialNo()+"' order by exListImageDate desc";
+		return  (List<LaneExListImg>) this.findByHql(hql, null);
+	}
+}

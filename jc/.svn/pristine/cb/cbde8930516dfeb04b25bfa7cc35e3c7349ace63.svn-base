@@ -1,0 +1,99 @@
+package com.hgsoft.main.action;
+
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import com.hgsoft.main.entity.DicItem;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.service.AdminService;
+import com.hgsoft.security.util.OrgUtils;
+import com.hgsoft.util.Property;
+
+
+@Controller
+@Scope("prototype")
+public class DicItemAction extends BaseAction<DicItem>{
+	@Resource
+	private AdminService adminService;
+	private List inspectorList;
+	private String imgId;
+	/**
+	 * 查询字典信息
+	 * @return
+	 */
+	
+	public DicItem getDicItem() {
+		return entity;
+	}
+
+	public void setDicItem(DicItem dicItem) {
+		this.entity = dicItem;
+	}
+	 
+	//注入Service
+    @Resource
+    public void setBaseService(DictionaryService service) {
+        this.setService(service);
+    }
+    
+    /**
+     * 判断是否重复
+     * @return
+     */
+    public String checkExist() {//检查数据库是否有重复数据
+    	if(entity.getId()==null){
+    		entity.setId("");
+    	}
+    	 
+    	List<DicItem> list = service.findByPager(getPager(), null, Property.ne("id", entity.getId()),Property.eq("type", entity.getType()),Property.eq("name", entity.getName()));
+    	List<DicItem> list1 = service.findByPager(getPager(), null, Property.ne("id", entity.getId()),Property.eq("type", entity.getType()),Property.eq("value", entity.getValue()));
+    	if(list.size()>0){
+    		message = "one";
+    	}else{
+    		if(list1.size()>0){
+    			message = "two";
+    		}
+    	}
+    	return "message";
+    }
+    
+    public String getSelectName() {
+
+		inspectorList = adminService.getAllInspectorList(imgId, this.operator);// 获得所有检查员信息
+		map.put("result", inspectorList);
+		return "success";
+	}
+
+	// 根据路段获取该路段下的站(自动过滤掉站级用户查看其它机构)
+	public String getStationSelectNameZJ() {
+		List<Org> stList = OrgUtils.getSubOrgByParentOrgStationIdZJ(imgId, this.operator);
+		map.put("stList", stList);
+		return "success";
+	}
+	// 根据路段获取该路段下的所有的收费站
+	public String getStationSelectNameSG() {
+		List<Org> stList = OrgUtils.getSubOrgByParentOrgStationId(imgId);
+		map.put("stList", stList);
+		return "success";
+	}
+	
+	public List getInspectorList() {
+		return inspectorList;
+	}
+
+	public void setInspectorList(List inspectorList) {
+		this.inspectorList = inspectorList;
+	}
+
+	public String getImgId() {
+		return imgId;
+	}
+
+	public void setImgId(String imgId) {
+		this.imgId = imgId;
+	}
+	
+}

@@ -1,0 +1,32 @@
+package com.hgsoft.main.laneexlist.service;
+
+import com.hgsoft.main.laneexlist.dao.LaneExListDao;
+import com.hgsoft.main.laneexlist.entity.LaneExList;
+import com.hgsoft.security.service.BaseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * 出口流水service
+ * @author 郭志强
+ * @time 2016/9/9 9:37
+ */
+@Service
+public class LaneExListService extends BaseService<LaneExList> {
+    // 注入dao
+    @Autowired
+    private LaneExListDao laneExListDao;
+
+    /**
+     * 根据年份讲数据保存到对应的表中
+     *
+     * @param laneExList
+     * @param year
+     * @throws Exception
+     */
+    public void saveLaneExList(LaneExList laneExList, String year) throws Exception {
+        this.laneExListDao.saveLaneExList(laneExList,year);
+    }
+
+
+}

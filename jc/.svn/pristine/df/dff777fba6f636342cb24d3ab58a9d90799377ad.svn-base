@@ -1,0 +1,770 @@
+package com.hgsoft.security.action;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.Writer;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.subject.Subject;
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.json.annotations.JSON;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import com.hgsoft.main.squadMana.service.SquadService;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.entity.AdminLogin;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.entity.Role;
+import com.hgsoft.security.operLog.annotation.Description;
+import com.hgsoft.security.service.AdminLoginService;
+import com.hgsoft.security.service.AdminService;
+import com.hgsoft.security.service.OrgService;
+import com.hgsoft.security.service.RoleService;
+import com.hgsoft.security.util.KickoutSessionControlFilter;
+import com.hgsoft.security.util.OrgUtils;
+import com.hgsoft.util.MD5Coder;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.opensymphony.xwork2.ActionContext;
+
+/**
+ * @author liujiefeng
+ * @date May 19, 2010
+ * @Description 系统用户管理
+ *
+ */
+
+@Controller
+@Scope("prototype")
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class AdminAction extends BaseAction<Admin> {
+	private final Log logger = LogFactory.getLog(AdminAction.class);
+
+	public Admin getAdmin() {
+		return entity;
+	}
+
+	public void setAdmin(Admin admin) {
+		this.entity = admin;
+	}
+	
+	//注入Service
+    @Resource
+    public void setBaseBridgeService(AdminService service) {
+        this.setService(service);
+    }
+	
+	private String firstUrl;
+	private String secondUrl;
+	private String deviceType;//判断是否手机登陆
+	private int stationNo;
+	private List<Org> orgList;
+	
+	@Resource
+	private OrgService orgService;
+	
+	private HashMap map = new HashMap();//用于存放手机Json返回
+	
+	
+	@Resource
+	private RoleService roleService;
+	@Resource
+	private AdminService adminService;
+ 
+	@Resource
+	private AdminLoginService adminLoginService;
+
+	@Resource
+	private SquadService squadService;
+
+	@Resource
+	private SessionDAO sessionDao;
+
+	private String usernameIsExists;
+	private static final String PREFIX = "{";
+	private static final String NEXTFIX = "}";
+	private static final String ENCODING = "UTF-8";
+	public static final String GAOGUANJU_CODE = "000";
+	 
+	private String redirectUrl;
+	private String theme;
+    
+	@JSON(serialize=false)
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+	 
+
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
+	 
+
+    public String unauthorized() {
+        return "unauthorized";
+    }
+    
+    public String checkIE(){
+    	return "browerError";
+    }
+    
+	/**
+	 * 保存用户
+	 *
+	 * @return
+	 */
+    @Description(details="保存用户")
+	public String save() {
+
+		if (adminService.usernameIsExists(entity)) {
+			usernameIsExists = "登录名已存在！";
+			return add();
+		}
+		if (!entity.getStaffNo().equals("") && entity.getStaffNo() != null) {
+			if (adminService.staffNoIsExists(entity)) {
+				message = "员工编号已存在！";
+				return ERROR;
+			}
+		}
+		entity.setCreateTime(new Timestamp((new Date()).getTime()));
+		/*List<Object[]> architecture = squareService.getArchitectureBySquareNo(admin.getSquareNo());
+		admin.setRoadNo((Integer)(architecture.get(0)[4]));
+		admin.setAreaNo((Integer)(architecture.get(0)[6]));*/
+		
+		try {
+			entity.setPassword(MD5Coder.encodeMD5Hex(entity.getPassword()
+                    + PREFIX + entity.getUsername() + NEXTFIX));
+		} catch (Exception e) {
+			return ERROR;
+		}
+		adminService.save(entity);
+		adminService.initInspection();
+		message = "操作成功！";
+		Org org = entity.getOrg();
+		entity = new Admin();
+		entity.setOrg(org);
+		return list();
+	}
+
+	/**
+	 * 修改用户
+	 *
+	 * @return
+	 */
+    @Description(details="修改用户")
+	public String update() {
+
+		if (entity == null) {
+			message = "传入参数有误！";
+			return ERROR;
+		}
+		Org org = entity.getOrg();
+		Admin temp = adminService.find(entity.getId());
+		if (temp == null) {
+			message = "管理员信息不存在";
+			return list();
+		}
+		temp.setUsername(entity.getUsername());
+		temp.setName(entity.getName());
+		if (entity.getPassword() != null && entity.getPassword().length() > 0) {
+			try {
+				temp.setPassword(MD5Coder.encodeMD5Hex(entity.getPassword()
+                        + PREFIX + temp.getUsername() + NEXTFIX));
+			} catch (Exception e) {
+			}
+		}
+
+		temp.setSex(entity.getSex());
+		temp.setEmail(entity.getEmail());
+		temp.setPhone(entity.getPhone());
+		temp.setValid(entity.getValid());
+		temp.setRoles(entity.getRoles());
+		temp.setStaffNo(entity.getStaffNo());
+		temp.setOrg(org);
+		temp.setUserId(entity.getUserId());
+		/*temp.setStationNo(admin.getStationNo());
+		temp.setSquareNo(admin.getSquareNo());
+		List<Object[]> architecture = squareService.getArchitectureBySquareNo(admin.getSquareNo());
+		temp.setRoadNo((Integer)(architecture.get(0)[4]));
+		temp.setAreaNo((Integer)(architecture.get(0)[6]));
+		if (adminService.usernameIsExists(temp)) {
+			usernameIsExists = "登录名已存在！";
+			return edit();
+		}*/
+
+		adminService.update(temp);
+		adminService.initInspection();
+		message = "操作成功！";
+		entity = new Admin();
+		entity.setOrg(org);
+		return list();
+	}
+
+	/**
+	 * 停用用户
+	 *
+	 * @return
+	 */
+    @Description(details="停用用户")
+	public String disable() {
+		// adminService.deleteById(admin.getId());
+		if (entity == null || entity.getId() == null) {
+			this.message = "待停用的用户不存在！";
+			return ERROR;
+		}
+		adminService.updateAdmin4Disabled(entity.getId());
+		return list();
+	}
+
+	/**
+	 * 启用用户
+	 *
+	 * @return
+	 */
+    @Description(details="启用用户")
+	public String enable() {
+		// adminService.deleteById(admin.getId());
+		if (entity == null || entity.getId() == null) {
+			this.message = "待启用的用户不存在！";
+			return ERROR;
+		}
+		adminService.updateAdmin4Enable(entity.getId());
+		return list();
+	}
+
+	/**
+	 * 跳转至查看个人用户信息界面
+	 * 
+	 * @return
+	 */
+	@Description(details="跳转至查看个人用户信息界面")
+	public String lookmyself() {
+		if (null == operator.getId()) {
+			if("Mobile".equals(deviceType)) {
+				map.put("result", "login");
+				
+				return "mobile";
+			}
+			return "login";
+		}
+
+		entity = adminService.find(operator.getId());
+		/*List<Object[]> architecture = squareService.getArchitectureBySquareNo(admin.getSquareNo());
+		if(null != architecture && architecture.size() > 0) {
+			request.setAttribute("archi", architecture.get(0));
+		}*/
+		
+		if("Mobile".equals(deviceType)) {
+			map.put("admin", entity);
+			map.put("result", "success");
+			
+			return "mobile";
+		}
+		
+		return "lookmyself";
+	}
+
+	/**
+	 * 跳转至更新个人用户信息界面
+	 *
+	 * @return
+	 */
+	@Description(details="跳转至更新个人用户信息界面")
+	public String editmyself() {
+		if (null == operator.getId()) {
+			if("Mobile".equals(deviceType)) {
+				map.put("result", "login");
+				
+				return "mobile";
+			}
+			return "login";
+		}
+
+		entity = adminService.find(operator.getId());
+		
+		if("Mobile".equals(deviceType)) {
+			map.put("admin", entity);
+			map.put("result", "success");
+			
+			return "mobile";
+		}
+		
+		return "editmyself";
+	}
+
+	/**
+	 * 更新个人用户信息
+	 *
+	 * @return
+	 */
+	@Description(details="更新个人用户信息")
+	public String updatemyself() {
+		if (entity == null) {
+			message = "传入参数有误！";
+			return ERROR;
+		}
+
+		if (null == entity.getId()) {
+			message = "管理员信息不存在";
+			return ERROR;
+		}
+		Admin temp = adminService.find(entity.getId());
+		if (temp == null) {
+			message = "管理员信息不存在";
+			return ERROR;
+		}
+		if (entity.getPassword() != null && entity.getPassword().length() > 0) {
+			try {
+				temp.setPassword(MD5Coder.encodeMD5Hex(entity.getPassword()
+                        + PREFIX + temp.getUsername() + NEXTFIX));
+			} catch (Exception e) {
+			}
+		}
+
+		temp.setEmail(entity.getEmail());
+		temp.setPhone(entity.getPhone());
+
+		adminService.update(temp);
+		message = "操作成功！";
+		
+		return lookmyself();
+	}
+	
+	public String index(){
+		 
+		return "index";
+	}
+	
+	public String leftOrgTreeJson(){
+		orgList = OrgUtils.getSubOrgByParentOrgId(operator.getOrg().getId());
+		return "orgTreeJson";
+	}
+	
+	/**
+	 * 查询用户列表
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	/*public String list() {
+		this.list = adminService.query(pager, admin, this.operator);
+		
+		return LIST;
+	}*/
+
+	/**
+	 * 查询用户列表
+	 *
+	 * @return
+	 * @throws Exception
+	 */
+	@Description(details="查询用户列表")
+	public String query() {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		String valid = request.getParameter("valid");
+		String name = request.getParameter("name");
+		Admin admin = new Admin();
+		admin.setName(name);
+		admin.setValid(valid);
+		this.list = adminService.query(pager, admin, this.operator);
+		return LIST;
+	}
+
+	public String login() {
+        UsernamePasswordToken token = null;
+        AdminLogin al = new AdminLogin();
+		if (theme == null || theme.equals("")) {
+			//theme = "dandelion2";
+			theme = "transparent";
+		}
+        ActionContext.getContext().getSession().put("theme", theme);
+        if (entity == null || entity.getUsername() == null) {
+            return LOGIN;
+        }
+		al.setUserName(entity.getUsername());
+		al.setIp(getIpAddr(request));
+		al.setLoginTime(new Date());
+			
+        String enCodePassword = null;
+        try {
+            enCodePassword = MD5Coder.encodeMD5Hex(entity.getPassword()
+                    + "{"
+                    + entity.getUsername().trim()
+                    + "}");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            message = "密码格式不对";
+            al.setStatus(0);
+			al.setRemark(message);
+			
+			adminLoginService.save(al);
+			
+			//手机登陆
+			if("Mobile".equals(this.deviceType)){
+				map.put("error", "1");
+				return "mobile";
+			}
+			
+			return LOGIN;
+        }
+		token = new UsernamePasswordToken(entity.getUsername().trim(),
+                enCodePassword, false);
+        Subject currentUser = SecurityUtils.getSubject();
+        try {
+            currentUser.login(token);
+            al.setStatus(1);
+            al.setRemark("登录成功");
+            operator = (Admin)SecurityUtils.getSubject().getSession().getAttribute("operator");
+			//手机登陆           
+			if("Mobile".equals(this.deviceType)){ 
+				return "mobile";
+			}
+			
+            return SUCCESS;
+        } catch (AuthenticationException e) {
+            message = e.getMessage();
+            al.setStatus(0);
+			al.setRemark(message);
+        } catch (Exception e){
+			e.printStackTrace();
+			message = e.getMessage();
+			al.setStatus(0);
+			al.setRemark("未知错误");
+		}
+        finally{
+        	/*operator = (Admin)SecurityUtils.getSubject().getSession().getAttribute("operator");	*/
+        	String orgId = adminService.queryOrgByname(entity.getUsername().trim());
+        	if(orgId!=null && orgId!=""){	
+        		al.setOrgId(orgId);
+        	}else{
+        		String LevOrgId = adminService.queryOrgBylevel(1);
+        		if(LevOrgId!=null && LevOrgId!=""){
+        			al.setOrgId(LevOrgId);
+        		}
+        		
+        	}
+			adminLoginService.save(al); //记登录日志
+
+			setJstx(currentUser);//判断是否打开WebService
+		}
+        
+        //手机登陆
+		if("Mobile".equals(this.deviceType)){
+			map.put("error",1);
+			return "mobile";
+		}
+		
+        return LOGIN;
+
+	}
+
+	public void setJstx(Subject currentUser) {
+		if (currentUser.isPermitted("msgAction:chatHome")) { // 表示有即时通信模块 打开WebService
+			ActionContext.getContext().getSession().put("chatOpen", "Chat.initialize()");
+		} else {
+			ActionContext.getContext().getSession().put("chatOpen", "");
+		}
+	}
+	
+	public String saveTheme() {
+		if (theme != null && theme != "") {
+			ActionContext.getContext().getSession().put("theme", theme);
+			// adminService.saveTheme(theme, operator.getId().toString());
+		}
+		return "saveTheme";
+	}
+
+	public void isExists() {
+		String name = entity.getUsername();
+		String staffNo = entity.getStaffNo();
+		
+		
+		if (!staffNo.equals("") && staffNo != null && !staffNo.isEmpty()) {
+			if (this.adminService.staffNoIsExists(entity)) {
+				staffNo = "员工编号已存在";
+			}
+			else{ staffNo = ""; }
+		}
+		if (!name.equals("") && name != null && !name.isEmpty()) {
+			if (this.adminService.usernameIsExists(entity)) {
+				name = "登录名已存在";
+			}
+			else{ name = ""; }
+		}
+		String result = "{ \"username\": \""+ name +"\", \"staffNo\": \"" + staffNo + "\" }";
+		HttpServletResponse response = ServletActionContext.getResponse();
+		response.setCharacterEncoding("UTF-8");
+		Writer writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write(result);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			if(writer != null)
+			{
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/*收费站级联查询收费广场*/
+	/*public void getSquareListByAsyn() {
+		
+		String squareStr = "";
+		squares = squareService.getSquareListByStationNo(stationNo);
+		
+		if(squares != null && squares.size() > 0) {
+			JSONArray jsonArray = JSONArray.fromObject(squares);	
+			squareStr = jsonArray.toString();
+		}else {
+			squareStr = "[]";
+			
+		}
+		
+		HttpServletResponse response = ServletActionContext.getResponse();
+		response.setCharacterEncoding("UTF-8");
+		Writer writer = null;
+		try {
+			writer = response.getWriter();
+			writer.write(squareStr);
+			writer.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			if(writer != null)
+			{
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}*/
+	
+	public String logout() {
+		System.out.println(SecurityUtils.getSubject().getPrincipal().toString()+"下线了...");
+		if(KickoutSessionControlFilter.cache.get(SecurityUtils.getSubject().getPrincipal().toString())!=null){//清除session缓存
+			KickoutSessionControlFilter.cache.put(SecurityUtils.getSubject().getPrincipal().toString(),new LinkedList<Serializable>());
+		}
+		ActionContext.getContext().getSession().put("operator", null);
+		SecurityUtils.getSubject().logout();
+		
+		if("Mobile".equals(deviceType)) {
+			map.put("result", "logout");
+			
+			return "mobile";
+		}
+		this.redirectUrl = "../login.do";
+		return "logout";
+	}
+
+	public String info() {
+		entity = adminService.find(entity.getId());
+		return "info";
+	}
+
+	public String updateInfo() {
+		Admin temp = adminService.find(operator.getId());
+		temp.setName(entity.getName());
+		if (entity.getPassword().length() > 0) {
+			temp.setPassword(entity.getPassword());
+		}
+		temp.setSex(entity.getSex());
+		temp.setEmail(entity.getEmail());
+		temp.setPhone(entity.getPhone());
+		temp.setIndexMainUrl(entity.getIndexMainUrl());
+		temp.setIndexSecondUrl(entity.getIndexSecondUrl());
+		adminService.update(temp);
+		ActionContext.getContext().getSession().put("operator", temp);
+		result = Result.SUCCESS;
+		return "info";
+	}
+	 
+	
+	/**
+	 * 跳转至连接池监控页面
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public String showDateSource() throws Exception {
+		String dataSource = "dataSource";
+		HttpServletRequest request = ServletActionContext.getRequest();
+
+		String flag = request.getParameter("flag");
+		WebApplicationContext applicationContext = WebApplicationContextUtils
+				.getRequiredWebApplicationContext(ServletActionContext
+                        .getServletContext());
+
+		DataSource etcDataSource = (DataSource) applicationContext
+				.getBean(dataSource);
+
+		// ajax方式输出
+		if (StringUtils.isNotEmpty(flag) && StringUtils.isNotBlank(flag)) {
+
+			if (StringUtils.endsWithIgnoreCase(flag, "reload")) {
+				if (etcDataSource instanceof ComboPooledDataSource) {
+					ComboPooledDataSource comboPooledDataSource = (ComboPooledDataSource) etcDataSource;
+
+					int busy = comboPooledDataSource
+							.getNumBusyConnectionsAllUsers();
+					int idle = comboPooledDataSource
+							.getNumIdleConnectionsAllUsers();
+					int unclosed = comboPooledDataSource
+							.getNumUnclosedOrphanedConnectionsAllUsers();
+
+					HttpServletResponse response = ServletActionContext
+							.getResponse();
+					Writer writer = response.getWriter();
+					String str = "{";
+					StringBuffer sb = new StringBuffer(str);
+					sb.append("\"idle\":\"" + idle + "\",");
+					sb.append("\"busy\":\"" + busy + "\",");
+					sb.append("\"unclosed\":\"" + unclosed + "\"}");
+					str = sb.toString();
+
+					writer.write(str);
+					writer.flush();
+
+					writer.close();
+				} else {
+					throw new Exception("原C3P0数据源已更换");
+				}
+
+			}
+			return null;
+		} else {
+
+			if (etcDataSource instanceof ComboPooledDataSource) {
+				ComboPooledDataSource comboPooledDataSource = (ComboPooledDataSource) etcDataSource;
+				request.setAttribute("comboPooledDataSource",
+						comboPooledDataSource);
+
+			} else {
+				throw new Exception("原C3P0数据源已更换");
+			}
+
+			return "datasource";
+		}
+
+	}
+	@JSON(serialize=false)
+	public static String getIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		return ip;
+	}
+	
+
+	public void setRoles(String roles) {
+		if (roles != null) {
+			roles = roles.replace("，", ",").replace(" ", "");
+			String[] ids = roles.split(",");
+
+			if (ids != null && ids.length > 0) {
+				for (int i = 0; i < ids.length; i++) {
+					Role role = new Role();
+					role.setId(ids[i]);
+					entity.getRoles().add(role);
+				}
+			}
+		}
+	}
+
+	public String indexPage() {
+		firstUrl = operator.getIndexMainUrl();
+		secondUrl = operator.getIndexSecondUrl();
+		return "manager";
+	}
+	@JSON(serialize=false)
+	public List<Role> getRoleList() {
+		String hql = "from Role where subSystem >= '"+this.operator.getOrg().getOrgType()+"'";
+		return roleService.queryByHQL(hql);
+	}
+	@JSON(serialize=false)
+	public String getSecondUrl() {
+		return secondUrl;
+	}
+	@JSON(serialize=false)
+	public String getFirstUrl() {
+		return firstUrl;
+	}
+	@JSON(serialize=false)
+	public String getUsernameIsExists() {
+		return usernameIsExists;
+	}
+	@JSON(serialize=false)
+	public void setUsernameIsExists(String usernameIsExists) {
+		this.usernameIsExists = usernameIsExists;
+	}
+	@JSON(serialize=false)
+	public String getTheme() {
+		return theme;
+	}
+	
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+	@JSON(serialize=false)
+	public String getDeviceType() {
+		return deviceType;
+	}
+	
+	public int getStationNo() {
+		return stationNo;
+	}
+
+	public void setStationNo(int stationNo) {
+		this.stationNo = stationNo;
+	}
+	
+	/*public List<Org> getOrgList() {
+		return  OrgUtils.getSubOrgByParentOrgId(getOperator().getOrg().getId());
+	}*/
+	public HashMap getMap() {
+		return map;
+	}
+	  
+}

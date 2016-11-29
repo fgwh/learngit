@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>路径识别</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome.min.css" />
+    <!--[if IE 7]>
+    <link rel="stylesheet" href="../../../css/plugins/font-awesome/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../../css/goods.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../../theme/transparent/main.css" />
+    <script language="javascript" src="../../../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../js/quartz/plugins/My97DatePicker/WdatePicker.js"></script>
+    <script type="text/javascript" src="${basePath}/js/communicate.js"></script>
+    <script src="../../../js/bootstrap.min.js"></script>
+    <script src="${basePath}/js/common.js"></script> 	 	
+</head>
+<body style="min-height:930px;">
+<form name="myForm" id="myForm" action="travelPath_list.do" method="post">
+    <ul class="breadcrumb">
+        <li><i class="icon-home icon-2x"></i></li>
+        <li>当前位置：路径识别</li>
+    </ul>
+    <div class="widget widget-table">
+        <div class="widget-content">
+            <div class="widget-header">
+                <h5>路径识别</h5>
+            </div>
+            <table class="pn-ftable" border="0" cellpadding="10">
+                <tbody>
+                <tr>
+                   <th>开始日期:</th>
+								<td class="pn-fcontent">
+									<input style="background-color:white;" type="text" name="conditions.startQueryDate" id="startQueryDate"  class="Wdate" value="${conditions.startQueryDate}"  onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})"/> 
+								</td>
+					<th>结束日期</th>
+								<td class="pn-fcontent">
+									<input style="width: 40% important; background-color:white;" type="text" name="conditions.endQueryDate" id="endQueryDate" class="Wdate" value="${conditions.endQueryDate}"  onClick="javascript:WdatePicker({dateFmt: 'yyyy-MM-dd',skin:'whyGreen',maxDate:'%y-%M-%d'})"/> 
+								</td>
+                    <th>车牌号 :</th>
+						<td class="pn-fcontent"><select class="pull-left" name="conditions.plateNum" id="plateNum"
+							style="width:100px;">
+								<option value="">全部</option>
+								<option value="粤" <c:if test="${conditions.plateNum=='粤'}">selected</c:if>>粤</option>
+								<option value="津" <c:if test="${conditions.plateNum=='津'}">selected</c:if>>津</option>
+								<option value="沪" <c:if test="${conditions.plateNum=='沪'}">selected</c:if>>沪</option>
+								<option value="渝" <c:if test="${conditions.plateNum=='渝'}">selected</c:if>>渝</option>
+								<option value="京" <c:if test="${conditions.plateNum=='京'}">selected</c:if>>京</option>
+								<option value="冀" <c:if test="${conditions.plateNum=='冀'}">selected</c:if>>冀</option>
+								<option value="豫" <c:if test="${conditions.plateNum=='豫'}">selected</c:if>>豫</option>
+								<option value="云" <c:if test="${conditions.plateNum=='云'}">selected</c:if>>云</option>
+								<option value="辽" <c:if test="${conditions.plateNum=='辽'}">selected</c:if>>辽</option>
+								<option value="黑" <c:if test="${conditions.plateNum=='黑'}">selected</c:if>>黑</option>
+								<option value="湘" <c:if test="${conditions.plateNum=='湘'}">selected</c:if>>湘</option>
+								<option value="皖" <c:if test="${conditions.plateNum=='皖'}">selected</c:if>>皖</option>
+								<option value="鲁" <c:if test="${conditions.plateNum=='鲁'}">selected</c:if>>鲁</option>
+								<option value="新" <c:if test="${conditions.plateNum=='新'}">selected</c:if>>新</option>
+								<option value="苏" <c:if test="${conditions.plateNum=='苏'}">selected</c:if>>苏</option>
+								<option value="浙" <c:if test="${conditions.plateNum=='浙'}">selected</c:if>>浙</option>
+								<option value="赣" <c:if test="${conditions.plateNum=='赣'}">selected</c:if>>赣</option>
+								<option value="鄂" <c:if test="${conditions.plateNum=='鄂'}">selected</c:if>>鄂</option>
+								<option value="桂" <c:if test="${conditions.plateNum=='桂'}">selected</c:if>>桂</option>
+								<option value="甘" <c:if test="${conditions.plateNum=='甘'}">selected</c:if>>甘</option>
+								<option value="晋" <c:if test="${conditions.plateNum=='晋'}">selected</c:if>>晋</option>
+								<option value="蒙" <c:if test="${conditions.plateNum=='蒙'}">selected</c:if>>蒙</option>
+								<option value="陕" <c:if test="${conditions.plateNum=='陕'}">selected</c:if>>陕</option>
+								<option value="吉" <c:if test="${conditions.plateNum=='吉'}">selected</c:if>>吉</option>
+								<option value="闽" <c:if test="${conditions.plateNum=='闽'}">selected</c:if>>闽</option>
+								<option value="贵" <c:if test="${conditions.plateNum=='贵'}">selected</c:if>>贵</option>
+								<option value="青" <c:if test="${conditions.plateNum=='青'}">selected</c:if>>青</option>
+								<option value="藏" <c:if test="${conditions.plateNum=='藏'}">selected</c:if>>藏</option>
+								<option value="川" <c:if test="${conditions.plateNum=='川'}">selected</c:if>>川</option>
+								<option value="宁" <c:if test="${conditions.plateNum=='宁'}">selected</c:if>>宁</option>
+								<option value="琼" <c:if test="${conditions.plateNum=='琼'}">selected</c:if>>琼</option>
+								<option value="台" <c:if test="${conditions.plateNum=='台'}">selected</c:if>>台</option>
+								<option value="港" <c:if test="${conditions.plateNum=='港'}">selected</c:if>>港</option>
+								<option value="澳" <c:if test="${conditions.plateNum=='澳'}">selected</c:if>>澳</option>
+								</select> <input type="text" size="6" maxlength="6" name="conditions.carNo" id="carNo"
+									value="${conditions.carNo}" seleted /></td>
+                </tr>
+                <tr>
+                    <th>入口流水号 :</th>
+	                    <td class="pn-fcontent">
+							<input style="width: 40% important; background-color:white;" type="text" name="conditions.laneEnNo" id="LaneEnNo"  value="${conditions.laneEnNo}" /> 
+						</td>
+                    <th>出口流水号 :</th>
+                    	<td class="pn-fcontent">
+							<input style="width: 40% important; background-color:white;" type="text" name="conditions.laneExNo" id="LaneExNo"  value="${conditions.laneExNo}" /> 
+						</td>
+                    <th>复合卡表面卡号 :</th>
+                   		<td class="pn-fcontent">
+							<input style="width: 40% important; background-color:white;" type="text" name="conditions.exCPCSnNo" id="ExCPCSnNo" value="${conditions.exCPCSnNo}" /> 
+						</td>
+                </tr>
+                <tr>
+
+                    <td class="pn-fcontent" colspan="6" style="border-left:1px solid #ddd;">
+                        赔款：付款方式；车型不符； 无通行卷(无卡)；U型行驶(回头)；超时行驶(超时)；闯关(冲卡)；黑名单；灰名单；不可读通行卷(坏卡)；无效通行卷(车牌不符)；
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <a class="btn btn-s-md btn-primary pull-right" id="" onclick="saveTxt()">保存结果</a>
+            <a class="btn btn-s-md btn-primary pull-right" id="print" onclick="savePath()"href="javascript:;"data-toggle="modal" data-target="#myModal4">生成行驶轨迹</a>
+            <a 	class="btn btn-s-md btn-primary pull-right" id="submit">搜索</a>
+        </div>
+    </div>
+    <div class="separator line"></div>
+    <div class="widget widget-table">
+        <div class="widget-header">
+            <i class="icon-th-list"></i>
+            <h5>数据列表</h5>
+        </div>
+        <div class="widget-content widget-list widget-scroll">  <!--  style="min-height:500px;" -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th >出口流水时间</th>
+                    <th>出口流水号</th>
+                    <th>路段</th>
+                    <th>收费站</th>
+                    <th>车道</th>
+                    <th>车道类型</th>
+                    <th>车牌号码</th>
+                    <th>识别车牌</th>
+                    <th>交易状态</th>
+                    <th>查看图像 </th>
+                </tr>
+                </thead>
+                <tbody id="databody">
+                	<c:forEach items="${list}" var="item" varStatus="status">
+							<tr>
+								<td>${item.exTime}</td>
+								<td>${item.laneExSerialNo}</td>
+								<td>${item.exRoadId}</td>
+								<td>${item.exStationId}</td>
+								<td>${item.exLaneId}</td>
+								<td>${item.exLaneType}</td>
+								<td>${item.exVehiclePlate}</td>
+								<td>${item.exVehIdentifyPlate}</td>
+								<td>${item.dealStatus}</td>
+								<td><a>查看图像</a></td>
+							</tr>
+						</c:forEach>
+                </tbody>
+            </table>
+        </div>
+         <div class="separator line"></div>
+         <div class="widget-content widget-list widget-scroll">  <!--  style="min-height:500px;" -->
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th >入口流水时间</th>
+                    <th>入口流水号</th>
+                    <th>路段</th>
+                    <th>收费站</th>
+                    <th>车道</th>
+                    <th>车道类型</th>
+                    <th>车牌号码</th>
+                    <th>识别车牌</th>
+                    <th>交易状态</th>
+                    <th>查看图像 </th>
+                </tr>
+                </thead>
+                <tbody id="databody">
+               	<c:forEach items="${list}" var="item" varStatus="status">
+							<tr>
+								<td>${item.enTime}</td>
+								<td>${item.laneEnSerialNo}</td>
+								<td>${item.enRoadId}</td>
+								<td>${item.enStationId}</td>
+								<td>${item.enLaneId}</td>
+								<td>${item.enLaneType}</td>
+								<td>${item.enVehiclePlate}</td>
+								<td>${item.enVehiclePlate}</td>
+								<td>${item.dealStatus}</td>
+								<td><a>查看图像</a></td>
+							</tr>
+						</c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div class="widget-bottom">
+            <jsp:include page="../include/pager.jsp" />
+        </div>
+    </div>
+
+</form>
+<div class="modal fade" id="myModal4" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:960px;">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only" >关闭</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">生成行驶轨迹</h4>
+            </div>
+            <div class="modal-body">
+                <table cellpadding="1" cellspacing="1" style="border:1px solid #ddd;"  class="pn-ftable dt-table">
+	               	<c:forEach items="${list}" var="item" varStatus="status">
+							<tr>
+		                        <th>日期:</th>
+		                        <td class="motaiTd"><font id="exTime2" class="motaiTdFont"  value="${item.exTime}"></font>${item.exTime}</td>
+		                        <th>行驶轨迹:</th>
+		                        <td class="motaiTd" style="display:none"><font id="realPathtxt" class="motaiTdFont" value="${item.realPath}"></font></td>
+		                        <td class="motaiTd"><font id="realPath" class="motaiTdFont"></font>${item.realPath}</td>
+	                   		</tr>
+					</c:forEach>
+                </table>
+            </div>
+            <div class="modal-footer" id="footer5">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+	function get(name){
+		var obj = document.getElementById(name);
+		if(obj != null)
+	  		return obj;
+	    obj = document.getElementsByName(name);
+		if(obj != null && obj.length > 0)
+			return obj[0];
+		return null;
+	}
+	
+	
+	$(function() {
+		//邦定搜索按钮，添加点击事件查询数据列表
+		$("#submit").on("click", function(event) {
+			//验证查询条件合法性
+			if (checkTimeLessThanWeek()) {
+                    $("#myForm").submit();
+               }
+			event.preventDefault();
+		});
+
+		//按回车键，查询数据列表
+		document.onkeydown = function(event) {
+			var ev = document.all ? window.event : event;
+			if (ev.keyCode == 13) {
+				//验证查询条件合法性
+				if (checkTimeLessThanWeek()) {
+                    $("#myForm").submit();
+                }
+				ev.preventDefault();
+			}
+		};
+	});
+	
+     var ShowImage = function() {
+    	 $('#myModal5 img').on("mouseover mouseout",function(e){
+    		 var availWidth = $("#myModal5").width();
+    		 if(e.type == "mouseover"){   		
+    	       jQuery("<img id='imgshow' style='height:55%;width:40%' src='" + this.src + "' />").appendTo("#myModal5");
+    	  	 //console.log(availWidth + ' ' + e.pageX + ' ' + e.pageY);
+    	  	 if(e.pageX > availWidth/2) {
+    	  	 	jQuery("#imgshow")
+    	           .css("top", 100 + "px")//(e.pageY - xOffset)
+    	           .css("left",100 + "px")//(e.pageX + yOffset)
+    	  		 .fadeIn("fast");
+    	  	 }else {
+    	  	 	jQuery("#imgshow")
+    	           .css("top", 100 + "px")//(e.pageY - xOffset)
+    	           .css("right",100 + "px")//(e.pageX + yOffset)
+    	  		 .fadeIn("fast");
+    	  	 }
+    		 }else if(e.type == "mouseout"){
+    			 jQuery("#imgshow").remove();
+    		 }
+    		});
+     }; 
+
+     
+     jQuery(document).ready(function() {
+    	 ShowImage();
+     });
+     
+     $("#myModal5").on("hide.bs.modal", function (e) {
+		for(var i=1;i<6;i++){
+			$("#zjz"+i).attr("src","");
+			$("#hwz"+i).attr("src","");
+			$("#hwjl"+i).attr("src","");
+			$("#zjz"+i).addClass('displayClass');
+			$("#hwz"+i).addClass('displayClass');
+			$("#hwjl"+i).addClass('displayClass');
+		}
+		$("#qianMingShow1").attr("src","");
+		$("#qianMingShow2").attr("src","");
+		$("#video").attr("src","");
+		$("#fileName").val("");
+		$("#footer5").attr("style","margin-top: 0px;");
+		$("#myModal5").attr("style","margin-left:0px");
+		
+	}); 
+     
+   //导出Txt
+ 	function saveTxt() {
+
+ 		if (checkTimeLessThanWeek()) {
+ 		
+ 			var LaneExNo = $("#LaneExNo").val();
+ 			var LaneEnNo = $("#LaneEnNo").val();
+ 			var ExCPCSnNo = $("#ExCPCSnNo").val();
+ 		    var plateNum = $("#plateNum").val();
+ 			var carNo = $("#carNo").val();
+ 			var startQueryDate = $("#startQueryDate").val();
+ 			var endQueryDate = $("#endQueryDate").val();
+ 			var params = {
+ 				'conditions.LaneExNo' : LaneExNo,
+ 				'conditions.LaneEnNo' : LaneEnNo,
+ 				'conditions.ExCPCSnNo' : ExCPCSnNo,
+ 				'conditions.plateNum' : plateNum,
+ 				'conditions.carNo' : carNo,
+ 				'conditions.startQueryDate' : startQueryDate,
+ 				'conditions.endQueryDate' : endQueryDate,
+ 			};
+ 			url = uri + "admin/travelPath_explortTXT.do";
+ 			$.post(url, params, reportExcelSucc, "json");
+ 		}
+ 	}
+
+ 	function reportExcelSucc(jsonTemp) {
+ 		var map = jsonTemp;
+ 		var status = map.status;
+ 		if (status == 0) {
+ 			alert("暂无数据，不能导出txt");
+ 		} else if (status > 63335) {
+ 			alert("暂时不支持大数据导出txt");
+ 		} else {
+ 			alert("已成功导出LaneExList.txt文件");
+ 		}
+ 	}
+ 	
+ 	//生成路径
+ 	function savePath() {
+
+ 		if (checkTimeLessThanWeek()) {
+ 		
+ 			var LaneExNo = $("#LaneExNo").val();
+ 			var LaneEnNo = $("#LaneEnNo").val();
+ 			var ExCPCSnNo = $("#ExCPCSnNo").val();
+ 		    var plateNum = $("#plateNum").val();
+ 			var carNo = $("#carNo").val();
+ 			var startQueryDate = $("#startQueryDate").val();
+ 			var endQueryDate = $("#endQueryDate").val();
+ 			var params = {
+ 				'conditions.LaneExNo' : LaneExNo,
+ 				'conditions.LaneEnNo' : LaneEnNo,
+ 				'conditions.ExCPCSnNo' : ExCPCSnNo,
+ 				'conditions.plateNum' : plateNum,
+ 				'conditions.carNo' : carNo,
+ 				'conditions.startQueryDate' : startQueryDate,
+ 				'conditions.endQueryDate' : endQueryDate,
+ 			};
+ 			url = uri + "admin/travelPath_savePath.do";
+ 			$.post(url, params, reportExcelSucc, "json");
+ 		}
+ 	}
+
+ 	function reportExcelSucc(jsonTemp) {
+ 		var realPath = $("#realPathtxt").val(); 
+ 			var realPath1 = realPath;
+			var LaneEnNo = $("#LaneEnNo").val();
+			var ExCPCSnNo = $("#ExCPCSnNo").val();
+		    var plateNum = $("#plateNum").val();
+			var carNo = $("#carNo").val();
+			var startQueryDate = $("#startQueryDate").val();
+			var endQueryDate = $("#endQueryDate").val();
+			var params = {
+				'conditions.LaneExNo' : LaneExNo,
+				'conditions.LaneEnNo' : LaneEnNo,
+				'conditions.ExCPCSnNo' : ExCPCSnNo,
+				'conditions.plateNum' : plateNum,
+				'conditions.carNo' : carNo,
+				'conditions.startQueryDate' : startQueryDate,
+				'conditions.endQueryDate' : endQueryDate,
+			};
+			url = uri + "admin/travelPath_savePath.do";
+			$.post(url, params, reportExcelSucc, "json");
+		}
+ 	}
+</script>
+</html>

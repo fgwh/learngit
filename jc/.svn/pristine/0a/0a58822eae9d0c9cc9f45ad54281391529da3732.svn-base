@@ -1,0 +1,563 @@
+var log = {};
+$(function() {	
+	  $(":radio[name='fanwei']").click(function(){	      
+	     if($(this).val()==0){
+	    	 $("#myForm").attr('action','blackList_list.do');
+	     }else{
+	    	 $("#myForm").attr('action','blackList_proList.do');
+	     }
+	     $("#myForm").submit();
+	  });
+
+	
+	//邦定搜索按钮，添加点击事件查询数据列表
+	$("#submit").on("click", function(event) {
+		//验证查询条件合法性
+		if (log.checkDate()) {
+                $("#myForm").submit();
+           }
+		event.preventDefault();
+	});
+
+	//按回车键，查询数据列表
+	document.onkeydown = function(event) {
+		var ev = document.all ? window.event : event;
+		if (ev.keyCode == 13) {
+			//验证查询条件合法性
+			if (log.checkDate()) {
+                $("#myForm").submit();
+            }
+			ev.preventDefault();
+		}
+	};
+});
+
+//验证查询条件
+    log.checkDate = function() {
+    	var  vehFlag=$("select[name='conditions.vehFlag'] option:selected").val()
+    	if(""==vehFlag){
+    		alert("客货车标识别不能为空");
+    		return false;
+    	}
+    	
+    	var interceptOption=$("select[name='conditions.interceptOption']").val();
+    	if(""==interceptOption){
+    		alert("拦截选项不能为空");
+    		return false;
+    	}
+        var v_start = $("#startQueryDate").val();//new Date($("#startQueryDate").val().replace("-", "/"));
+        if(""==v_start){
+        	alert("开始时间不能为空");
+        	return false;
+        }
+        var v_end = $("#endQueryDate").val();//new Date($("#endQueryDate").val().replace("-", "/"));
+        if(""==v_end){
+        	alert("结束时间不能为空");
+        	return false;
+        }
+        if (v_start > v_end) {
+            alert("结束时间不能小于开始时间");
+            return false;
+        }          
+        return true;
+    };
+
+
+var fileDate = '';
+function showxiangqing(id,vehPlate,vehPlateColor,vehFlag,vehClass,interceptOption,startDate,endDate,vehInfo,axisGroup,
+		vehBigType,vehMidType,vehSmallType,vehCompany,vehModel,vehType,feeCount,feeMoney,applicant,applicateTime,applicateOrg,
+		fileName,uploadTime){
+	 fileDate=uploadTime.substring(0,10);
+	 $("[name='vehPlate']").text(vehPlate);
+	 $("[name='vehPlateColor']").text(vehPlateColor);
+	 if(vehFlag==1){
+		 $("[name='vehFlag']").text('客车');
+	 }else if(vehFlag==2){
+		 $("[name='vehFlag']").text('货车');
+	 }else{
+		 $("[name='vehFlag']").text('非计重或不分客货');
+	 }
+	 $("[name='vehClass']").text(vehClass);	
+	 $("[name='interceptOption']").text(interceptOption);	
+	 $("[name='startDate']").text(startDate.substring(0,10));
+	 $("[name='endDate']").text(endDate.substring(0,10));
+	 $("[name='vehInfo']").text(vehInfo);
+	 $("[name='vehBigType']").text(vehBigType);
+	 $("[name='vehMidType']").text(vehMidType);
+	 $("[name='vehSmallType']").text(vehSmallType);
+	 $("[name='vehCompany']").text(vehCompany);
+	 $("[name='vehModel']").text(vehModel);
+	 $("[name='vehType']").text(vehType);
+	 $("[name='feeCount']").text(feeCount+'次');
+	 $("[name='feeMoney']").text(feeMoney+'元');
+	 $("[name='applicant']").text(applicant);
+	 $("[name='applicateTime']").text(applicateTime.substring(0,10));
+	 $("[name='applicateOrg']").text(applicateOrg);
+	 $("[name='fileName']").val(fileName);
+	 $("[name='axisGroup']").text(axisGroup);
+	 if(fileName==''){
+		 $("#fileIsExit").css("display",'none');
+	 }else{
+		 $("#fileIsExit").css("display",'');
+	 }
+	 
+	 $("#myModal4").modal('show');
+	
+}
+
+function openSaveForm(){
+	$("#myModalLabel5").html("黑名单登记");
+	$('#saveForm')[0].reset();
+	$("#evidence").attr("dataValidate","证据链");
+	$("#redPoint").text("*");
+	$("#myModal5").modal('show');
+	
+}
+
+
+//修改
+function update(id,vehPlate,vehPlateColor,vehFlag,vehClass,interceptOption,startDate,endDate,vehInfo,axisGroup,
+		vehBigType,vehMidType,vehSmallType,vehCompany,vehModel,vehType,feeCount,feeMoney,applicant,applicateTime,applicateOrg,
+		fileName,uploadTime){
+	$("#myModalLabel5").html("黑名单修改");
+	$("#updateId").val(id);
+	$("#plateNum").val(vehPlate.substring(0,1));
+	$("#carNo").val(vehPlate.substring(1,7));
+	$("#vehPlateColor").val(vehPlateColor);
+	$("#vehClass").val(vehClass);
+	$("#vehFlag").val(vehFlag);
+	$("#vehCompany").val(vehCompany);
+	$("#vehModel").val(vehModel);
+	$("#vehType").val(vehType);
+	$("#feeCount").val(feeCount);
+	$("#feeMoney").val(feeMoney);
+	$("#axisGroup").val(axisGroup);
+	$("#vehBigType").val(vehBigType);
+	$("#vehMidType").val(vehMidType);
+	$("#vehSmallType").val(vehSmallType);
+	$("#vehInfo").val(vehInfo);
+	$("#evidence").val("");
+	$("#evidence").removeAttr("dataValidate");
+	$("#redPoint").text("");
+	$("#applicant").val(applicant);
+	$("#applicateTime").val(applicateTime.substring(0,10));
+	$("#applicateOrg").val(applicateOrg);
+	$("#interceptOption").val(interceptOption);
+	$("#startDate").val(startDate.substring(0,10));
+	$("#endDate").val(endDate.substring(0,10));
+	$("#fileName").val(fileName);
+	$("#uploadTime").val(uploadTime);
+	$("#myModal5").modal('show');
+		
+}
+
+//文件下载
+function onloadFile(){
+	var fileName=$("[name='fileName']").val();
+	window.location.href="download_execute.do?filename="+encodeURI(encodeURI(fileName))+"&fileDate="+fileDate;
+}
+
+function save(){	
+
+	
+	if(dataValidate()){
+		jQuery("#saveForm").find("#loading").showLoading();
+		/*if($("#feeCount").val()==''){
+			$("#feeCount").removeAttr('name');
+		}
+		var formData = new FormData($( "#saveForm" )[0]);
+		$.ajax({
+			   type: "POST",
+			   url: uri+"admin/blackList_save.do",
+			   data: formData,
+			   processData: false,
+			    contentType: false,
+			    cache: false,
+			   success: function(msg){
+			     if(msg.Msg==true){
+			    	 alert("上传成功");
+			     }else{
+			    	 alert("上传失败");
+			     }
+			    window.location.reload();
+			   },
+			   error:function(){
+				   alert("网络异常");				   
+			   }
+		});
+		jQuery("#saveForm").find("#loading").hideLoading();*/
+
+		setConditions("saveForm");
+		get("saveForm").submit();
+
+	}
+} 
+
+
+
+
+
+function zhuijiao(){
+	var value=$("#recoveredForm").find("[name='roBlackList.file']").val();
+	if(""==value){
+		alert("请选择追缴数据");
+		return false;
+	}
+	jQuery("#recoveredForm").find("#loading").showLoading();
+/*	var formData = new FormData($( "#recoveredForm" )[0]);
+	$.ajax({
+		   type: "POST",
+		   url: uri+"admin/blackList_recovered.do",
+		   data: formData,
+		   processData: false,
+		    contentType: false,
+		    cache: false,
+		   success: function(msg){
+			jQuery("#recoveredForm").find("#loading").hideLoading();
+		     if(msg.Msg!=-1){
+		    	 alert("上传成功");
+		     }else{
+		    	 alert("上传失败");
+		     }
+		    window.location.reload();
+		   },
+		   error:function(){
+			   alert("网络异常");
+		   }
+	});*/
+	setConditions("recoveredForm");
+	get("recoveredForm").submit();
+	
+}
+
+function deleteById(id){
+	if(confirm("是否删除该黑名单信息？")){
+		$.post(uri+"admin/blackList_delete.do",{"conditions.id":id},function(json){
+			if(json.status==true){
+	            $("#myForm").submit();
+			}			
+		});
+	}	
+		
+}
+
+
+function recovered(id){
+	$("#recoveredId").val(id);
+	$('#myModal6').modal('show');
+		
+}
+//打开上传div
+function upload(id){
+	$("#uploadId").val(id);
+	$('#myModal3').modal('show');
+		
+}
+
+//上传证据链
+function uploadEvidence(){
+	
+	var value=$("#uploadForm").find("[name='roBlackList.file']").val();
+	if(""==value){
+		alert("请选择证据链");
+		return false;
+	}
+	jQuery("#uploadForm").find("#loading").showLoading();
+	/*var formData = new FormData($( "#uploadForm" )[0]);
+	$.ajax({
+		   type: "POST",
+		   url: uri+"admin/blackList_upload.do",
+		   data: formData,
+		   processData: false,
+		    contentType: false,
+		    cache: false,
+		   success: function(msg){
+			jQuery("#uploadForm").find("#loading").hideLoading();
+		     if(msg.Msg!=-1){
+		    	 alert("上传成功");
+		     }else{
+		    	 alert("上传失败");
+		     }
+		    window.location.reload();
+		   },
+		   error:function(){
+			   alert("网络异常");
+		   }
+	});*/
+	setConditions("uploadForm");
+	get("uploadForm").submit();
+
+}
+
+
+function improtExcel(){
+	jQuery("#myModal2").find("#loading").showLoading();
+    $('#myForm1').submit();
+}
+//增加一个标签属性dataValidate  用于不为空的校验
+   function dataNotNull(){
+    	  var flag=true;
+    	  var all=$("*[dataValidate]");
+    	   all.each(function(){
+    	   if($(this).val()==""){
+    			alert($(this).attr("dataValidate")+"不能为空!");
+    			flag=false;
+    			return false; 
+    		}
+    	});
+    		 if(flag==false){
+    			 return false;
+    		 }
+      }
+
+   //车牌校验
+   function plateValidate(){
+	   var  plateNum=$("#plateNum").val();
+	    var carNo=$("#carNo").val();
+	    if(""==carNo||""==plateNum){
+	    	alert("车牌不能为空");
+	    	return false;
+	    }
+	    var express= /^[A-Z_a-z]{1}[警京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼]{0,1}[A-Z_a-z_0-9]{4}[A-Z_a-z_0-9挂学警港澳]{1}$/;
+	    if(!express.test(carNo)){
+	    	alert("车牌不合法");
+	    	return false;
+	    }
+	    var vehPlateColor=$("#vehPlateColor").val();
+	    if(""==vehPlateColor){
+	    	alert("车牌颜色不能为空");
+	    	return false;
+	    }
+	  /*  carNo=carNo.toUpperCase();
+	    var vehPlateColor=$("#vehPlateColor").val();
+	    var id=$("#updateId").val();
+	    if(""!=plateNum&&""!=vehPlateColor&&""!=carNo){
+	    	$.ajax({
+	    		  async:false,
+	    		   type: "POST",
+	    		   url: uri+"admin/blackList_plateValidate.do",
+	    		   data: {'conditions.id':id,
+	    			      'conditions.vehPlate':plateNum+carNo,
+	    			      'conditions.vehPlateColor':vehPlateColor
+	    		            },
+	    		   success: function(json){
+	    			 if(json.status==false){ 
+	    				 alert("该车辆已加入黑名单");  
+		    			 flag=false;
+	    		      }
+	    		}
+	    		});
+	    	if(flag==false){
+	    		return false;
+	    	}
+	    	
+	    }else{
+	    	alert("请选择车牌号和颜色");
+	        return false;
+	    }*/
+	 return true;
+   }
+
+function dataValidate(){
+	  //车牌 车牌颜色校验是否重复
+	 if(plateValidate()==false){
+		 return false;
+	 }
+	//不为空校验
+	 var flag= dataNotNull();
+	 if(flag==false){
+		 return false;
+	 }
+	  //时间校验
+		 var startTime=$("input[name='roBlackList.startDate']").val();
+	    var endTime=$("input[name='roBlackList.endDate']").val();
+	    if(endTime<startTime){
+	        alert("开始时间要小于结束时间");
+	        return false;
+	    }
+		//文件类型验证
+	 	 
+		   
+		/* var feeCount= $("input[name='roBlackList.feeCount']").val(); 
+		 if(parseInt(feeCount)>9999){
+			 alert("逃费次数为4位数字以内合法数字")
+			   return false;
+		 }
+		 var feeMoney= $("input[name='roBlackList.feeMoney']").val(); 
+		 if(parseInt(feeMoney)>99999999){
+			 alert("逃费金额为8位数字以内合法数字")
+			   return false;
+		 }*/
+	   return true;
+}
+
+function setConditions(model){
+	$("#"+model+" input[name='conditions.plateNum']").val($("#myForm select[name='conditions.plateNum']").val());
+	$("#"+model+" input[name='conditions.carNo']").val($("#myForm input[name='conditions.carNo']").val());
+	$("#"+model+" input[name='conditions.vehClass']").val($("#myForm select[name='conditions.vehClass']").val());
+	$("#"+model+" input[name='conditions.vehFlag']").val($("#myForm select[name='conditions.vehFlag']").val());
+	$("#"+model+" input[name='conditions.vehPlateColor']").val($("#myForm select[name='conditions.vehPlateColor']").val());
+	$("#"+model+" input[name='conditions.interceptOption']").val($("#myForm select[name='conditions.interceptOption']").val());
+	$("#"+model+" input[name='conditions.startQueryDate']").val($("#startQueryDate").val());
+	$("#"+model+" input[name='conditions.endQueryDate']").val($("#endQueryDate").val());
+	$("#"+model+" input[name='pager.pageSize']").val($("#pagesize").val());
+	$("#"+model+" input[name='pager.currentPage']").val($(".toPage input[name='pager.currentPage']").val());	
+	
+}
+
+function get(name){
+	var obj = document.getElementById(name);
+	if(obj != null)
+  		return obj;
+    obj = document.getElementsByName(name);
+	if(obj != null && obj.length > 0)
+		return obj[0];
+	return null;
+}
+
+function doExcelReoprt(){
+	var dataSource  = $('input[name="fanwei"]:checked').val();//"1"全省，"0"路段
+	var plateNum = $("select[name='conditions.plateNum'] option:selected").val();
+	var carNo = $("input[name='conditions.carNo']").val();
+	var vehClass = $("select[name='conditions.vehClass'] option:selected").val(); 
+	var vehFlag = $("select[name='conditions.vehFlag'] option:selected").val();
+	var vehPlateColor = $("select[name='conditions.vehPlateColor'] option:selected").val();
+	var interceptOption = $("select[name='conditions.interceptOption'] option:selected").val();
+	var startQueryDate = $("input[name='conditions.startQueryDate']").val();
+	var endQueryDate = $("input[name='conditions.endQueryDate']").val();
+	var params = {
+		'conditions.dataSource' : dataSource,
+		'conditions.plateNum' : plateNum,
+		'conditions.carNo' : carNo,
+		'conditions.vehClass':vehClass,
+		'conditions.vehFlag':vehFlag,
+		'conditions.vehPlateColor':vehPlateColor,
+		'conditions.interceptOption':interceptOption,
+		'conditions.startQueryDate':startQueryDate,
+		'conditions.endQueryDate':endQueryDate
+	};
+	if (dataSource == 1) {
+		params.excelFlag="problack";
+		if(log.checkDate()){
+			url = uri + "admin/report_excelNum.do";
+			$.post(url, params, reportProExcelSucc, "json");
+		}
+	} else if(dataSource == 0) {
+		params.excelFlag="roblack";
+		if(log.checkDate()){
+			url = uri + "admin/report_excelNum.do";
+			$.post(url, params, reportRoExcelSucc, "json");
+		}
+	}
+}
+
+function reportProExcelSucc(jsonTemp) {
+	var map = jsonTemp;
+	var status = map.status;
+	if (status == 0) {
+		alert("暂无数据，不能导出");
+	} else if (status == 1) {
+		alert("暂时不支持大数据量导出");
+	} else {
+		var form = get("myForm");
+		var url = form.action; // 保存原来的action url
+		form.action = "proBlackListReport_doExportExcel.do";
+		form.submit();
+		form.action = url;
+	}
+}
+
+function reportRoExcelSucc(jsonTemp) {
+	var map = jsonTemp;
+	var status = map.status;
+	if (status == 0) {
+		alert("暂无数据，不能导出");
+	} else if (status == 1) {
+		alert("暂时不支持大数据量导出");
+	} else {
+		var form = get("myForm");
+		var url = form.action; // 保存原来的action url
+		form.action = "roBlackListReport_doExportExcel.do";
+		form.submit();
+		form.action = url;
+	}
+}
+
+/*//逃费金额验证
+function moneyValidate(thisDom){
+	 var val=thisDom.value;
+	 if(""==val){
+		 alert("逃费总金额不能为空");
+		 return false;
+	 }
+	 if(! $.isNumeric(val)){
+		 alert("逃费总金额必须为数字");
+		 thisDom.value=0;
+		 return false;
+	 }
+	 if(parseInt(val)<0){
+		 alert("逃费总金额不为负数");
+		 thisDom.value=0;
+		 return false;
+	 }
+	 
+}*/
+$(function(){
+	$("input[name='roBlackList.feeCount']").keydown(function (event) {
+        var eventObj = event || e;
+         var keyCode = eventObj.keyCode || eventObj.which;
+         if ( keyCode == 46 ||keyCode == 8 || (keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105) ) 
+            return true;
+         else
+         return false;
+    });
+	
+	$("input[name='roBlackList.feeCount']").bind("input propertychange", function () {
+	    if (isNaN(parseFloat($(this).val())) || parseFloat($(this).val()) <0) $(this).val("");
+	});
+	
+	
+	$("input[name='roBlackList.feeMoney']").keydown(function (event) {
+        var eventObj = event || e;
+         var keyCode = eventObj.keyCode || eventObj.which;
+         if ( keyCode == 110||keyCode == 46 ||keyCode == 8 || (keyCode >= 48 && keyCode <= 57) || (keyCode >= 96 && keyCode <= 105) ) 
+            return true;
+         else
+         return false;
+    });
+	
+	$("input[name='roBlackList.feeMoney']").bind("input propertychange", function () {
+	    if (isNaN(parseFloat($(this).val())) || parseFloat($(this).val()) <0) $(this).val("");
+	});
+});
+
+
+
+
+/*//逃费次数验证
+function numVali(thisDom){
+	 var val=thisDom.value;
+	 if(""==val){
+		 return false;
+	 }
+	 if(!$.isNumeric(val)){
+		 alert("逃费次数必须为数字");
+		 thisDom.value=0;
+		 return false;
+	 }
+	    if(parseInt(val)<0){
+	    	alert("逃费次数不为负数")
+	    	m.value=0;
+	    	 return false;
+	    }
+	  }*/
+function fileValidate(thisDom){
+	  var s=thisDom.value;
+	   var filesuffix=s.substring(s.lastIndexOf(".")+1);
+	   if("zip"!=filesuffix&&"rar"!=filesuffix&&s!=""){
+		   alert("请选择zip或rar格式文件上传");
+		   thisDom.outerHTML= thisDom.outerHTML;
+            return false;
+	   }   
+}
+

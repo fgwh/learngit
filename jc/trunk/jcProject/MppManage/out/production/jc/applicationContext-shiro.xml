@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="authController" class="com.hgsoft.security.Realm.AuthControllerImpl">
+        <property name="filterChainDefinitions">
+            <value>
+           		 /admin/goods_saveGoodsData.do = anon
+            	/admin/admin_checkIE.do = anon
+                /login.jsp = anon
+                /login.do = anon
+                /error.jsp = anon
+                /index.htm = anon
+                /WEB-INF/jsp/error404.jsp = anon
+                /WEB-INF/jsp/error.jsp = anon
+                /WEB-INF/jsp/login.jsp = anon
+                /images/** = anon
+                /plugins/* = anon
+                /theme/** = anon
+                /css/** = anon
+                /css/images/* = anon
+                /js/** = anon
+                /admin_logout.do = anon 
+                <!--/admin/admin_list.do* = authc, roles[]-->
+                <!-- /** = roleOrFilter[管理员]-->
+            </value>
+        </property>
+    </bean>
+	
+    <bean id="kickoutSessionControlFilter" 
+	class="com.hgsoft.security.util.KickoutSessionControlFilter">
+	    <property name="cacheManager" ref="shiroCacheManager"/>
+	    <property name="sessionManager" ref="sessionManager"/>
+	
+	    <property name="kickoutAfter" value="false"/>
+	    <property name="maxSession" value="1"/>
+	    <property name="kickoutUrl" value="/login.do"/>
+	</bean>
+
+    <bean id="roleOrFilter" class="com.hgsoft.security.util.CustomRolesAuthorizationFilter" />
+    <!-- Shiro Filter -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"
+          depends-on="roleOrFilter">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/index.htm" />
+        <property name="successUrl" value="/admin/sys_index.do" />
+        <property name="unauthorizedUrl" value="/admin/admin_unauthorized.do" />
+        <property name="filters">
+            <util:map>
+                <entry key="kickout" value-ref="kickoutSessionControlFilter"/>
+                <!--<entry key="roleOrFilter" value-ref="roleOrFilter"/>-->
+                <entry key="authc">
+                    <bean class="org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter"/>
+						<!--<bean class="com.hgsoft.security.util.PassThruAuthenticationFilter"/>-->
+                </entry>
+
+            </util:map>
+        </property>
+
+        <property name="filterChainDefinitions">
+            <value>
+            	/admin/goods_saveGoodsData.do = anon
+             	/admin/admin_checkIE.do = anon
+                /login.jsp = anon
+                /login.do = anon
+                /error.jsp = anon
+                /index.htm = anon
+            	/admin/staffLocation_save.do = anon<!--手机端上传位置信息将调用此方法-->
+                /WEB-INF/jsp/error404.jsp = anon
+                /WEB-INF/jsp/error.jsp = anon
+                /WEB-INF/jsp/login.jsp = anon
+                /images/** = anon
+                /plugins/* = anon
+                /theme/** = anon
+                /css/** = anon
+                /css/images/* = anon
+                /js/** = anon
+                /ws/** = anon
+                /admin/getStationMessage_*.do = anon   <!-- 路段中心访问站级获取图片和签名 -->
+                /** = authc,kickout
+               
+            </value>
+        </property>
+    </bean>
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!--认证管理器-->
+        <property name="realm" ref="permissionsRealm" />
+		<!-- 缓存管理器 -->
+		<property name="cacheManager" ref="shiroCacheManager" />
+		<!-- session管理器 -->
+		<property name="sessionManager" ref="sessionManager" />
+		
+    </bean>
+	
+    <bean id="permissionsRealm" class="com.hgsoft.security.Realm.PermissionsRealm" />
+	<bean id="shiroCacheManager"  class="org.apache.shiro.cache.MemoryConstrainedCacheManager"   />
+	   
+
+    <!-- 会话DAO -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+    </bean>
+	
+	<!-- 会话验证调度器 -->
+    <!--<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+        <property name="sessionValidationInterval" value="1440000"/>
+       <property name="sessionManager" ref="sessionManager"/>
+    </bean>-->
+
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="globalSessionTimeout" value="86400000"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionIdCookieEnabled" value="true"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="sessionIdCookie" ref="sessionIdCookie"/>
+    </bean>
+
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <property name="maxAge" value="-1"/>
+        <property name="name" value="JSESSIONID"/>
+    </bean>
+      
+
+	
+	
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true" />
+    </bean>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    
+</beans>

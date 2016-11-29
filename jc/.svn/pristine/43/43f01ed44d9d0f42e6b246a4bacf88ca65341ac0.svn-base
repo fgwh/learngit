@@ -1,0 +1,181 @@
+
+package com.hgsoft.main.statisticsAnalysis.dao;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
+
+
+import com.hgsoft.main.statisticsAnalysis.entity.Condition;
+import com.hgsoft.main.statisticsAnalysis.entity.TrafficFlow;
+import com.hgsoft.security.dao.BaseDao;
+
+/** 
+  * @author  dje 
+  * @date    创建时间：2016年9月13日 下午3:30:38   
+  */
+@Repository
+public class LiushuiStatisticsDAO extends BaseDao<TrafficFlow> {
+	
+	private static Logger log = Logger.getLogger(LiushuiStatisticsDAO.class);
+	
+	/**
+	 * 根据年月日条件 获取入口客车、货车（分车型）数量
+	 * 用于数据列表
+	 * @param condition
+	 * @param treeCode
+	 * @return
+	 */
+	public TrafficFlow getTrafficFlowByEnStatistics(Condition condition,String treeCode) {
+		StringBuffer sb = new StringBuffer(
+				"select " + "sum(case when EnVehicleFlag = 1 and EnVehicleClass = 1 then 1 else 0 end) carsOneNum,"
+						+ "sum(case when EnVehicleFlag = 1 and EnVehicleClass = 2 then 1 else 0 end) carsTwoNum,"
+						+ "sum(case when EnVehicleFlag = 1 and EnVehicleClass = 3 then 1 else 0 end) carsThreeNum,"
+						+ "sum(case when EnVehicleFlag = 1 and EnVehicleClass = 4 then 1 else 0 end) carsFourNum,"
+						+ "sum(case when EnVehicleFlag = 1 and EnVehicleClass = 5 then 1 else 0 end) carsFiveNum,"
+						+ "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum," 
+						+ "sum(case when EnVehicleFlag = 2 and EnVehicleClass = 1 then 1 else 0 end) truckOneNum,"
+						+ "sum(case when EnVehicleFlag = 2 and EnVehicleClass = 2 then 1 else 0 end) truckTwoNum,"
+						+ "sum(case when EnVehicleFlag = 2 and EnVehicleClass = 3 then 1 else 0 end) truckThreeNum,"
+						+ "sum(case when EnVehicleFlag = 2 and EnVehicleClass = 4 then 1 else 0 end) truckFourNum,"
+						+ "sum(case when EnVehicleFlag = 2 and EnVehicleClass = 5 then 1 else 0 end) truckFiveNum,"
+						+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+						+"from tb_LaneEnList_"+condition.getYear()+" l "
+						+"left join sys_org so on l.EnStationID = so.orgCode where 1=1 ");
+		
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.EnTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20 ) >= l.EnTime ");
+		
+		return (TrafficFlow) super.findBySql(sb.toString(),null, TrafficFlow.class).get(0);
+	}
+	/**
+	 * 根据年月日条件 获取出口客车、货车（分车型）数量
+	 * 用于数据列表
+	 * @param condition
+	 * @param treeCode
+	 * @return
+	 */
+	public TrafficFlow getTrafficFlowByExStatistics(Condition condition,String treeCode) {
+		StringBuffer sb = new StringBuffer(
+				"select " + "sum(case when EnVehicleFlag = 1 and ExVehicleClass = 1 then 1 else 0 end) carsOneNum,"
+						+ "sum(case when EnVehicleFlag = 1 and ExVehicleClass = 2 then 1 else 0 end) carsTwoNum,"
+						+ "sum(case when EnVehicleFlag = 1 and ExVehicleClass = 3 then 1 else 0 end) carsThreeNum,"
+						+ "sum(case when EnVehicleFlag = 1 and ExVehicleClass = 4 then 1 else 0 end) carsFourNum,"
+						+ "sum(case when EnVehicleFlag = 1 and ExVehicleClass = 5 then 1 else 0 end) carsFiveNum,"
+						+ "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum," 
+						+ "sum(case when EnVehicleFlag = 2 and ExVehicleClass = 1 then 1 else 0 end) truckOneNum,"
+						+ "sum(case when EnVehicleFlag = 2 and ExVehicleClass = 2 then 1 else 0 end) truckTwoNum,"
+						+ "sum(case when EnVehicleFlag = 2 and ExVehicleClass = 3 then 1 else 0 end) truckThreeNum,"
+						+ "sum(case when EnVehicleFlag = 2 and ExVehicleClass = 4 then 1 else 0 end) truckFourNum,"
+						+ "sum(case when EnVehicleFlag = 2 and ExVehicleClass = 5 then 1 else 0 end) truckFiveNum,"
+						+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+						+"from tb_LaneExList_"+condition.getYear()+" l "
+						+"left join sys_org so on l.ExStationID = so.orgCode where 1=1 ");
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.ExTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20) >= l.ExTime ");
+		
+		return (TrafficFlow) super.findBySql(sb.toString(),null, TrafficFlow.class).get(0);
+	}
+
+	public List getTrafficFlowByEnStatisticsWithYear(Condition condition, String treeCode) {
+		StringBuffer sb = new StringBuffer(
+				"select " + "MONTH(l.EnTime) mon, " + "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum,"
+						+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+						+"from tb_LaneEnList_"+condition.getYear()+" l "
+						+"left join sys_org so on l.EnStationID = so.orgCode where 1=1 ");
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.EnTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20) >= l.EnTime ");
+		sb.append(" group by MONTH(l.EnTime) ");
+		return super.findBySql(sb.toString(),null);
+	}
+	
+	public List getTrafficFlowByEnStatisticsWithMonth(Condition condition,String treeCode){
+		StringBuffer sb =new StringBuffer(
+				"select "+"datepart(dd,l.EnTime) day,"
+		+ "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum,"
+		+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+		+"from tb_LaneEnList_"+condition.getYear()+" l "
+		+"left join sys_org so on l.EnStationID = so.orgCode where 1=1 ");
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.EnTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20) >= l.EnTime ");
+		sb.append(" group by  datepart(dd,l.EnTime)");
+		return super.findBySql(sb.toString(),null);
+	}
+	
+	public List getTrafficFlowByExStatisticsWithYear(Condition condition,String treeCode){
+		StringBuffer sb = new StringBuffer(
+				"select " + "MONTH(l.ExTime) mon, " + "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum,"
+						+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+						+"from tb_LaneExList_"+condition.getYear()+" l "
+						+"left join sys_org so on l.ExStationID = so.orgCode where 1=1 ");
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.ExTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20) >= l.ExTime ");
+		sb.append(" group by MONTH(l.ExTime) ");
+		return super.findBySql(sb.toString(),null);
+	}
+	
+	public List getTrafficFlowByExStatisticsWithMonth(Condition condition,String treeCode){
+		StringBuffer sb =new StringBuffer(
+				"select "+"datepart(dd,l.ExTime) day,"
+		+ "sum(case when EnVehicleFlag = 1 then 1 else 0 end) carsTotalNum,"
+		+ "sum(case when EnVehicleFlag = 2 then 1 else 0 end) truckTotalNum "
+		+"from tb_LaneExList_"+condition.getYear()+" l "
+		+"left join sys_org so on l.ExStationID = so.orgCode where 1=1 ");
+		sb.append("and so.treeCode like '"+treeCode+"%'");
+		sb.append(" and  l.ExTime >= CONVERT(varchar(100),'" + dateToString(condition).get(0) + "' ,20)");
+		sb.append(" and convert(varchar(100),'"+ dateToString(condition).get(1) +"' ,20) >= l.ExTime ");
+		sb.append(" group by  datepart(dd,l.ExTime)");
+		return super.findBySql(sb.toString(),null);
+	}
+	
+	//日期查询条件转换成String
+	public List<String> dateToString(Condition condition) {
+		String startQueryDate = "";
+		String endQueryDate = "";
+		if (1 == condition.getTableInfo()) {
+			startQueryDate = condition.getYear() + "-" + condition.getMonth() + "-" + condition.getDay() + " 00:00:00";
+			endQueryDate = condition.getYear() + "-" + condition.getMonth() + "-" + condition.getDay() + " 23:59:59";
+			return Arrays.asList(startQueryDate, endQueryDate);
+		} else if (2 == condition.getTableInfo()) {
+			startQueryDate = condition.getYear() + "-" + condition.getMonth() + "-" + "01" + " 00:00:00";
+			endQueryDate = condition.getYear() + "-" + condition.getMonth() + "-"
+					+ getMaxDayByYearMonth(condition.getYear(), condition.getMonth()) + " 23:59:59";
+			return Arrays.asList(startQueryDate, endQueryDate);
+		} else {
+			startQueryDate = condition.getYear() + "-" + "01-01" + " 00:00:00";
+			endQueryDate = condition.getYear() + "-" + "12-31" + " 23:59:59";
+			return Arrays.asList(startQueryDate, endQueryDate);
+		}
+	}
+	
+	//根据年月，获取当前月最大天数
+	public int getMaxDayByYearMonth(int year,int month) {
+		int maxDay = 0;
+		int day = 1;
+		/**
+		 * 与其他语言环境敏感类一样，Calendar 提供了一个类方法 getInstance，
+		 * 以获得此类型的一个通用的对象。Calendar 的 getInstance 方法返回一
+		 * 个 Calendar 对象，其日历字段已由当前日期和时间初始化： 
+		 */
+        Calendar calendar = Calendar.getInstance();
+        /**
+         * 实例化日历各个字段,这里的day为实例化使用
+         */
+        calendar.set(year,month - 1,day);
+        /**
+         * Calendar.Date:表示一个月中的某天
+         * calendar.getActualMaximum(int field):返回指定日历字段可能拥有的最大值
+         */
+        maxDay = calendar.getActualMaximum(Calendar.DATE);
+		return maxDay;
+	}
+}
+

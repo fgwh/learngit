@@ -1,0 +1,81 @@
+package com.hgsoft.main.travelpath;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.ServletActionContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+import com.hgsoft.main.entity.Conditions;
+import com.hgsoft.main.laneexlist.entity.LaneExList;
+import com.hgsoft.main.laneexlist.service.LaneExListService;
+import com.hgsoft.security.action.BaseAction;
+import com.hgsoft.util.Property;
+
+@Controller
+@Scope("prototype")
+public class TravelpathAction extends BaseAction{
+	
+	private static final Object SPLITTER = "|";
+	private static final Object LINE_SPLITTER = "\r\n";
+	private Conditions conditions = new Conditions(); //查询条件
+	@Resource
+	private LaneExListService laneExListService;
+	//查询
+		public String list(){  
+			/*list = laneExListService.getListBySql(pager, operator,conditions);*/
+			return "list";
+		}
+	
+	// 导出TXT文件
+	 	public String explortTXT() {
+	 		HttpServletResponse response = ServletActionContext.getResponse();
+//	 		List<DicItem> DicItems = service.findByPager(getPager(), null, Property.ne("id", entity.getId()),Property.eq("type", entity.getType()),Property.eq("name", entity.getName()));
+	 		List<LaneExList> laneExList =laneExListService.getListBySql(pager, operator,conditions);
+	 		try {
+	 			response.setContentType("APPLICATION/OCTET-STREAM");
+	 			String filename = "users.txt";
+	 			response.addHeader("Content-Disposition", "attachment;filename="
+	 					+ new String(filename.getBytes(), "utf-8"));
+	 			OutputStream out = response.getOutputStream();
+
+	 			StringBuffer temp_row = new StringBuffer(
+	 					"日期|路径|");
+
+	 			temp_row.append(LINE_SPLITTER);
+	 			out.write(temp_row.toString().getBytes());
+	 			out.flush();
+
+	 			if (laneExList != null & laneExList.size() > 0) {
+	 				for (int i = 0; i < laneExList.size(); i++) {
+	 					LaneExList row = (LaneExList) laneExList.get(i);
+	 					temp_row = new StringBuffer();
+	 					temp_row.append(row.getExTime()).append(SPLITTER);
+	 					temp_row.append(row.getRealPath()).append(SPLITTER);
+	 					temp_row.append(LINE_SPLITTER); // 换行
+	 					out.write(temp_row.toString().getBytes());
+	 					out.flush();
+	 				}
+	 			}
+	 			out.close();
+	 		} catch (IOException e) {
+	 			e.printStackTrace();
+	 			return null;
+	 		}
+	 		return null;
+	 	}
+
+	 	
+	 	
+		public Conditions getConditions() {
+			return conditions;
+		}
+
+		public void setConditions(Conditions conditions) {
+			this.conditions = conditions;
+		}
+}

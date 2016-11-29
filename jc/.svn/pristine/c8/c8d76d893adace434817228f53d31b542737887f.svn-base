@@ -1,0 +1,55 @@
+var log = {};
+$(function() {	
+	  $(":radio").click(function(){
+		 scope($(this).val());
+	     $("#myForm").submit(); 
+	  });
+
+	
+	//邦定搜索按钮，添加点击事件查询数据列表
+	$("#submit").on("click", function(event) {
+		//验证查询条件合法性
+		if (log.checkDate()) {
+			    scope($(":radio:checked").val());
+                $("#myForm").submit();
+           }
+		event.preventDefault();
+	});
+
+	//按回车键，查询数据列表
+	document.onkeydown = function(event) {
+		var ev = document.all ? window.event : event;
+		if (ev.keyCode == 13) {
+			//验证查询条件合法性
+			if (log.checkDate()) {
+				scope($(":radio:checked").val());
+                $("#myForm").submit();
+            }
+			ev.preventDefault();
+		}
+	};
+});
+
+//验证查询条件
+    log.checkDate = function() {
+        var v_start = $("#startQueryDate").val();//new Date($("#startQueryDate").val().replace("-", "/"));
+        var v_end = $("#endQueryDate").val();//new Date($("#endQueryDate").val().replace("-", "/"));
+        if (v_start > v_end) {
+            alert("结束时间不能小于开始时间");
+            return false;
+        }            
+        return true;
+    };
+//范围
+function scope(value){
+	 if(value==0){
+    	 $("#myForm").attr('action','grayList_list.do');
+    	 
+     }else{
+    	 $("#myForm").attr('action','grayList_proList.do');
+     }
+}
+
+function save(){
+	 $("#saveForm").submit();
+}

@@ -1,0 +1,108 @@
+package com.hgsoft.main.jcManange.dao;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import com.hgsoft.main.jcManange.entity.AbnormalCarDetail;
+import com.hgsoft.security.dao.BaseDao;
+
+@Repository
+public class AbnormalCarDetailDao extends BaseDao<AbnormalCarDetail> {
+
+	// 获取流水
+	public List<AbnormalCarDetail> getAbnorLiuShui(String plateNum, String num) {
+		String sql = "select ac.id,ac.EnStationID,ac.EnTime,sd2.name as EnVehicleClass,ac.EnVehicleStatus,ac.EnVehiclePlate,ac.ExStationID,ac.ExTime,sd.name as ExVehicleClass,ac.ExVehicleStatus,"
+				+ "ac.ExVehiclePlate,ac.exVehIdentifyPlate,ac.DealStatus,ac.AxisGroupNum,ac.TotalWeight,ac.OverLoadWeight,ac.RealPath,ac.Miles,ac.OBUPlate,ac.OverLoadPercent,"
+				+ "ac.ExceptionType,ac.ExVehicleFlag,ac.CashMoney,ac.EnNetRoadID,ac.ExNetRoadID,ac.LaneExSerialNo,ac.LaneEnSerialNo,ac.EnLaneID,ac.ExLaneID,ac.EnRoadID,"
+				+ "ac.ExRoadID,ac.SquadDate,ac.ExOperatorID,ac.AuditStatus,ExcepDisplayType FROM tb_AbnormalCarDeatils ac LEFT JOIN sys_dic sd ON ac.ExVehicleClass=sd.value "
+				+ "LEFT JOIN sys_dic sd2 ON ac.EnVehicleClass=sd2.value where sd.type='vehClass' and sd2.type='vehClass' and ac.ExVehiclePlate='"
+				+ plateNum.trim() + "' and ac.ExTime>convert(nvarchar(10),dateadd(m,-36,getdate()),120)"
+				+ "and ac.AuditStatus='1' ";
+		List list = null;
+		try {
+			list = (List<AbnormalCarDetail>) findBySql(sql, null, AbnormalCarDetail.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// 批量删除
+	public void batchDelete(String... ids) {
+		if (ids == null || ids.length < 1) {
+			return;
+		}
+
+		StringBuffer sql = new StringBuffer();
+		if (ids.length > 0) {
+			sql.append("('").append(ids[0]).append("'");
+		}
+		for (int i = 1; i < ids.length; i++) {
+			sql.append(",'").append(ids[i]).append("'");
+		}
+		if (sql.length() > 0) {
+			sql.append(")");
+			// Query q= this.getSession().createSQLQuery("delete from tb_" +
+			// clazz.getSimpleName() + " where id in " + sql.toString());
+			Query q = this.getSession()
+					.createSQLQuery("delete from  tb_AbnormalCarDeatils   where id in " + sql.toString());
+			q.executeUpdate();
+			this.getSession().flush();
+		}
+	}
+
+	// 修改
+	public int updateAbnor(String id) {
+		String sql = "update  tb_AbnormalCarDeatils set AuditStatus='2' where id='" + id + "'";
+		return getSession().createSQLQuery(sql).executeUpdate();
+	}
+
+	// 通过ID查找AbnormalCarDetail对象
+	public List<Object> getAbnormalCarDetail(String id) {
+		String sql="select ac.id,so.orgName,ac.EnTime,sd2.name as EnVehicleClass,sd3.name,ac.EnVehiclePlate,so2.orgName,ac.ExTime,sd.name as ExVehicleClass,sd4.name,"
+				+ " ac.ExVehiclePlate,ac.exVehIdentifyPlate,ac.DealStatus,ac.AxisGroupNum,ac.TotalWeight,ac.OverLoadWeight,ac.RealPath,ac.Miles,ac.OBUPlate,ac.OverLoadPercent,"
+				+ " ac.ExceptionType,ac.ExVehicleFlag,ac.CashMoney,ac.EnNetRoadID,ac.ExNetRoadID,ac.LaneExSerialNo,ac.LaneEnSerialNo,ac.EnLaneID,ac.ExLaneID,ac.EnRoadID,"
+				+ " ac.ExRoadID,ac.SquadDate,ac.ExOperatorID,ac.AuditStatus,ExcepDisplayType FROM tb_AbnormalCarDeatils ac LEFT JOIN sys_dic sd ON ac.ExVehicleClass=sd.value"
+				+ " LEFT JOIN sys_dic sd2 ON ac.EnVehicleClass=sd2.value"
+				+ " LEFT JOIN sys_org so ON so.orgCode=ac.EnStationID"
+				+ " LEFT JOIN sys_org so2 ON so2.orgCode=ac.ExStationID"
+				+ " LEFT JOIN sys_dic sd3 ON ac.EnVehicleStatus=sd3.value"
+				+ " LEFT JOIN sys_dic sd4 ON ac.ExVehicleStatus=sd4.value"
+				+ " where sd.type='vehClass' and sd2.type='vehClass' "
+				+ " and ac.ExTime>convert(nvarchar(10),dateadd(m,-36,getdate()),120)"
+				+ " and ac.AuditStatus='1' and sd3.type='vehType'"
+				+ " and  sd4.type='vehType' and ac.id='"+id+"'";
+	         	List<Object> list= (List<Object>) findBySql(sql, null);
+	         	return list;
+	}
+	
+	//标识点异常一
+	public List<Object[]> identifyPointOne(String year, String beginDate, String endDate) {
+		String sql="select  EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,RealPath,Miles,OBUPlate,ExVehicleFlag,CashMoney,EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID from tb_laneExList_"+year+" where ExVehiclePlate in (select t.ExVehiclePlate from tb_laneExList_"+year+"t where t.CashMoney>0 and (t.RealPath='' or DATALENGTH(t.realPath)<5) and t.EnRoadID!='86' and (t.ExTime between  DATEADD(month, -3, getDate()) and  getDate()) group by t.ExVehiclePlate having count(*)>=2)";
+		return (List<Object[]>) findBySql(sql,null);
+	}
+	//标识点异常二
+	public List<Object[]> identifyPointTwo(String year, String beginDate, String endDate) {
+		String sql="select EnStationID,LaneEnSerialNo,EnTime,EnVehicleClass,EnVehicleStatus,EnVehiclePlate,ExStationID,ExTime,ExVehicleClass,ExVehicleStatus,ExVehiclePlate, ExVehIdentifyPlate,DealStatus,AxisGroupNum,TotalWeight,RealPath,Miles,OBUPlate,ExVehicleFlag,CashMoney,EnNetRoadID,ExNetRoadID,LaneExSerialNo,EnLaneID,ExLaneID,EnRoadID,ExRoadID,SquadDate,ExOperatorID from tb_LaneExList_"+year+"b where b.laneExSerialNo in (select a.LaneExSerialNo as LaneEnSerialNo from tb_ExPathPoint_"+year+" a group by a.LaneExSerialNo,a.RealPathPoint having count(*) > 1) ";
+		return (List<Object[]>) findBySql(sql,null);
+	}
+    
+    public List<Object> getPourCarEeception(String year,String beginDate,String endDate){		
+		String sql = "IF OBJECT_ID('tempdb..#temp') is not null drop table #temp "
+				   + "select t.* into #temp from (	 select ExVehiclePlate from tb_LaneExList_"+year+" where  dbo.vehPlate_legal(ExVehiclePlate)=0 "
+				   + "and  FLOOR(DealStatus/POWER(2.0,7))%2 = 1 and  extime > convert(date,'"+beginDate+"') and extime < convert(date,'"+endDate+"') "
+				   + ") s left join tb_LaneExList_2015 t on s.ExVehiclePlate=t.ExVehiclePlate "
+				   + "select  * from  #temp f where f.LaneExSerialNo in(  "
+				   + "select a.LaneExSerialNo  from  ( select LaneExSerialNo,ExTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp) a, "
+				   + "( select LaneExSerialNo,EnTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) b "
+				   + "where  b.EnTime<a.ExTime and b.rows=a.rows+1 and a.ExVehiclePlate=f.ExVehiclePlate and b.ExVehiclePlate=a.ExVehiclePlate "
+				   + "union "
+				   + "select d.LaneExSerialNo from  ( select LaneExSerialNo,ExTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) c, "
+				   + "( select LaneExSerialNo,EnTime,ExVehiclePlate,  ROW_NUMBER() over(order by ExTime asc) as rows from #temp ) d "
+				   + "where  d.EnTime<c.ExTime and d.rows=c.rows+1 and c.ExVehiclePlate=f.ExVehiclePlate and d.ExVehiclePlate=f.ExVehiclePlate ) ";
+		
+		return (List<Object>) findBySql(sql, null);
+	}
+}

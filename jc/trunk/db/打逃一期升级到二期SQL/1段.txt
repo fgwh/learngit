@@ -1,0 +1,557 @@
+USE [jc]
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2019]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2019](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2018]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2018](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2017]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2017](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2016]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2016](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2015]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2015](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2014]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2014](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[tb_ExPathPoint_2013]    Script Date: 10/14/2016 16:42:00 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[tb_ExPathPoint_2013](
+	[LaneExSerialNo] [char](16) NOT NULL,
+	[RealPathPoint] [char](4) NOT NULL,
+	[SquadDate] [datetime] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+
+
+
+--tb_LaneExList_2013
+alter table tb_LaneExList_2013 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2013 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2013 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2013 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2013 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2013 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2013 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2013 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2013 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2013 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2013 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2013 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2013 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2013 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2013 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2013 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2013 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2013 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2013 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2013 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2013 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2013 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2013 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2013 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2013 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2013 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2013 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2013 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2013 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2013 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2014
+alter table tb_LaneExList_2014 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2014 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2014 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2014 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2014 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2014 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2014 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2014 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2014 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2014 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2014 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2014 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2014 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2014 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2014 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2014 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2014 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2014 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2014 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2014 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2014 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2014 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2014 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2014 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2014 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2014 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2014 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2014 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2014 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2014 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2015
+alter table tb_LaneExList_2015 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2015 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2015 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2015 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2015 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2015 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2015 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2015 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2015 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2015 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2015 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2015 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2015 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2015 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2015 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2015 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2015 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2015 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2015 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2015 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2015 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2015 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2015 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2015 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2015 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2015 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2015 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2015 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2015 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2015 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2016
+alter table tb_LaneExList_2016 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2016 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2016 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2016 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2016 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2016 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2016 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2016 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2016 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2016 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2016 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2016 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2016 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2016 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2016 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2016 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2016 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2016 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2016 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2016 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2016 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2016 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2016 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2016 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2016 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2016 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2016 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2016 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2016 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2016 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2017
+alter table tb_LaneExList_2017 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2017 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2017 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2017 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2017 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2017 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2017 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2017 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2017 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2017 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2017 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2017 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2017 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2017 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2017 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2017 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2017 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2017 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2017 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2017 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2017 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2017 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2017 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2017 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2017 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2017 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2017 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2017 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2017 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2017 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2018
+alter table tb_LaneExList_2018 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2018 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2018 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2018 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2018 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2018 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2018 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2018 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2018 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2018 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2018 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2018 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2018 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2018 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2018 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2018 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2018 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2018 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2018 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2018 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2018 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2018 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2018 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2018 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2018 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2018 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2018 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2018 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2018 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2018 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+--tb_LaneExList_2019
+alter table tb_LaneExList_2019 add  CardNetRoadID smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add  EnShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add  EnETCTermCode varchar(16) default('') NOT NULL
+alter table tb_LaneExList_2019 add  ExOpCardNo char(10) NULL
+alter table tb_LaneExList_2019 add	ExOpCardID bigint NULL
+alter table tb_LaneExList_2019 add	ExShiftID tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add ExCPCInID bigint default 0  NULL
+alter table tb_LaneExList_2019 add CardBoxNo int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	CardTrunkNo int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	AppVer varchar(20) default('') NOT NULL
+alter table tb_LaneExList_2019 add InvoiceID varchar(30) default('') NOT NULL
+alter table tb_LaneExList_2019 add 	ETCMoney int default 0 NOT NULL
+alter table tb_LaneExList_2019 add 	FreeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2019 add 	OfficeMoney int default 0 NOT NULL
+alter table tb_LaneExList_2019 add 	UnpayMoney int  default 0 NOT NULL
+alter table tb_LaneExList_2019 add DownVehicleClassMoney int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	OfficeCardSnNo char(10) default('') NOT NULL
+alter table tb_LaneExList_2019 add	OwnerCode1 bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	OwnerCode2 bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	OwnerCode3 bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	OwnerCode4 bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add ExVehicleFlag tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	ExICCIssuer smallint NULL
+alter table tb_LaneExList_2019 add ExCpuCardPlate varchar(12) NULL
+alter table tb_LaneExList_2019 add	ExCpuCardPlateColor varchar(2) NULL
+alter table tb_LaneExList_2019 add	ExCpuCardUserType tinyint NULL
+alter table tb_LaneExList_2019 add TicketType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	PayCardType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	PreviousAxisType varchar(50) default('') NOT NULL
+alter table tb_LaneExList_2019 add	PreviousTotalWeight bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	TruckLimitVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	TruckLimitPriceVerNo tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add PreVehMoney int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	PayCardBalanceBefore bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	PayCardBalanceAfter bigint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	OBUNum varchar(16) NULL
+alter table tb_LaneExList_2019 add	OBUID varchar(16) NULL
+alter table tb_LaneExList_2019 add	OBEState varchar(4) NULL
+alter table tb_LaneExList_2019 add	OBUPlate varchar(12) NULL
+alter table tb_LaneExList_2019 add	OBUPlateColor varchar(2) NULL
+alter table tb_LaneExList_2019 add	ExETCTradeNo int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	ExETCTac varchar(8) NULL
+alter table tb_LaneExList_2019 add	ExETCTermTradNo int default 0 NOT NULL
+alter table tb_LaneExList_2019 add RebateType smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	RebateVerNo smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	RebateRate smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	PreRebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	RebateFee int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	FlagType tinyint default 0  NOT NULL
+alter table tb_LaneExList_2019 add MoneyComb varchar(512) default('') NOT NULL
+alter table tb_LaneExList_2019 add TollRateVer int default 0 NOT NULL
+alter table tb_LaneExList_2019 add ListName smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	VoidSerialNo varchar(16) NULL
+alter table tb_LaneExList_2019 add	CPCCurrentVol smallint default 0  NOT NULL
+alter table tb_LaneExList_2019 add	Miles int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	TranslationMiles int default 0 NOT NULL
+alter table tb_LaneExList_2019 add	TollCardFreeListVerNo smallint default 0  NOT NULL
+
+
+
+/*****创建车牌比对函数 逐位比对返回不同的个数*****/
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[f_CompareSTR]') and xtype in (N'FN', N'IF', N'TF'))  
+drop function [dbo].[f_CompareSTR]  
+GO
+create function dbo.f_CompareSTR(@s1 varchar(12), @s2 varchar(12))
+returns int
+as
+begin
+declare @len int, @i int, @diff int
+select @len=len(@s1), @i=1, @diff=0
+if @len>7 set @s1=substring(@s1,2,@len)
+while @i<=@len
+begin
+    if substring(@s1,@i,1)<>substring(@s2,@i,1) set @diff+=1
+    set @i+=1
+end
+return @diff
+end
+go

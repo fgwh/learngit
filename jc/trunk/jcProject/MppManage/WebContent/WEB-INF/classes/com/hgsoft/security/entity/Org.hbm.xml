@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.hgsoft.security.entity.Org" table="sys_org" lazy="false">
+        <id name="id" type="java.lang.String">
+            <column name="id" />
+            <generator class="uuid"></generator>
+        </id>
+        <property name="orgLevel" type="java.lang.Integer">
+            <column name="orgLevel" />
+        </property>
+         <property name="orgName" type="java.lang.String">
+            <column name="orgName" length="50" />
+        </property>
+        <property name="orgCode" type="java.lang.String">
+            <column name="orgCode" length="50" />
+        </property>
+        <property name="orgType" type="java.lang.String">
+            <column name="orgType" length="80" />
+        </property>
+         <many-to-one name="parent" class="com.hgsoft.security.entity.Org" fetch="join">
+        	<column name="parentId" />
+        </many-to-one>
+        <property name="serverName" type="java.lang.String">
+            <column name="serverName" length="16" />
+        </property>
+        <property name="serverIP" type="java.lang.String">
+            <column name="serverIP" length="15" />
+        </property>
+         <property name="domain" type="java.lang.String">
+            <column name="domain" length="30" />
+        </property>
+        <property name="dbName" type="java.lang.String">
+            <column name="dBName" length="16" />
+        </property>
+         <property name="dbUserName" type="java.lang.String">
+            <column name="dBUserName" length="10" />
+        </property>
+        <property name="dbPassword" type="java.lang.String">
+            <column name="dBPassword" length="10" />
+        </property>
+         <property name="startTime" type="java.util.Date">
+            <column name="startTime" length="23" not-null="true" />
+        </property>
+        <property name="treeCode" type="java.lang.String">
+            <column name="treeCode" length="160" />
+        </property>
+        <property name="Xcode" type="java.lang.Double">
+            <column name="Xcode" precision="15" scale="0" />
+        </property>
+        <property name="Ycode" type="java.lang.Double">
+            <column name="Ycode" precision="15" scale="0" />
+        </property>
+      	<property name="orgStatus" type="java.lang.Integer">
+            <column name="orgStatus" />
+        </property>
+       	<property name="remark" type="java.lang.String">
+            <column name="remark" length="2000" />
+        </property>
+        <property name="priority" type="java.lang.Integer">
+            <column name="priority" />
+        </property>
+        <property name="isDelete" type="java.lang.Integer">
+            <column name="isDelete" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,2094 @@
+create table tb_msgPublish(
+	id varchar(64) primary key,
+	publishTime datetime not null,
+	theme varchar(100) not null,
+	content varchar(4000) not null,
+	publishMan varchar(80) not null
+)
+
+
+
+
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2013
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2013]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2013] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2014
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2014]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2014] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2015
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2015]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2015] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2016
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2016]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2016] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2017
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2017]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2017] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2018
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2018]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2018] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneEnList_2019
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneEnList_2019]
+GO
+CREATE TABLE [dbo].[tb_LaneEnList_2019] (
+[EnRecordNo] smallint NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[CardNetRoadID] smallint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnNetRoadID] smallint NOT NULL ,
+[EnRoadID] smallint NOT NULL ,
+[EnStationID] int NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnOperatorID] bigint NOT NULL ,
+[EnOpCardNo] char(10) NULL ,
+[EnOpCardID] bigint NULL ,
+[EnShiftID] tinyint NOT NULL ,
+[EnCPCSnNo] char(10) NULL ,
+[EnCPCInID] bigint NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[EnVehIdentifyPlate] char(12) NOT NULL ,
+[EnVehicleFlag] tinyint NOT NULL ,
+[EnICCIssuer] smallint NULL ,
+[EnCPUCardSnNo] char(16) NULL ,
+[EnCPUCardID] bigint NULL ,
+[EnCPUCardType] tinyint NOT NULL ,
+[EnETCTermCode] varchar(16) NOT NULL ,
+[EnOBUNum] char(16) NOT NULL ,
+[EnETCTradNo] char(8) NOT NULL ,
+[EnETCTermTradNo] int NOT NULL ,
+[EnETCTac] char(8) NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[CardBoxNo] int NOT NULL ,
+[CardTrunkNo] int NOT NULL ,
+[AppVer] varchar(20) NOT NULL ,
+[DealStatus] bigint NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[TicketType] tinyint NOT NULL ,
+[ListName] smallint NOT NULL ,
+[BillNo] int NULL ,
+[VoidSerialNo] varchar(16) NULL ,
+[VerifyCode] int NOT NULL ,
+[CPCCurrentVol] smallint NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList]
+GO
+CREATE TABLE [dbo].[tb_LaneExList] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExRecordNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口记录号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExRecordNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口记录号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExRecordNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'LaneExSerialNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口流水号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'LaneExSerialNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口流水号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'LaneExSerialNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'LaneEnSerialNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口流水号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'LaneEnSerialNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口流水号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'LaneEnSerialNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnNetRoadID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口路网编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnNetRoadID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口路网编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnNetRoadID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnRoadID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口路段编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnRoadID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口路段编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnRoadID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ICInCardID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'IC卡内部编号②'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ICInCardID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'IC卡内部编号②'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ICInCardID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnStationID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口站编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnStationID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口站编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnStationID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnLaneID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口车道编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnLaneID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口车道编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnLaneID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnLaneType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口车道类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnLaneType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口车道类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnLaneType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnTime')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口日期及时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnTime'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口日期及时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnTime'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnVehicleClass')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehicleClass'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehicleClass'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnVehicleStatus')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口车种'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehicleStatus'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口车种'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehicleStatus'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'EnVehiclePlate')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'入口车牌号码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehiclePlate'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'入口车牌号码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'EnVehiclePlate'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExNetRoadID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口路网编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExNetRoadID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口路网编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExNetRoadID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExRoadID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口路段编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExRoadID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口路段编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExRoadID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExStationID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口站编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExStationID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口站编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExStationID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExLaneID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口车道编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExLaneID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口车道编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExLaneID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExLaneType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口车道类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExLaneType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口车道类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExLaneType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExTime')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口日期及时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExTime'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口日期及时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExTime'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'SquadDate')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口工班日期'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'SquadDate'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口工班日期'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'SquadDate'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExCPCSnNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口复合卡表面号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPCSnNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口复合卡表面号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPCSnNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExVehicleClass')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehicleClass'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehicleClass'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExVehicleStatus')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口车种'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehicleStatus'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口车种'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehicleStatus'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ImageSerialNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口图片编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ImageSerialNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口图片编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ImageSerialNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExVehiclePlate')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口车牌'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehiclePlate'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口车牌'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehiclePlate'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExVehIdentifyPlate')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口识别车牌'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehIdentifyPlate'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口识别车牌'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExVehIdentifyPlate'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'CashMoney')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'收费金额'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'CashMoney'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'收费金额'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'CashMoney'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'VehicleClassMoney')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'车型费率金额'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'VehicleClassMoney'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'车型费率金额'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'VehicleClassMoney'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'DeviceStatus')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'设备状态'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'DeviceStatus'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'设备状态'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'DeviceStatus'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RecordType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'记录类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RecordType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'记录类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RecordType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExCPUCardSnNo')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口CPU卡表面编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardSnNo'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口CPU卡表面编号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardSnNo'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExCPUCardID')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口CPU卡内部ID号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardID'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口CPU卡内部ID号'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardID'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExCPUCardType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口CPU卡类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口CPU卡类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExCPUCardType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'WeightFlag')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'计重标识'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'WeightFlag'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'计重标识'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'WeightFlag'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'VehCount')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'车辆数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'VehCount'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'车辆数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'VehCount'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'AxisNum')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'轴数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisNum'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'轴数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisNum'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'AxisGroupNum')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'轴组数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisGroupNum'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'轴组数'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisGroupNum'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'TotalWeight')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'总轴重'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TotalWeight'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'总轴重'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TotalWeight'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'TotalWeightLimit')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'总轴限'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TotalWeightLimit'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'总轴限'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TotalWeightLimit'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'TollType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'费用类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TollType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'费用类型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'TollType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'AxisType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'轴型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'轴型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'AxisWeightDetail')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'各轴轴重'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisWeightDetail'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'各轴轴重'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'AxisWeightDetail'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'OverLoadWeight')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'超限重量'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'OverLoadWeight'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'超限重量'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'OverLoadWeight'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'PreVehType')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'降档前车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'PreVehType'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'降档前车型'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'PreVehType'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ExETCTermCode')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'出口终端机编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExETCTermCode'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'出口终端机编码'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ExETCTermCode'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'OriginalPath')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'原始标识信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'OriginalPath'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'原始标识信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'OriginalPath'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RealPath')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'收费路径信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RealPath'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'收费路径信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RealPath'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RoadComb')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'收费路径路段组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadComb'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'收费路径路段组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadComb'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RoadSStationComb')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'收费路径路段起始站编码组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadSStationComb'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'收费路径路段起始站编码组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadSStationComb'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RoadEStationComb')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'收费路径路段结束站编码组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadEStationComb'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'收费路径路段结束站编码组合'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RoadEStationComb'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'RealPath01')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'缺失路径标识信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RealPath01'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'缺失路径标识信息'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'RealPath01'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'ManualFlag')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'人工录入标识'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ManualFlag'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'人工录入标识'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'ManualFlag'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'Spare1')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'备用1'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare1'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'备用1'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare1'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'Spare2')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'备用2'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare2'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'备用2'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare2'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'Spare3')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'备用3'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare3'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'备用3'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare3'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'Spare4')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'备用4'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare4'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'备用4'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'Spare4'
+GO
+IF ((SELECT COUNT(*) from fn_listextendedproperty('MS_Description', 
+'SCHEMA', N'dbo', 
+'TABLE', N'tb_LaneExList', 
+'COLUMN', N'UploadTime')) > 0) 
+EXEC sp_updateextendedproperty @name = N'MS_Description', @value = N'上传时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'UploadTime'
+ELSE
+EXEC sp_addextendedproperty @name = N'MS_Description', @value = N'上传时间'
+, @level0type = 'SCHEMA', @level0name = N'dbo'
+, @level1type = 'TABLE', @level1name = N'tb_LaneExList'
+, @level2type = 'COLUMN', @level2name = N'UploadTime'
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2013
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2013]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2013] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2014
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2014]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2014] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2015
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2015]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2015] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL ,
+[EnOperatorID] bigint NULL ,
+[ExOperatorID] bigint NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2016
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2016]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2016] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2017
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2017]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2017] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2018
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2018]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2018] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Table structure for tb_LaneExList_2019
+-- ----------------------------
+DROP TABLE [dbo].[tb_LaneExList_2019]
+GO
+CREATE TABLE [dbo].[tb_LaneExList_2019] (
+[ExRecordNo] smallint NOT NULL ,
+[LaneExSerialNo] char(16) NOT NULL ,
+[LaneEnSerialNo] char(16) NOT NULL ,
+[EnNetRoadID] smallint NULL ,
+[EnRoadID] tinyint NOT NULL ,
+[ICInCardID] bigint NOT NULL ,
+[EnStationID] smallint NOT NULL ,
+[EnLaneID] smallint NOT NULL ,
+[EnLaneType] tinyint NOT NULL ,
+[EnTime] datetime NOT NULL ,
+[EnVehicleClass] tinyint NOT NULL ,
+[EnVehicleStatus] tinyint NOT NULL ,
+[EnVehiclePlate] char(12) NOT NULL ,
+[ExNetRoadID] smallint NOT NULL ,
+[ExRoadID] tinyint NOT NULL ,
+[ExStationID] smallint NOT NULL ,
+[ExLaneID] smallint NOT NULL ,
+[ExLaneType] tinyint NOT NULL ,
+[ExTime] datetime NOT NULL ,
+[SquadDate] datetime NOT NULL ,
+[ExCPCSnNo] char(10) NULL ,
+[ExVehicleClass] tinyint NOT NULL ,
+[ExVehicleStatus] tinyint NOT NULL ,
+[ImageSerialNo] int NOT NULL ,
+[ExVehiclePlate] char(12) NOT NULL ,
+[ExVehIdentifyPlate] char(12) NOT NULL ,
+[CashMoney] int NOT NULL ,
+[VehicleClassMoney] int NOT NULL ,
+[DeviceStatus] int NOT NULL ,
+[RecordType] smallint NOT NULL ,
+[ExCPUCardSnNo] char(16) NULL ,
+[ExCPUCardID] bigint NULL ,
+[ExCPUCardType] tinyint NOT NULL ,
+[WeightFlag] tinyint NOT NULL ,
+[VehCount] smallint NOT NULL ,
+[AxisNum] tinyint NOT NULL ,
+[AxisGroupNum] tinyint NOT NULL ,
+[TotalWeight] bigint NOT NULL ,
+[TotalWeightLimit] bigint NOT NULL ,
+[TollType] tinyint NOT NULL ,
+[AxisType] varchar(50) NOT NULL ,
+[AxisWeightDetail] varchar(50) NOT NULL ,
+[OverLoadWeight] bigint NOT NULL ,
+[PreVehType] tinyint NOT NULL ,
+[ExETCTermCode] char(16) NOT NULL ,
+[OriginalPath] varchar(256) NOT NULL ,
+[RealPath] varchar(256) NOT NULL ,
+[RoadComb] varchar(128) NOT NULL ,
+[RoadSStationComb] varchar(256) NOT NULL ,
+[RoadEStationComb] varchar(256) NOT NULL ,
+[RealPath01] varchar(256) NOT NULL ,
+[ManualFlag] tinyint NOT NULL ,
+[VerifyCode] int NOT NULL ,
+[Spare1] int NULL ,
+[Spare2] int NULL ,
+[Spare3] varchar(50) NULL ,
+[Spare4] varchar(50) NULL ,
+[UploadTime] datetime NOT NULL 
+)
+
+
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2013
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2013
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2013] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2014
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2014
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2014] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2015
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2015
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2015] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2016
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2016
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2016] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2017
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2017
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2017] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2018
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2018
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2018] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneEnList_2019
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneEnList_2019
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneEnList_2019] ADD PRIMARY KEY ([LaneEnSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2013
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2013
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2013] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2014
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2014
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2014] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2015
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2015
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2015] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2016
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2016
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2016] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2017
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2017
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2017] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2018
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2018
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2018] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+-- ----------------------------
+-- Indexes structure for table tb_LaneExList_2019
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_LaneExList_2019
+-- ----------------------------
+ALTER TABLE [dbo].[tb_LaneExList_2019] ADD PRIMARY KEY ([LaneExSerialNo])
+GO
+
+
+
+/*****黑、灰名单 *****/
+create table tb_proBlackList(
+ VehPlate	 VarChar(20) not null,
+ VehPlateColor	 decimal(1) not null,
+ VehFlag	 decimal(1) not null,
+ VehClass	 decimal(1) not null,
+ InterceptOption decimal(1) not null,
+ StartDate	 Datetime not null,
+ EndDate	 Datetime not null,
+ VehInfo	 VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_proGrayList(
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	decimal(1) not null,
+ VehFlag	decimal(1) not null,
+ VehClass	decimal(1) not null,
+ VehInfo	VarChar(500) not null,
+ primary key(VehPlate,VehPlateColor)
+)
+
+create table tb_roBlackList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	decimal(1),
+ VehFlag	decimal(1) not null,
+ VehClass	decimal(1) ,
+ InterceptOption	decimal(1) not null,
+ StartDate	Datetime not null,
+ EndDate	Datetime not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	decimal(1),
+ VehMidType	decimal(1),
+ VehSmallType	decimal(1),
+ Intercept	decimal(1),
+ VehCompany	VarChar(20),
+ VehModel       VarChar(20),
+ VehType	decimal(1) not null,
+ feeCount	int ,
+ feeMoney	bigint,
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ source	TinyInt not null,
+ fileName	varchar(32) ,
+ uploadTime     Datetime,
+ JfStatus	decimal(1) not null,
+)
+
+create table tb_roGrayList(
+ id varchar(32) primary key,
+ VehPlate	VarChar(20) not null,
+ VehPlateColor	decimal(1) not null,
+ VehFlag	decimal(1) not null,
+ VehClass	decimal(1) ,
+ VehType	decimal(1) not null,
+ VehInfo	VarChar(500) not null,
+ VehBigType	decimal(1),
+ VehMidType	decimal(1),
+ VehSmallType	decimal(1),
+ Applicant	VarChar(20) not null,
+ ApplicateTime	Datetime not null,
+ ApplicateOrg	VarChar(20) not null,
+ Status	decimal(1) not null,
+ fileName	varchar(32) ,
+ UpdateTime	Datetime,
+ uploadTime     Datetime,
+ staffNo        VarChar(8),
+ opinion        VarChar(500),
+)
+
+create table tb_evidence(
+  id	Varchar(32) primary key,
+  type  decimal(1) not null,
+  Pid	Varchar(32)  not null,
+  fileURL	varchar(32) not null
+)
+
+/*****黑、灰名单 *****/

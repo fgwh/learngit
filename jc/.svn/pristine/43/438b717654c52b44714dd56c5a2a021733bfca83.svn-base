@@ -1,0 +1,311 @@
+package com.hgsoft.main.jcManange.service;
+
+
+
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.springframework.stereotype.Service;
+
+import com.hgsoft.main.jcManange.dao.AbnormalCarDetailDao;
+import com.hgsoft.main.jcManange.dao.GrayListDao;
+import com.hgsoft.main.jcManange.entity.Conditions;
+import com.hgsoft.main.jcManange.entity.RoBlackList;
+import com.hgsoft.main.jcManange.entity.RoGrayList;
+import com.hgsoft.main.service.DictionaryService;
+import com.hgsoft.security.entity.Admin;
+import com.hgsoft.security.service.BaseService;
+import com.hgsoft.util.DBUtil;
+import com.hgsoft.util.JDBCFrame;
+import com.hgsoft.util.Pager;
+import com.hgsoft.util.StringUtil;
+@Service
+@SuppressWarnings({ "rawtypes" })
+public class GrayListService extends BaseService<RoGrayList>{
+	
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	
+	@Resource
+	public EvidenceService evidenceService;
+	
+	@Resource
+	private BlackListService blackListService;
+	
+	@Resource
+	private AbnormalCarDetailDao abnormalcardetaildao;
+	
+	@Resource
+	private DictionaryService   dicService;
+	
+	@Resource
+	public void setDao(GrayListDao grayListDao) {
+		super.setDao(grayListDao);
+	}
+
+	public GrayListDao getGrayListDao() {
+		return (GrayListDao) this.getDao();
+	}
+
+	 public boolean plateValidate(Conditions condition){
+		 
+		 List rs=getGrayListDao().plateValidate(condition);
+		 if(rs.size()==0){
+			 return true;
+		 }else{
+			 if(rs.get(0).toString().equals(condition.getId())){
+				 return true;
+			 }			 
+	     }
+		 return false;
+		 
+	 }	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> queryAllMessageList(Pager pager,Conditions conditions,String[] selectName,String sqlName,Class clazz) {		
+						
+		List<Object[]> list = getDao().findByNamedQuery(pager, sqlName, selectName,conditions.toArray(selectName),clazz,"new");
+			
+		return list;
+	}
+	
+	
+	
+	public boolean saveRoGrayList(RoGrayList entity){	
+				
+		Date date = new Date();
+		
+		if(StringUtil.isTrimEmpty(entity.getVehPlate())){
+			entity.setVehPlate((entity.getPlateNum()+entity.getCarNo()).toUpperCase());
+		}else{
+			entity.setVehPlate(entity.getVehPlate().toUpperCase());
+		}
+		
+		if(entity.getId()==null||"".equals(entity.getId())){
+			entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+		}
+			    
+		saveFile(entity, date);		
+		entity.setUpdateTime(date);
+		entity.setCreatime(date);
+		entity.setStatus(0);
+		getGrayListDao().saveOrUpdate(entity);
+		return  true;
+	}
+
+	private void saveFile(RoGrayList entity, Date date) {
+		if(entity.getFile()!=null){
+			
+			entity.setUploadTime(date);		
+			
+			String fileName="";
+			try {
+				fileName = evidenceService.rename(entity.getFileFileName(), date);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			entity.setFileName(fileName);
+			
+			evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),date);
+			
+		}
+	}
+
+	
+	//审核
+	public boolean saveAudit(Conditions conditions){
+		
+		if("0".equals(conditions.getStatus())){
+			
+			RoGrayList roGrayList = getGrayListDao().find(conditions.getId());
+			
+			RoBlackList roBlackList = new RoBlackList();
+			
+			roBlackList.setId(roGrayList.getId());
+			
+			roBlackList.setVehPlate(roGrayList.getVehPlate());
+			
+			roBlackList.setVehPlateColor(roGrayList.getVehPlateColor());
+			
+			roBlackList.setVehFlag(roGrayList.getVehFlag());
+			
+			roBlackList.setVehClass(roGrayList.getVehClass());
+			
+			roBlackList.setVehType(roGrayList.getVehType());
+			
+			roBlackList.setAxisGroup(roGrayList.getAxisGroup());
+			
+			roBlackList.setVehInfo(roGrayList.getVehInfo());
+			
+            roBlackList.setApplicant(roGrayList.getApplicant());
+			
+			roBlackList.setApplicateTime(roGrayList.getApplicateTime());
+			
+			roBlackList.setApplicateOrg(roGrayList.getApplicateOrg());
+			
+			roBlackList.setFileName(roGrayList.getFileName());
+			
+			roBlackList.setUploadTime(roGrayList.getUploadTime());
+			
+			roBlackList.setFeeCount(roGrayList.getFeeCount());
+			
+			roBlackList.setFeeMoney(roGrayList.getFeeMoney());
+									
+			roBlackList.setInterceptOption(Short.parseShort(conditions.getInterceptOption()));
+			
+			roBlackList.setStartDate(conditions.getStartDate());
+			
+			roBlackList.setEndDate(conditions.getEndDate());
+						
+			roBlackList.setCreatime(new Date());
+			
+			roBlackList.setSource(1);
+			
+			roBlackList.setJfStatus(0);
+			
+			try{			
+			    blackListService.save(roBlackList);
+			    deleteById(conditions.getId());
+			}catch(Exception e){
+				e.printStackTrace();
+				return false;
+			}
+												
+		}else{
+			
+			getGrayListDao().audit(conditions.getId(),conditions.getOpinion(),conditions.getStatus());
+			
+			
+		}
+		
+		return true;
+	}
+	
+	
+	//上传证据链
+	 
+		public void upload(RoGrayList entity){
+			if(entity.getFile()!=null){
+				Date uploadTime = new Date();
+								
+				String fileName=evidenceService.rename(entity.getFileFileName(), uploadTime);
+							
+				evidenceService.saveFile(fileName, entity.getFile(), 0, entity.getId(),uploadTime);
+				
+				getGrayListDao().upload(entity.getId(),fileName,sdf.format(uploadTime));
+				
+			}	
+					
+		}
+		
+		
+		public  void deleteByAuto(){
+			JDBCFrame jdbcFrame = new JDBCFrame(DBUtil.getLocalConnection());
+			
+	        String sql="delete  from tb_roGrayList  where DATEDIFF(MONTH, tb_roGrayList.UpdateTime,getdate()) >=6 ";
+					
+			try {
+			    jdbcFrame.updateByPreparedStatement(sql, null);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        } finally {
+		            jdbcFrame.releaseConn();
+		        }			
+		}
+		
+		/**
+		 * 可以车辆审核通过上传到灰名单
+		 * @param entity
+		 * @param ids
+		 */
+		public void saveAbnorToGray(RoGrayList entity,String ids,Admin operator){
+			       Map<String,String>  colorMap= dicService.getItemsMap("vehPlateColor");    //车牌颜色Map
+		           String[] idStr=ids.split(",");
+		    	   String id[]=new String[idStr.length];   //ID数组
+		    	   String vehPlate[]=new String[idStr.length]; //识别车牌数组
+		    	   for (int i = 0; i < idStr.length; i++) {
+		           	id[i]=idStr[i].substring(0, idStr[i].indexOf("_"));
+		           	vehPlate[i]=idStr[i].substring(idStr[i].indexOf("_")+1);
+		   	  	}
+				abnormalcardetaildao.batchDelete(id); 
+				 Date date=new Date();  //申请时间
+				 String  applicant=operator.getName();  //申请人
+		    	 String  applicateOrg= operator.getOrg().getOrgCode();//申请机构
+		    	 String staffNo=operator.getStaffNo();
+		
+		    	 for (int i = 0; i < idStr.length; i++) {
+			     try {    
+			    	   entity.setId(UUID.randomUUID().toString().trim().replaceAll("-", ""));
+			    	   entity.setApplicant(applicant);
+			    	   entity.setApplicateTime(date);
+			    	   entity.setApplicateOrg(applicateOrg);
+			           entity.setStatus(0);
+			           entity.setStaffNo(staffNo);
+			           entity.setCreatime(date);
+			           entity.setUploadTime(date);
+			    	   //车牌颜色 测试用
+			           if("0".equals(vehPlate[i])||StringUtil.isTrimEmpty(vehPlate[i])){
+			        	   entity.setVehPlateColor(Short.parseShort("10"));
+			           }else{
+			        	   Short color=Short.parseShort(getKeyByValue(vehPlate[i].substring(0, 1), colorMap ));
+			        	   entity.setVehPlateColor(color);
+			           }
+			           
+			           RoGrayList rograylist=new RoGrayList();
+			           rograylist.setApplicant(entity.getApplicant());
+			           rograylist.setApplicateOrg(entity.getApplicateOrg());
+			           rograylist.setApplicateTime(entity.getApplicateTime());
+			           rograylist.setAxisGroup(entity.getAxisGroup());
+			           rograylist.setCarNo(entity.getCarNo());
+			           rograylist.setCreatime(entity.getCreatime());
+			           rograylist.setFeeCount(entity.getFeeCount());
+			           rograylist.setFeeMoney(entity.getFeeMoney());
+			           rograylist.setFile(entity.getFile());
+			           rograylist.setFileContentType(entity.getFileContentType());
+			           rograylist.setFileFileName(entity.getFileFileName());
+			           rograylist.setFileName(entity.getFileName());
+			           rograylist.setId(entity.getId());
+			           rograylist.setOpinion(entity.getOpinion());
+			           rograylist.setPlateNum(entity.getPlateNum());
+			           rograylist.setStaffNo(entity.getStaffNo());
+			           rograylist.setStatus(entity.getStatus());
+			           rograylist.setUpdateTime(entity.getUpdateTime());
+			           rograylist.setUploadTime(entity.getUploadTime());
+			           rograylist.setVehClass(entity.getVehClass());
+			           rograylist.setVehFlag(entity.getVehFlag());
+			           rograylist.setVehInfo(entity.getVehInfo());
+			           rograylist.setVehPlate(entity.getVehPlate().toUpperCase());
+			           rograylist.setVehPlateColor(entity.getVehPlateColor());
+			           rograylist.setVehType(entity.getVehType());
+					   saveRoGrayList(rograylist);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		}
+		
+		//根据value获取key 
+	public static String getKeyByValue(String value, Map<String, String> map) {
+		String str = "";
+		value = value + "色";
+		for (String key : map.keySet()) {
+			String tvalue = map.get(key);
+			if (value.equals(tvalue)) {
+				str += key;
+			}
+		}
+		return str;
+	}
+
+}

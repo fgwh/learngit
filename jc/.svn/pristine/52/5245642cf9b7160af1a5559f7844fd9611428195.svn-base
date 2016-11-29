@@ -1,0 +1,548 @@
+package com.hgsoft.main.laneexlist.entity;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+
+/**
+ * 出口流水表pojo
+ * @author 郭志强
+ * @time 2016/9/8 21:58
+ */
+public class LaneExList implements Serializable {
+
+	private static final long serialVersionUID = 8002761695528237158L;
+	// Fields
+
+	private String laneExSerialNo;   // 出口流水号(主键)
+	private Short exRecordNo; // ExRecordNo
+	private String laneEnSerialNo;  // 入口流水号
+	private Short enNetRoadId; // 入口路网编号
+	private Short enRoadId; // 入口路段编码
+	private Long icinCardId; // IC卡内部编号
+	private Integer enStationId; // 入口站编号
+	private Short enLaneId; // 入口车道编号
+	private Short enLaneType; // 入口车道类型
+	private Timestamp enTime; // 入口日期及时间
+	private Short enVehicleClass; // 入口车型
+	private Short enVehicleStatus; // 入口车种
+	private String enVehiclePlate; // 入口车牌号码
+	private Short exNetRoadId; // 出口路网编号
+	private Short exRoadId; // 出口路段编码
+	private Integer exStationId; // 出口站编号
+	private Short exLaneId; // 出口车道编号
+	private Short exLaneType; // 出口车道类型
+	private Timestamp exTime; // 出口日期及时间
+	private Timestamp squadDate; // 出口工班日期
+	private String exCpcsnNo; // 出口复合卡表面号
+	private Short exVehicleClass; // 出口车型
+	private Short exVehicleStatus; // 出口车种
+	private Integer imageSerialNo; // 出口图片编号
+	private String exVehiclePlate; // 出口车牌
+	private String exVehIdentifyPlate; // 出口识别车牌
+	private Integer cashMoney; // 收费金额
+	private Integer vehicleClassMoney; // 车型费率金额
+	private Integer deviceStatus; // 设备状态
+	private Short recordType; // 记录类型
+	private String exCpucardSnNo; // 出口CPU卡表面编号
+	private Long exCpucardId; // 出口CPU卡内部ID号
+	private Short exCpucardType; // 出口CPU卡类型
+	private Short weightFlag; // 计重标识
+	private Short vehCount; // 车辆数
+	private Short axisNum; // 轴数
+	private Short axisGroupNum; // 轴组数
+	private Long totalWeight; // 总轴重
+	private Long totalWeightLimit; // 总轴限
+	private Short tollType; // 费用类型
+	private String axisType; // 轴型
+	private String axisWeightDetail; // 各轴轴重
+	private Long overLoadWeight; // 超限重量
+	private Short preVehType; // 降档前车型
+	private String exEtctermCode; // 出口终端机编码
+	private String originalPath; // 原始标识信息
+	private String realPath; // 收费路径信息
+	private String roadComb; // 收费路径路段组合
+	private String roadSstationComb; // 收费路径路段起始站编码组合
+	private String roadEstationComb; // 收费路径路段结束站编码组合
+	private String realPath01; // 缺失路径标识信息
+	private Short manualFlag; // 人工录入标识
+	private Integer verifyCode; // 校验码
+	private Integer spare1; // 备用1
+	private Integer spare2; // 备用2
+	private String spare3; // 备用3
+	private String spare4; // 备用4
+	private Timestamp uploadTime; // 上传时间
+
+	// Constructors
+
+	/** default constructor */
+	public LaneExList() {
+	}
+
+
+
+	public String getLaneExSerialNo() {
+		return this.laneExSerialNo;
+	}
+
+	public void setLaneExSerialNo(String laneExSerialNo) {
+		this.laneExSerialNo = laneExSerialNo;
+	}
+
+	public Short getExRecordNo() {
+		return this.exRecordNo;
+	}
+
+	public void setExRecordNo(Short exRecordNo) {
+		this.exRecordNo = exRecordNo;
+	}
+
+	public String getLaneEnSerialNo() {
+		return this.laneEnSerialNo;
+	}
+
+	public void setLaneEnSerialNo(String laneEnSerialNo) {
+		this.laneEnSerialNo = laneEnSerialNo;
+	}
+
+	public Short getEnNetRoadId() {
+		return enNetRoadId;
+	}
+
+	public void setEnNetRoadId(Short enNetRoadId) {
+		this.enNetRoadId = enNetRoadId;
+	}
+
+	public Short getEnRoadId() {
+		return this.enRoadId;
+	}
+
+	public void setEnRoadId(Short enRoadId) {
+		this.enRoadId = enRoadId;
+	}
+
+	public Long getIcinCardId() {
+		return this.icinCardId;
+	}
+
+	public void setIcinCardId(Long icinCardId) {
+		this.icinCardId = icinCardId;
+	}
+
+	public Integer getEnStationId() {
+		return enStationId;
+	}
+
+	public void setEnStationId(Integer enStationId) {
+		this.enStationId = enStationId;
+	}
+
+	public Short getEnLaneId() {
+		return this.enLaneId;
+	}
+
+	public void setEnLaneId(Short enLaneId) {
+		this.enLaneId = enLaneId;
+	}
+
+	public Short getEnLaneType() {
+		return this.enLaneType;
+	}
+
+	public void setEnLaneType(Short enLaneType) {
+		this.enLaneType = enLaneType;
+	}
+
+	public Timestamp getEnTime() {
+		return this.enTime;
+	}
+
+	public void setEnTime(Timestamp enTime) {
+		this.enTime = enTime;
+	}
+
+	public Short getEnVehicleClass() {
+		return this.enVehicleClass;
+	}
+
+	public void setEnVehicleClass(Short enVehicleClass) {
+		this.enVehicleClass = enVehicleClass;
+	}
+
+	public Short getEnVehicleStatus() {
+		return this.enVehicleStatus;
+	}
+
+	public void setEnVehicleStatus(Short enVehicleStatus) {
+		this.enVehicleStatus = enVehicleStatus;
+	}
+
+	public String getEnVehiclePlate() {
+		return this.enVehiclePlate;
+	}
+
+	public void setEnVehiclePlate(String enVehiclePlate) {
+		this.enVehiclePlate = enVehiclePlate;
+	}
+
+	public Short getExNetRoadId() {
+		return this.exNetRoadId;
+	}
+
+	public void setExNetRoadId(Short exNetRoadId) {
+		this.exNetRoadId = exNetRoadId;
+	}
+
+	public Short getExRoadId() {
+		return this.exRoadId;
+	}
+
+	public void setExRoadId(Short exRoadId) {
+		this.exRoadId = exRoadId;
+	}
+
+	public Integer getExStationId() {
+		return exStationId;
+	}
+
+	public void setExStationId(Integer exStationId) {
+		this.exStationId = exStationId;
+	}
+
+	public Short getExLaneId() {
+		return this.exLaneId;
+	}
+
+	public void setExLaneId(Short exLaneId) {
+		this.exLaneId = exLaneId;
+	}
+
+	public Short getExLaneType() {
+		return this.exLaneType;
+	}
+
+	public void setExLaneType(Short exLaneType) {
+		this.exLaneType = exLaneType;
+	}
+
+	public Timestamp getExTime() {
+		return this.exTime;
+	}
+
+	public void setExTime(Timestamp exTime) {
+		this.exTime = exTime;
+	}
+
+	public Timestamp getSquadDate() {
+		return this.squadDate;
+	}
+
+	public void setSquadDate(Timestamp squadDate) {
+		this.squadDate = squadDate;
+	}
+
+	public String getExCpcsnNo() {
+		return this.exCpcsnNo;
+	}
+
+	public void setExCpcsnNo(String exCpcsnNo) {
+		this.exCpcsnNo = exCpcsnNo;
+	}
+
+	public Short getExVehicleClass() {
+		return this.exVehicleClass;
+	}
+
+	public void setExVehicleClass(Short exVehicleClass) {
+		this.exVehicleClass = exVehicleClass;
+	}
+
+	public Short getExVehicleStatus() {
+		return this.exVehicleStatus;
+	}
+
+	public void setExVehicleStatus(Short exVehicleStatus) {
+		this.exVehicleStatus = exVehicleStatus;
+	}
+
+	public Integer getImageSerialNo() {
+		return this.imageSerialNo;
+	}
+
+	public void setImageSerialNo(Integer imageSerialNo) {
+		this.imageSerialNo = imageSerialNo;
+	}
+
+	public String getExVehiclePlate() {
+		return this.exVehiclePlate;
+	}
+
+	public void setExVehiclePlate(String exVehiclePlate) {
+		this.exVehiclePlate = exVehiclePlate;
+	}
+
+	public String getExVehIdentifyPlate() {
+		return this.exVehIdentifyPlate;
+	}
+
+	public void setExVehIdentifyPlate(String exVehIdentifyPlate) {
+		this.exVehIdentifyPlate = exVehIdentifyPlate;
+	}
+
+	public Integer getCashMoney() {
+		return this.cashMoney;
+	}
+
+	public void setCashMoney(Integer cashMoney) {
+		this.cashMoney = cashMoney;
+	}
+
+	public Integer getVehicleClassMoney() {
+		return this.vehicleClassMoney;
+	}
+
+	public void setVehicleClassMoney(Integer vehicleClassMoney) {
+		this.vehicleClassMoney = vehicleClassMoney;
+	}
+
+	public Integer getDeviceStatus() {
+		return this.deviceStatus;
+	}
+
+	public void setDeviceStatus(Integer deviceStatus) {
+		this.deviceStatus = deviceStatus;
+	}
+
+	public Short getRecordType() {
+		return this.recordType;
+	}
+
+	public void setRecordType(Short recordType) {
+		this.recordType = recordType;
+	}
+
+	public String getExCpucardSnNo() {
+		return this.exCpucardSnNo;
+	}
+
+	public void setExCpucardSnNo(String exCpucardSnNo) {
+		this.exCpucardSnNo = exCpucardSnNo;
+	}
+
+	public Long getExCpucardId() {
+		return this.exCpucardId;
+	}
+
+	public void setExCpucardId(Long exCpucardId) {
+		this.exCpucardId = exCpucardId;
+	}
+
+	public Short getExCpucardType() {
+		return this.exCpucardType;
+	}
+
+	public void setExCpucardType(Short exCpucardType) {
+		this.exCpucardType = exCpucardType;
+	}
+
+	public Short getWeightFlag() {
+		return this.weightFlag;
+	}
+
+	public void setWeightFlag(Short weightFlag) {
+		this.weightFlag = weightFlag;
+	}
+
+	public Short getVehCount() {
+		return this.vehCount;
+	}
+
+	public void setVehCount(Short vehCount) {
+		this.vehCount = vehCount;
+	}
+
+	public Short getAxisNum() {
+		return this.axisNum;
+	}
+
+	public void setAxisNum(Short axisNum) {
+		this.axisNum = axisNum;
+	}
+
+	public Short getAxisGroupNum() {
+		return this.axisGroupNum;
+	}
+
+	public void setAxisGroupNum(Short axisGroupNum) {
+		this.axisGroupNum = axisGroupNum;
+	}
+
+	public Long getTotalWeight() {
+		return this.totalWeight;
+	}
+
+	public void setTotalWeight(Long totalWeight) {
+		this.totalWeight = totalWeight;
+	}
+
+	public Long getTotalWeightLimit() {
+		return this.totalWeightLimit;
+	}
+
+	public void setTotalWeightLimit(Long totalWeightLimit) {
+		this.totalWeightLimit = totalWeightLimit;
+	}
+
+	public Short getTollType() {
+		return this.tollType;
+	}
+
+	public void setTollType(Short tollType) {
+		this.tollType = tollType;
+	}
+
+	public String getAxisType() {
+		return this.axisType;
+	}
+
+	public void setAxisType(String axisType) {
+		this.axisType = axisType;
+	}
+
+	public String getAxisWeightDetail() {
+		return this.axisWeightDetail;
+	}
+
+	public void setAxisWeightDetail(String axisWeightDetail) {
+		this.axisWeightDetail = axisWeightDetail;
+	}
+
+	public Long getOverLoadWeight() {
+		return this.overLoadWeight;
+	}
+
+	public void setOverLoadWeight(Long overLoadWeight) {
+		this.overLoadWeight = overLoadWeight;
+	}
+
+	public Short getPreVehType() {
+		return this.preVehType;
+	}
+
+	public void setPreVehType(Short preVehType) {
+		this.preVehType = preVehType;
+	}
+
+	public String getExEtctermCode() {
+		return this.exEtctermCode;
+	}
+
+	public void setExEtctermCode(String exEtctermCode) {
+		this.exEtctermCode = exEtctermCode;
+	}
+
+	public String getOriginalPath() {
+		return this.originalPath;
+	}
+
+	public void setOriginalPath(String originalPath) {
+		this.originalPath = originalPath;
+	}
+
+	public String getRealPath() {
+		return this.realPath;
+	}
+
+	public void setRealPath(String realPath) {
+		this.realPath = realPath;
+	}
+
+	public String getRoadComb() {
+		return this.roadComb;
+	}
+
+	public void setRoadComb(String roadComb) {
+		this.roadComb = roadComb;
+	}
+
+	public String getRoadSstationComb() {
+		return this.roadSstationComb;
+	}
+
+	public void setRoadSstationComb(String roadSstationComb) {
+		this.roadSstationComb = roadSstationComb;
+	}
+
+	public String getRoadEstationComb() {
+		return this.roadEstationComb;
+	}
+
+	public void setRoadEstationComb(String roadEstationComb) {
+		this.roadEstationComb = roadEstationComb;
+	}
+
+	public String getRealPath01() {
+		return this.realPath01;
+	}
+
+	public void setRealPath01(String realPath01) {
+		this.realPath01 = realPath01;
+	}
+
+	public Short getManualFlag() {
+		return this.manualFlag;
+	}
+
+	public void setManualFlag(Short manualFlag) {
+		this.manualFlag = manualFlag;
+	}
+
+	public Integer getVerifyCode() {
+		return this.verifyCode;
+	}
+
+	public void setVerifyCode(Integer verifyCode) {
+		this.verifyCode = verifyCode;
+	}
+
+	public Integer getSpare1() {
+		return this.spare1;
+	}
+
+	public void setSpare1(Integer spare1) {
+		this.spare1 = spare1;
+	}
+
+	public Integer getSpare2() {
+		return this.spare2;
+	}
+
+	public void setSpare2(Integer spare2) {
+		this.spare2 = spare2;
+	}
+
+	public String getSpare3() {
+		return this.spare3;
+	}
+
+	public void setSpare3(String spare3) {
+		this.spare3 = spare3;
+	}
+
+	public String getSpare4() {
+		return this.spare4;
+	}
+
+	public void setSpare4(String spare4) {
+		this.spare4 = spare4;
+	}
+
+	public Timestamp getUploadTime() {
+		return this.uploadTime;
+	}
+
+	public void setUploadTime(Timestamp uploadTime) {
+		this.uploadTime = uploadTime;
+	}
+
+}

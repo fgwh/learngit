@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.hgsoft.base.entity.UploadFileError" table="base_uploadfile_error">
+        <id name="id" type="java.lang.String">
+            <column name="id" />
+            <generator class="uuid" />
+        </id>
+        <property name="colsInfo" type="java.lang.String">
+            <column name="colsInfo" length="1000" />
+        </property>
+        <property name="errorInfo" type="java.lang.String">
+            <column name="errorInfo" length="200" />
+        </property>
+        <many-to-one name="uploadFile" column="fileId" lazy="false"
+    		class="com.hgsoft.base.entity.UploadFile"/>
+    </class>
+</hibernate-mapping>

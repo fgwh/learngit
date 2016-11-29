@@ -1,0 +1,26 @@
+
+package com.hgsoft.main.statisticsAnalysis.action;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.hgsoft.security.action.BaseAction;
+
+/** 
+  * @author  dje 
+  * @date    创建时间：2016年9月13日 下午3:12:41   
+  */
+
+@Controller
+@Scope("prototype")
+public class TrafficFlowStatisticalAction extends BaseAction{
+	
+	//private List 
+	
+	public String trafficFlowStatistics() {
+		
+		return "traffic";
+	}
+
+}
+

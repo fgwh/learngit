@@ -1,0 +1,314 @@
+package com.hgsoft.main.jcManange.entity;
+
+import java.io.File;
+import java.util.Date;
+
+import com.hgsoft.security.entity.BaseEntity;
+
+public class RoBlackList implements BaseEntity{
+
+    private String id;
+	
+    private String vehPlate;
+    
+    private String plateNum;
+    
+    private String carNo;
+	
+    private int vehPlateColor;
+	
+    private int vehFlag;
+	
+    private int vehClass;
+	
+    private int interceptOption;
+	
+    private Date startDate;
+	
+    private Date endDate;
+	
+    private String vehInfo;
+	
+    private int vehBigType;
+	
+    private int vehMidType;
+	
+    private int vehSmallType;
+	
+    private int intercept;
+	
+    private String vehCompany;
+	
+    private int vehType;
+    
+    private String vehModel;
+	
+    private int feeCount;
+	
+    private long feeMoney;	
+	
+    private String applicant;
+	
+    private Date applicateTime;
+	
+    private String applicateOrg;
+	
+    private int source;
+	
+    private String fileName;
+	
+    private int jfStatus;
+    
+    private File file;
+    
+    private Date uploadTime;
+    
+    private String fileFileName;
+    
+    
+    private String fileContentType;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getVehPlate() {
+		return vehPlate;
+	}
+
+	public void setVehPlate(String vehPlate) {
+		this.vehPlate = vehPlate;
+	}
+
+	public int getVehPlateColor() {
+		return vehPlateColor;
+	}
+
+	public void setVehPlateColor(int vehPlateColor) {
+		this.vehPlateColor = vehPlateColor;
+	}
+
+	public int getVehFlag() {
+		return vehFlag;
+	}
+
+	public void setVehFlag(int vehFlag) {
+		this.vehFlag = vehFlag;
+	}
+
+	public int getVehClass() {
+		return vehClass;
+	}
+
+	public void setVehClass(int vehClass) {
+		this.vehClass = vehClass;
+	}
+
+	public int getInterceptOption() {
+		return interceptOption;
+	}
+
+	public void setInterceptOption(int interceptOption) {
+		this.interceptOption = interceptOption;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getVehInfo() {
+		return vehInfo;
+	}
+
+	public void setVehInfo(String vehInfo) {
+		this.vehInfo = vehInfo;
+	}
+
+	public int getVehBigType() {
+		return vehBigType;
+	}
+
+	public void setVehBigType(int vehBigType) {
+		this.vehBigType = vehBigType;
+	}
+
+	public int getVehMidType() {
+		return vehMidType;
+	}
+
+	public void setVehMidType(int vehMidType) {
+		this.vehMidType = vehMidType;
+	}
+
+	public int getVehSmallType() {
+		return vehSmallType;
+	}
+
+	public void setVehSmallType(int vehSmallType) {
+		this.vehSmallType = vehSmallType;
+	}
+
+	public int getIntercept() {
+		return intercept;
+	}
+
+	public void setIntercept(int intercept) {
+		this.intercept = intercept;
+	}
+
+	public String getVehCompany() {
+		return vehCompany;
+	}
+
+	public void setVehCompany(String vehCompany) {
+		this.vehCompany = vehCompany;
+	}
+
+	public int getVehType() {
+		return vehType;
+	}
+
+	public void setVehType(int vehType) {
+		this.vehType = vehType;
+	}
+
+	public String getVehModel() {
+		return vehModel;
+	}
+
+	public void setVehModel(String vehModel) {
+		this.vehModel = vehModel;
+	}
+
+
+	public int getFeeCount() {
+		return feeCount;
+	}
+
+	public void setFeeCount(int feeCount) {
+		this.feeCount = feeCount;
+	}
+
+	public long getFeeMoney() {
+		return feeMoney;
+	}
+
+	public void setFeeMoney(long feeMoney) {
+		this.feeMoney = feeMoney;
+	}
+
+	public String getApplicant() {
+		return applicant;
+	}
+
+	public void setApplicant(String applicant) {
+		this.applicant = applicant;
+	}
+
+	public Date getApplicateTime() {
+		return applicateTime;
+	}
+
+	public void setApplicateTime(Date applicateTime) {
+		this.applicateTime = applicateTime;
+	}
+
+	public String getApplicateOrg() {
+		return applicateOrg;
+	}
+
+	public void setApplicateOrg(String applicateOrg) {
+		this.applicateOrg = applicateOrg;
+	}
+
+	public int getSource() {
+		return source;
+	}
+
+	public void setSource(int source) {
+		this.source = source;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public int getJfStatus() {
+		return jfStatus;
+	}
+
+	public void setJfStatus(int jfStatus) {
+		this.jfStatus = jfStatus;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+	
+	
+	public Date getUploadTime() {
+		return uploadTime;
+	}
+
+	public void setUploadTime(Date uploadTime) {
+		this.uploadTime = uploadTime;
+	}
+
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	public String getPlateNum() {
+		return plateNum;
+	}
+
+	public void setPlateNum(String plateNum) {
+		this.plateNum = plateNum;
+	}
+
+	public String getCarNo() {
+		return carNo;
+	}
+
+	public void setCarNo(String carNo) {
+		this.carNo = carNo;
+	}
+
+				
+}

@@ -1,0 +1,166 @@
+package com.hgsoft.main.carStatistic.entity;
+
+import java.util.Date;
+
+import com.hgsoft.security.entity.BaseEntity;
+
+
+public class CarStatistic implements BaseEntity{
+	private static final long serialVersionUID = 1L;
+	private String id;
+	private String centralStationId;
+	private String selectId;  //选择的中心站编号
+	private String stationNo; //收费站编号
+	private String laneEnSerialNo; //入口流水号
+	private String exVehiclePlate;   //车牌
+	private String exCPCSnNo;  //复合卡表面卡号
+	private String exCPUCardSnNo; //CPU卡号
+	private Date startTime;     //开始时间
+	private Date endTime;       //结束时间
+	private String laneExSerialNo;   //出口流水号
+	private String dealStatusArr;    //多选的处理情况
+	private int flag = 0;   //标识是不是第一次加载
+	private String dealStatusStr; //异常情况数据显示
+	
+	private String exSerialNo;    //出口流水号获取图片
+	private String enSerialNo;	  //入口流水号获取图片
+	
+	
+	
+	
+	/****************************  set/get方法  ********************************/
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getCentralStationId() {
+		return centralStationId;
+	}
+
+	public void setCentralStationId(String centralStationId) {
+		this.centralStationId = centralStationId;
+	}
+
+	public String getSelectId() {
+		return selectId;
+	}
+
+	public void setSelectId(String selectId) {
+		this.selectId = selectId;
+	}
+
+	public String getStationNo() {
+		return stationNo;
+	}
+
+	public void setStationNo(String stationNo) {
+		this.stationNo = stationNo;
+	}
+
+	public String getLaneEnSerialNo() {
+		return laneEnSerialNo;
+	}
+
+	public void setLaneEnSerialNo(String laneEnSerialNo) {
+		this.laneEnSerialNo = laneEnSerialNo;
+	}
+
+	public String getExVehiclePlate() {
+		return exVehiclePlate;
+	}
+
+	public void setExVehiclePlate(String exVehiclePlate) {
+		this.exVehiclePlate = exVehiclePlate;
+	}
+
+	public String getExCPCSnNo() {
+		return exCPCSnNo;
+	}
+
+	public void setExCPCSnNo(String exCPCSnNo) {
+		this.exCPCSnNo = exCPCSnNo;
+	}
+
+	public String getExCPUCardSnNo() {
+		return exCPUCardSnNo;
+	}
+
+	public void setExCPUCardSnNo(String exCPUCardSnNo) {
+		this.exCPUCardSnNo = exCPUCardSnNo;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getLaneExSerialNo() {
+		return laneExSerialNo;
+	}
+
+	public void setLaneExSerialNo(String laneExSerialNo) {
+		this.laneExSerialNo = laneExSerialNo;
+	}
+
+	public String getDealStatusArr() {
+		return dealStatusArr;
+	}
+
+	public void setDealStatusArr(String dealStatusArr) {
+		this.dealStatusArr = dealStatusArr;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public int getFlag() {
+		return flag;
+	}
+
+	public void setFlag(int flag) {
+		this.flag = flag;
+	}
+
+	public String getDealStatusStr() {
+		return dealStatusStr;
+	}
+
+	public void setDealStatusStr(String dealStatusStr) {
+		this.dealStatusStr = dealStatusStr;
+	}
+
+	public String getExSerialNo() {
+		return exSerialNo;
+	}
+
+	public void setExSerialNo(String exSerialNo) {
+		this.exSerialNo = exSerialNo;
+	}
+
+	public String getEnSerialNo() {
+		return enSerialNo;
+	}
+
+	public void setEnSerialNo(String enSerialNo) {
+		this.enSerialNo = enSerialNo;
+	}
+	
+	
+	
+}

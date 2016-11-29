@@ -1,0 +1,509 @@
+package com.hgsoft.security.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+import com.hgsoft.security.dao.OrgDao;
+import com.hgsoft.security.entity.Org;
+import com.hgsoft.security.util.OrgUtils;
+import com.hgsoft.util.Order;
+import com.hgsoft.util.Property;
+
+@Service
+public class OrgService extends BaseService<Org> {
+	
+	 
+	/**机构类型，名称： 路段，编号： 3*/
+	public static final String ORG_TYPE_ROAD = "3";
+	/**机构类型，名称： 收费站，编号： 4*/
+	public static final String ORG_TYPE_STATION = "4";
+	 
+	
+	@Resource
+	public void setDao(OrgDao dao){
+		super.setDao(dao);
+	}
+	
+	@Resource
+	OrgDao orgDao;
+	
+	public List<Org> getAllOrgListForOrder(){
+		List<Org> list = getDao().findAll(new Order[] { Order.asc("orgLevel"), Order.asc("priority"),Order.asc("treeCode") });//Order.asc("orgCode"), Order.asc("treeCode") ,Property.eq("isDelete", 0)
+		if (list != null) {
+			// 排序 list，把每个结点对应的下级结点相邻，采用循环查找方法
+			for (int i = 0; i < list.size(); i++) {
+				String currentId = ((Org) list.get(i)).getId();
+				int count = list.size() - i - 1;
+				for (int j = i + 1; count > 0 && j < list.size(); j++) {
+					Org m = (Org) list.get(j);
+					// 若此结点不是currentId的下层结点，则放到放到list最后
+					if (m.getParent() == null) {
+						list.remove(j);
+						list.add(m);
+						j--;
+					} else if (!m.getParent().getId().equals(currentId)) {
+						list.remove(j);
+						list.add(m);
+						j--;
+					}
+					count--;
+				}
+			}
+		}
+		return list;
+	}
+	
+	
+	
+	public void deleteAllChildNode(String treeCode){
+		String sql = "update sys_org set isDelete = "+ -1 +" where treeCode like'"+treeCode+"%'";
+		orgDao.getSession().createSQLQuery(sql).executeUpdate();
+		//判断该树是否全部被删除 是则创建一个根节点
+		/*String sql2 = "select COUNT(*) from sys_org";
+		int treeCount = Integer.parseInt(orgDao.getSession().createSQLQuery(sql2).uniqueResult().toString());
+		if(treeCount == 0){
+			Org org = new Org();
+			org.setParent(null);
+			org.setOrgLevel(1);
+			org.setStartTime(new Date());
+			org.setTreeCode("0001");
+			org.setOrgName("新建机构");
+			this.save(org);
+		}*/
+	}
+	
+	/***
+	 * 获取所有未禁用的机构
+	 * 
+	 */
+	public List<Org> getAllAvailableOrgListForOrder(){
+		List<Org> list = getDao().findAll(new Order[] { Order.asc("orgLevel"), Order.asc("priority") ,Order.asc("treeCode")}, Property.eq("orgStatus", 0),Property.eq("isDelete", 0));
+		if (list != null) {
+			// 排序 list，把每个结点对应的下级结点相邻，采用循环查找方法
+			for (int i = 0; i < list.size(); i++) {
+				String currentId = ((Org) list.get(i)).getId();
+				int count = list.size() - i - 1;
+				for (int j = i + 1; count > 0 && j < list.size(); j++) {
+					Org m = (Org) list.get(j);
+					// 若此结点不是currentId的下层结点，则放到放到list最后
+					if (m.getParent() == null) {
+						list.remove(j);
+						list.add(m);
+						j--;
+					} else if (!m.getParent().getId().equals(currentId)) {
+						list.remove(j);
+						list.add(m);
+						j--;
+					}
+					count--;
+				}
+			}
+		}
+		return list;
+	}
+	
+	public String getOrgLevelChartUiLiString(){
+		List<Org> orgList = this.getAllAvailableOrgListForOrder();
+		StringBuffer sb = new StringBuffer("");		
+		return getChartUiLiString(orgList, 0, sb).toString();
+	}
+	
+	public StringBuffer getChartUiLiString(List<Org> orgList,int currIndex, StringBuffer sb){
+		if (currIndex==orgList.size()){
+			return sb;
+		}		
+		Org currOrg = orgList.get(currIndex);	
+		
+		sb.append("<li>").append(currOrg.getOrgName());
+		List<Org> subOrg = new ArrayList<Org>();
+		for (Iterator iterator = orgList.iterator(); iterator.hasNext();) {
+			Org org = (Org) iterator.next();
+			if (currOrg.getId().equals(org.getParentId())){
+				subOrg.add(org);
+			}
+		}
+		if (subOrg!=null && !subOrg.isEmpty()){
+			sb.append("<ul>");
+			for (Iterator iterator = subOrg.iterator(); iterator.hasNext();) {
+				Org org = (Org) iterator.next();
+				getChartUiLiString(orgList, orgList.indexOf(org), sb);
+			}
+			sb.append("</ul>");			
+		}
+		sb.append("</li>");		
+		
+		return sb;
+	}
+
+	public List<Org> findByLevel(Integer id) {
+		return getDao().findAll(Order.asc("orgLevel"), Property.gt("orgLevel", id));
+	}
+	
+	public List<Org> findByType(String type) {
+		return getDao().findAll(Property.eq("orgType", type),Property.eq("isDelete", 0));
+	}
+	
+	/**
+	 * 获取没有被删除且没被禁用
+	 * @return
+	 */
+	public List<Org> findAllOrg(){
+		return getDao().findAll(Property.eq("isDelete", 0),Property.eq("orgStatus", 0));
+	}
+
+
+	/**
+	 * 根据orgId新增同级机构
+	 * @author liyy
+	 * @date 2015年10月12日
+	 * @param id
+	 * @return
+	 */
+	public Org addSameLevelByOrgId(String id) {
+		Org orgCurrent = find(id);
+		if (orgCurrent==null){
+			return null;
+		}
+		Org orgNew = new Org();
+		orgNew.setId(null);
+		orgNew.setParent(orgCurrent.getParent());
+		orgNew.setOrgLevel(orgCurrent.getOrgLevel());
+		orgNew.setOrgName("新建机构");
+		orgNew.setOrgCode("0");
+		orgNew.setStartTime(new Date());
+		orgNew.setOrgStatus(0);
+		orgNew.setPriority(0);
+		orgNew.setIsDelete(0);
+		orgNew.setOrgType(orgCurrent.getOrgType());
+		
+		orgNew.setTreeCode(addSameLevelTreeCode(orgCurrent.getParent().getTreeCode()));
+		
+		save(orgNew);
+		//刷新下机构缓存
+		OrgUtils.init();
+		return orgNew;
+	}
+	
+	/**
+	 * 设置同级机构treeCode
+	 * @param currentTreeCode
+	 * @return
+	 */
+	public String addSameLevelTreeCode(String currentParentTreeCode){
+		String treecode = orgDao.getMaxTreeCodeByParentTreeCode(currentParentTreeCode);
+		int max = Integer.parseInt(treecode.substring(treecode.length()-4, treecode.length()));
+		String treeIndex = treecode.substring(0, treecode.length()-4);
+		max++;
+		if (max<10){
+			treecode = "000"+max;
+		} else if (max<100){
+			treecode = "00"+max;
+		} else if (max<1000){
+			treecode = "0"+max;
+		} else {
+			treecode =""+max;
+		}
+		return treeIndex+treecode;
+	}
+	/**
+	 * 根据orgId新增下级机构
+	 * @author liyy
+	 * @date 2015年10月12日
+	 * @param id
+	 * @return
+	 */
+	public Org addLowerLevelByOrgId(String id) {
+		Org orgCurrent = find(id);
+		if (orgCurrent==null){
+			return null;
+		}
+		Org orgNew = new Org();
+		orgNew.setId(null);
+		orgNew.setParent(orgCurrent);
+		orgNew.setOrgLevel(orgCurrent.getOrgLevel() + 1);
+		orgNew.setOrgCode("0");
+		orgNew.setOrgName("新建机构");
+		orgNew.setStartTime(new Date());
+		orgNew.setOrgStatus(0);
+		orgNew.setPriority(0);
+		orgNew.setIsDelete(0);
+		
+		orgNew.setOrgType(String.valueOf(Integer.valueOf(orgCurrent.getOrgType())+1));
+		orgNew.setTreeCode(addLowerLevelTreeCode(orgCurrent.getTreeCode()));
+		
+		save(orgNew);
+		//刷新下机构缓存
+		OrgUtils.init();
+		return orgNew;
+	}
+	
+	/**
+	 * 设置下级机构treeCode
+	 * @param currentTreeCode
+	 * @return
+	 */
+	public String addLowerLevelTreeCode(String currentTreeCode){
+		String treecode = orgDao.getMaxNextTreeCodeByParentTreeCode(currentTreeCode);
+		if(treecode.equals(currentTreeCode)){
+			treecode = treecode+"0001";
+		}else{
+			int max = Integer.parseInt(treecode.substring(treecode.length()-4, treecode.length()));
+			String treeIndex = treecode.substring(0, treecode.length()-4);
+			max++;
+			if (max<10){
+				treecode = "000"+max;
+			} else if (max<100){
+				treecode = "00"+max;
+			} else if (max<1000){
+				treecode = "0"+max;
+			} else {
+				treecode =""+max;
+			}
+			treecode = treeIndex+treecode;
+		}
+		return treecode;
+	}
+	
+	
+	
+	/**
+	 * 获取该机构下的所有子机构（包含当前机构）
+	 * @param parentOrgId
+	 * @return
+	 */
+	public List findAllSubOrgInParentOrg(String parentOrgId){
+		List<Org> list = getDao().findAll(new Order[] { Order.asc("orgLevel"), Order.asc("priority") }, Property.eq("available", 0));
+		List<Org> orgList = new ArrayList<Org>();
+		if (list != null) {
+			List<Org> returnList = new ArrayList<Org>();
+			this.findSubOrg(returnList,parentOrgId, list);
+			for(Org org: list){
+				if(parentOrgId.equals(org.getId())){
+					orgList.add(org);
+					break;
+				}
+			}
+			orgList.addAll(returnList);
+		}
+		return orgList;
+	}
+	
+	private List findSubOrg(List<Org> returnList,String parentOrgId,List<Org> list){
+		for(int i=0;i<list.size();i++){
+			Org org = list.get(i);
+			if(parentOrgId.equals(org.getParentId())){
+				//System.out.println(org.getName());
+				List<Org> subList = this.findSubOrg(returnList,org.getId(), list);
+				//orgList.addAll(subList);
+				returnList.add(org);
+			}
+		}
+		return returnList;
+	}
+	
+	public List findOwnerPartyOrgBtOrgId(String orgId) {
+		List<Org> retList = new ArrayList<Org>();
+		List<Org> list = OrgUtils.getSubOrgByParentOrgId(orgId);
+		if (list!=null && !list.isEmpty()){
+			for (Org org : list) {
+				if (Org.ORGTYPE_OWNER.equals(org.getOrgType())){
+					retList.add(org);
+				}
+			}
+		}
+			
+		return retList;
+	}
+	
+public List findOwnerPartyOrgBtOrgIdHasPower(String orgId){
+		
+		StringBuffer sql = new StringBuffer("select b.orgId from csrm_e_acceptrecord b where 1=1 ");
+		List orgs = this.findAllSubOrgInParentOrg(orgId);
+		sql.append(" and b.ownOrgId in('").append(orgId).append("'");
+		if(orgs != null && orgs.size() > 0){
+			for(int i=0;i<orgs.size();i++){
+				sql.append(",'").append(((Org)orgs.get(i)).getId()).append("'");
+			}
+		}
+		sql.append(")");
+		List<Map<String , Object>> l = this.getDao().queryBySQLForMap(sql.toString());
+		
+		List<Org> retList = new ArrayList<Org>();
+		List<String> hasId = new ArrayList<String>();
+		if(l != null && l.size() > 0){
+			for(int i=0;i<l.size();i++){
+				List<Org> list = OrgUtils.getSubOrgByParentOrgId((String)l.get(i).get("orgId"));
+				if (list!=null && !list.isEmpty()){
+					for (Org org : list) {
+						if (Org.ORGTYPE_OWNER.equals(org.getOrgType()) && !hasId.contains(org.getId())){
+							hasId.add(org.getId());
+							retList.add(org);
+						}
+					}
+				}
+			}
+		}
+		return retList;
+	}
+
+	public List findConstructPartyOrgBtOrgId(String orgId) {
+		List<Org> retList = new ArrayList<Org>();
+		List<Org> list = OrgUtils.getSubOrgByParentOrgId(orgId);
+		if (list!=null && !list.isEmpty()){
+			for (Org org : list) {
+				if (Org.ORGTYPE_CONSTRUCTPARTY.equals(org.getOrgType())){
+					retList.add(org);
+				}
+			}
+		}
+			
+		return retList;
+	}
+	
+	public List findSubSupervisionOrgId(String orgId) {
+		/*List<Org> list = OrgUtils.getOrgList();
+		String rootOrgId = "";
+		for(int i =0;i<list.size();i++){
+			String pId = list.get(i).getParentId();
+			if(pId.equals(orgId)){
+				rootOrgId = list.get(i).getId();
+				break;
+			}
+		}
+		List<Org> orgList = new ArrayList<Org>();
+		if (list != null) {
+			List<Org> returnList = new ArrayList<Org>();
+			this.findSubSupervisionOrg(returnList, rootOrgId, list);
+			for(Org org: list){
+				if(rootOrgId.equals(org.getId())){
+					orgList.add(org);
+					break;
+				}
+			}
+			orgList.addAll(returnList);
+		}
+		return orgList;*/
+		List<Org> retList = new ArrayList<Org>();
+		//List<Org> list = getAllOrgListForOrder();//OrgUtils.getSubOrgByParentOrgId(orgId);
+		List<Org> list = OrgUtils.getOrgList();
+		if (list!=null && !list.isEmpty()){
+			for (Org org : list) {
+				if (Org.ORGTYPE_SUPERVISION.equals(org.getOrgType())){
+					retList.add(org);
+				}
+			}
+		}
+
+		return retList;
+	}
+	
+	public boolean getOrgStaffNum(String treeCode){
+		String sql = "select COUNT(*) from sys_admin where orgid in(select id from sys_org where treecode like '"+treeCode+"%')";
+		int size = Integer.parseInt(orgDao.getSession().createSQLQuery(sql).uniqueResult().toString());
+		if(size ==0){
+			return false;
+		}
+		return true;
+	}
+	
+	public int getOrgCodeNum(String orgCode){
+		String sql = "select COUNT(*) from sys_org where orgCode= '"+orgCode+"'";
+		int size = Integer.parseInt(orgDao.getSession().createSQLQuery(sql).uniqueResult().toString());
+		return size;
+	}
+	/**
+	 * 获取站编号和站名称
+	 * 用户ID
+	 * @param id
+	 * @return
+	 */
+	public List<Org> getStationName(String id){
+		return orgDao.getStationName(id);
+	}
+	
+	/**
+	 * 获取用户上级机构信息
+	 * 用户ID
+	 * @param id
+	 * @return
+	 */
+	public List<Org> getUpOrgMsg(String treeCode){
+		return orgDao.getUpOrgMsg(treeCode);
+	}
+	 
+	/**
+	 * 根据收费站id查询下级所有的车道
+	 * 
+	 * @param orgId
+	 * @return
+	 */
+	public List<Org> getAllLaneBystationId(String orgId) {
+		
+		return orgDao.getAllLaneBystationId(orgId);
+	}
+	
+	public List<Org> getAllSquareBystationId(String orgId){
+		return orgDao.getAllSquareBystationId(orgId);
+	}
+	
+	
+	
+	/**
+	 * 通过id查询路段或者收费站
+	 * @param orgId
+	 * @return
+	 */
+	public List<Org> findRoadOrStation(String orgId) {
+		return getDao().findAll(Property.eq("id", orgId),Property.eq("isDelete", 0));
+	}
+	
+	/**
+	 * 通过父节点和机构类型查询子收费站
+	 * @param orgId
+	 * @param orgType
+	 * @return
+	 */
+	public List<Org> findChildrenStation(String orgId, String orgType){
+		return orgDao.getAllChildrenStation(orgId, orgType);
+	}
+	
+	/**
+	 * 根据输入的orgCode判断是否存在
+	 * @param orgCode
+	 * @return
+	 */
+	public List<Object[]> findOrgByOrgCode(String orgCode){
+		String sql = "select orgCode,isDelete,id from sys_org where orgCode = '"+orgCode+"'";
+		List<Object[]> list = (List<Object[]>) orgDao.findBySql(sql, null);	
+		return list;
+	}
+	
+	/**
+	 * 根据输入的orgName判断是否存在
+	 * @param orgName
+	 * @return
+	 */
+	public List<Object[]> findOrgByOrgName(String orgName){
+		String sql = "select orgName,isDelete,id from sys_org where orgName = '"+orgName+"'";
+		List<Object[]> list = (List<Object[]>) orgDao.findBySql(sql, null);	
+		return list;
+	}
+	
+	//获取所有org的map形式<orgCode,id>
+	public Map getAllOrg(){
+		String sql = "select distinct orgCode,id from sys_org where isDelete = 0";
+		List<Object[]> list = (List<Object[]>) this.getDao().findBySql(sql,null);
+		Map<String, String> map = new HashMap<String, String>();
+		if(list.size() > 0){
+			for (Object[] obj : list) {
+				map.put(obj[0].toString(), obj[1].toString());
+			}
+		} 
+		return map;
+	}
+}
